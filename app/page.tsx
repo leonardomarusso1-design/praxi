@@ -329,7 +329,7 @@ export default function Landing() {
           <div className="hidden lg:block">
             <div className="relative">
               <img
-                src="/images/hero-mockup.jpg"
+                src="/images/hero-mockup.png"
                 alt="Dashboard do Praxi no tablet"
                 className="w-full rounded-2xl shadow-2xl"
                 onError={(e: any) => { e.currentTarget.style.display = 'none'; (e.currentTarget.nextSibling as HTMLElement).style.display = 'block'; }}
@@ -417,7 +417,7 @@ export default function Landing() {
               </Link>
             </div>
             <div>
-              <img src="/images/hero-mockup.jpg" alt="Dashboard Praxi com agenda" className="w-full rounded-2xl shadow-xl"
+              <img src="/images/hero-mockup.png" alt="Dashboard Praxi com agenda" className="w-full rounded-2xl shadow-xl"
                 onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><AgendaMockup /></div>
             </div>
@@ -428,7 +428,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 mb-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <img src="/images/recibo-feature.jpg" alt="Recibo profissional Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
+              <img src="/images/recibo-feature.png" alt="Recibo profissional Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
                 onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><ReciboMockup /></div>
             </div>
@@ -493,7 +493,7 @@ export default function Landing() {
               </Link>
             </div>
             <div>
-              <img src="/images/carne-feature.jpg" alt="Carnê-Leão automático Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
+              <img src="/images/carne-feature.png" alt="Carnê-Leão automático Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
                 onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><CarneMockup /></div>
             </div>
