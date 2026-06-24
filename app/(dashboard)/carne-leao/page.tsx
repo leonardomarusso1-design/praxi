@@ -269,12 +269,27 @@ export default function CarneLeaoPage() {
               </div>
             )}
 
-            {totalMes > 0 && !mesSelecionado?.pago && impostoMes > 0 && (
+            {totalMes === 0 && (
+              <div className="mt-4 bg-gray-50 rounded-xl p-3 text-xs text-gray-500 text-center">
+                Nenhuma sessão paga registrada neste mês.<br/>
+                <span className="text-gray-400">As sessões marcadas como "Realizada + Paga" na Agenda aparecem aqui automaticamente.</span>
+              </div>
+            )}
+
+            {totalMes > 0 && !mesSelecionado?.pago && impostoMes === 0 && (
+              <div className="mt-4 bg-green-50 rounded-xl p-3 text-xs text-green-700 text-center">
+                ✅ Faixa de isenção — nenhum imposto a recolher em {MONTHS[selectedMes-1]}.
+              </div>
+            )}
+
+            {totalMes > 0 && !mesSelecionado?.pago && (
               <button
                 onClick={() => togglePago(selectedMes, mesSelecionado?.pago || false)}
                 className="mt-3 w-full btn-primary py-3 text-sm font-semibold"
               >
-                ✓ Marcar imposto de {MONTHS[selectedMes-1]} como pago
+                {impostoMes > 0
+                  ? `✓ Marcar imposto de ${MONTHS[selectedMes-1]} como pago`
+                  : `✓ Marcar ${MONTHS[selectedMes-1]} como registrado`}
               </button>
             )}
             {mesSelecionado?.pago && (
@@ -282,7 +297,7 @@ export default function CarneLeaoPage() {
                 onClick={() => togglePago(selectedMes, mesSelecionado?.pago || false)}
                 className="mt-3 w-full btn-secondary py-2.5 text-sm text-gray-500"
               >
-                Desfazer pagamento
+                Desfazer
               </button>
             )}
           </div>
