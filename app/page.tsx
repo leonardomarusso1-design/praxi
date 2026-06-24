@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState } from 'react'
 
 const LINK_MENSAL = 'https://pay.cakto.com.br/v3tb44f_941204'
@@ -285,7 +284,8 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/images/logo.png" alt="Praxi" width={110} height={36} className="h-9 w-auto" priority />
+            <img src="/images/logo.png" alt="Praxi" className="h-9 w-auto" onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='flex'; }} />
+            <span className="text-2xl font-bold text-violet-700 tracking-tight hidden items-center">Praxi</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
             <a href="#funcionalidades" className="hover:text-gray-900 transition-colors">Funcionalidades</a>
@@ -327,15 +327,12 @@ export default function Landing() {
             <p className="text-sm text-gray-400">Sem cartão de crédito · Grátis para começar</p>
           </div>
           <div className="hidden lg:block">
-            {/* Troca pelo mockup real quando salvar a imagem em public/images/hero-mockup.jpg */}
             <div className="relative">
-              <Image
+              <img
                 src="/images/hero-mockup.jpg"
                 alt="Dashboard do Praxi no tablet"
-                width={600}
-                height={480}
                 className="w-full rounded-2xl shadow-2xl"
-                onError={(e: any) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'block'; }}
+                onError={(e: any) => { e.currentTarget.style.display = 'none'; (e.currentTarget.nextSibling as HTMLElement).style.display = 'block'; }}
               />
               <div style={{ display: 'none' }}>
                 <AgendaMockup />
@@ -420,8 +417,8 @@ export default function Landing() {
               </Link>
             </div>
             <div>
-              <Image src="/images/hero-mockup.jpg" alt="Dashboard Praxi com agenda" width={600} height={480} className="w-full rounded-2xl shadow-xl"
-                onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='block'; }} />
+              <img src="/images/hero-mockup.jpg" alt="Dashboard Praxi com agenda" className="w-full rounded-2xl shadow-xl"
+                onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><AgendaMockup /></div>
             </div>
           </div>
@@ -431,8 +428,8 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 mb-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <Image src="/images/recibo-feature.jpg" alt="Recibo profissional Praxi" width={580} height={580} className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
-                onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='block'; }} />
+              <img src="/images/recibo-feature.jpg" alt="Recibo profissional Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
+                onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><ReciboMockup /></div>
             </div>
             <div className="order-1 lg:order-2">
@@ -496,8 +493,8 @@ export default function Landing() {
               </Link>
             </div>
             <div>
-              <Image src="/images/carne-feature.jpg" alt="Carnê-Leão automático Praxi" width={580} height={580} className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
-                onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='block'; }} />
+              <img src="/images/carne-feature.jpg" alt="Carnê-Leão automático Praxi" className="w-full max-w-md mx-auto rounded-2xl shadow-xl"
+                onError={(e: any) => { e.currentTarget.style.display='none'; (e.currentTarget.nextSibling as HTMLElement).style.display='block'; }} />
               <div style={{display:'none'}}><CarneMockup /></div>
             </div>
           </div>
@@ -705,7 +702,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div className="md:col-span-2">
               <Link href="/" className="inline-block mb-3">
-              <Image src="/images/logo.png" alt="Praxi" width={100} height={32} className="h-8 w-auto" />
+              <img src="/images/logo.png" alt="Praxi" className="h-8 w-auto" />
             </Link>
               <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
                 O software de gestão feito para psicólogos autônomos brasileiros. Agenda, recibos e Carnê-Leão em um só lugar.
