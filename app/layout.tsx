@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Praxi – Gestão para Psicólogos',
     description: 'Agenda, recibos e Carnê-Leão automático para psicólogos autônomos.',
-    images: ['/images/og-hero.png'],
   },
 }
 

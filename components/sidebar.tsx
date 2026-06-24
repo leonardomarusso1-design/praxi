@@ -1,7 +1,6 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 
@@ -38,48 +37,40 @@ const IconSettings = () => (
   </svg>
 )
 const IconLogout = () => (
-  <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg className="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-)
-const IconChevron = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="6 9 12 15 18 9"/>
   </svg>
 )
 
 const nav = [
-  { href: '/dashboard',    Icon: IconHome,     label: 'Dashboard' },
-  { href: '/agenda',       Icon: IconCalendar, label: 'Agenda' },
-  { href: '/pacientes',    Icon: IconUsers,    label: 'Pacientes' },
-  { href: '/recibos',      Icon: IconReceipt,  label: 'Recibos' },
-  { href: '/carne-leao',   Icon: IconTax,      label: 'Carnê-Leão' },
-  { href: '/configuracoes',Icon: IconSettings, label: 'Configurações' },
+  { href: '/dashboard',     Icon: IconHome,     label: 'Dashboard' },
+  { href: '/agenda',        Icon: IconCalendar, label: 'Agenda' },
+  { href: '/pacientes',     Icon: IconUsers,    label: 'Pacientes' },
+  { href: '/recibos',       Icon: IconReceipt,  label: 'Recibos' },
+  { href: '/carne-leao',    Icon: IconTax,      label: 'Carnê-Leão' },
+  { href: '/configuracoes', Icon: IconSettings, label: 'Configurações' },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const router = useRouter()
   const supabase = createClient()
-  const [professional, setProfessional] = useState<{ nome: string; especialidade: string } | null>(null)
+  const [professional, setProfessional] = useState<{ nome: string; especialidade: string; avatar_url?: string } | null>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
-      supabase.from('professionals').select('nome, especialidade').eq('id', user.id).single()
-        .then(({ data }) => { if (data) setProfessional(data) })
+      supabase.from('professionals').select('nome, especialidade, avatar_url').eq('id', user.id).single()
+        .then(({ data }) => { if (data) setProfessional(data as any) })
     })
   }, [])
 
   async function logout() {
     await supabase.auth.signOut()
-    router.push('/login')
+    window.location.href = '/login'
   }
 
-  const primeiroNome = professional?.nome?.split(' ')[0] || ''
-  const ultimoNome = professional?.nome?.split(' ').slice(-1)[0] || ''
   const initials = professional?.nome
-    ? professional.nome.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    ? professional.nome.split(' ').filter(Boolean).map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : '?'
 
   return (
@@ -88,20 +79,27 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-5 py-5 border-b border-gray-100">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
-            {/* Brain SVG inline */}
-            <svg width="18" height="18" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 8C35 8 23 18 20 32C15 33 10 38 10 45C10 50 13 55 17 57C17 69 25 79 36 82L36 88C36 90 38 92 40 92L60 92C62 92 64 90 64 88L64 82C75 79 83 69 83 57C87 55 90 50 90 45C90 38 85 33 80 32C77 18 65 8 50 8Z" fill="white" opacity="0.9"/>
-              <circle cx="38" cy="45" r="4" fill="#7C3AED"/>
-              <circle cx="50" cy="40" r="4" fill="#7C3AED"/>
-              <circle cx="62" cy="45" r="4" fill="#7C3AED"/>
-              <line x1="38" y1="45" x2="50" y2="40" stroke="#7C3AED" strokeWidth="2"/>
-              <line x1="50" y1="40" x2="62" y2="45" stroke="#7C3AED" strokeWidth="2"/>
-              <line x1="38" y1="53" x2="50" y2="48" stroke="#7C3AED" strokeWidth="1.5" opacity="0.6"/>
-              <line x1="50" y1="48" x2="62" y2="53" stroke="#7C3AED" strokeWidth="1.5" opacity="0.6"/>
-            </svg>
-          </div>
-          <span className="text-lg font-bold text-violet-700 tracking-tight">Praxi</span>
+          <img
+            src="/images/logo.png"
+            alt="Praxi"
+            className="h-9 w-auto"
+            onError={(e: any) => {
+              e.currentTarget.style.display = 'none'
+              ;(e.currentTarget.nextSibling as HTMLElement).style.display = 'flex'
+            }}
+          />
+          {/* Fallback inline se logo.png não carregar */}
+          <span className="hidden items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 8C35 8 23 18 20 32C15 33 10 38 10 45C10 50 13 55 17 57C17 69 25 79 36 82L36 88C36 90 38 92 40 92L60 92C62 92 64 90 64 88L64 82C75 79 83 69 83 57C87 55 90 50 90 45C90 38 85 33 80 32C77 18 65 8 50 8Z" fill="white" opacity="0.9"/>
+                <circle cx="38" cy="45" r="4" fill="#7C3AED"/><circle cx="50" cy="40" r="4" fill="#7C3AED"/><circle cx="62" cy="45" r="4" fill="#7C3AED"/>
+                <line x1="38" y1="45" x2="50" y2="40" stroke="#7C3AED" strokeWidth="2"/>
+                <line x1="50" y1="40" x2="62" y2="45" stroke="#7C3AED" strokeWidth="2"/>
+              </svg>
+            </div>
+            <span className="text-lg font-bold text-violet-700 tracking-tight">Praxi</span>
+          </span>
         </Link>
       </div>
 
@@ -129,14 +127,19 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* User Profile */}
-      <div className="p-3 border-t border-gray-100">
-        <button
-          onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group text-left"
+      {/* User Profile + Logout */}
+      <div className="p-3 border-t border-gray-100 space-y-1">
+        {/* Perfil (clicável → configurações) */}
+        <Link
+          href="/configuracoes"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors group"
         >
-          <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-xs flex-shrink-0">
-            {initials}
+          <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-xs flex-shrink-0 overflow-hidden">
+            {professional?.avatar_url ? (
+              <img src={professional.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold text-gray-800 truncate">
@@ -146,9 +149,15 @@ export default function Sidebar() {
               {professional?.especialidade || 'Psicóloga/o'}
             </div>
           </div>
-          <span className="text-gray-300 group-hover:text-gray-500 flex-shrink-0">
-            <IconLogout />
-          </span>
+        </Link>
+
+        {/* Botão Sair separado */}
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors text-sm font-medium group"
+        >
+          <span className="flex-shrink-0"><IconLogout /></span>
+          <span>Sair</span>
         </button>
       </div>
     </aside>

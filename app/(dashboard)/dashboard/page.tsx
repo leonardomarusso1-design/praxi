@@ -168,12 +168,16 @@ export default async function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="relative w-10 h-10 rounded-xl border border-gray-100 bg-white flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors">
+          <a
+            href="#alertas"
+            title={sessoesNaoPagasData.length > 0 ? `${sessoesNaoPagasData.length} sessão(ões) não faturada(s)` : 'Sem alertas'}
+            className="relative w-10 h-10 rounded-xl border border-gray-100 bg-white flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors"
+          >
             <IconBell />
             {sessoesNaoPagasData.length > 0 && (
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
             )}
-          </button>
+          </a>
           <div className="bg-white border border-gray-100 rounded-xl px-4 py-2 text-sm text-gray-600 font-medium">
             📅 {now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
           </div>
@@ -348,7 +352,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Alertas e Pendências */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+        <div id="alertas" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
           <h2 className="font-semibold text-gray-900 mb-4">Alertas e Pendências</h2>
           <div className="space-y-2">
             {/* Carnê-Leão alert */}

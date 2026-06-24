@@ -284,7 +284,7 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/images/logo.png" alt="Praxi" className="h-9 w-auto" onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='flex'; }} />
+            <img src="/images/logo.png" alt="Praxi" className="h-12 w-auto" onError={(e: any) => { e.currentTarget.style.display='none'; e.currentTarget.nextSibling.style.display='flex'; }} />
             <span className="text-2xl font-bold text-violet-700 tracking-tight hidden items-center">Praxi</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">

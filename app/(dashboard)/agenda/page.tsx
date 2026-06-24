@@ -99,12 +99,31 @@ export default function Agenda() {
     load()
   }
 
-  function getWhatsAppLink(session: SessionWithPatient) {
+  function getWhatsAppLink(session: SessionWithPatient, forStatus?: string) {
     const phone = session.patient?.telefone?.replace(/\D/g, '')
     if (!phone) return null
+    const nome = session.patient?.nome?.split(' ')[0] || 'você'
     const dt = new Date(session.data_hora)
-    const msg = `Olá ${session.patient?.nome?.split(' ')[0]}, passando para lembrar da nossa sessão ${dt.toLocaleDateString('pt-BR', { weekday: 'long' })}, dia ${dt.toLocaleDateString('pt-BR')} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. Confirma? 😊`
+    const dataLonga = dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })
+    const hora = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    const status = forStatus || session.status
+
+    const messages: Record<string, string> = {
+      agendada: `Olá ${nome}! 😊 Passando para lembrar da nossa sessão na ${dataLonga} às ${hora}h. Confirma sua presença?`,
+      realizada: `Olá ${nome}! Obrigado pela nossa sessão de hoje. Espero que tenha sido proveitoso! Qualquer dúvida, estou por aqui. 🙏`,
+      cancelada: `Olá ${nome}, precisamos cancelar a sessão do dia ${dt.toLocaleDateString('pt-BR')} às ${hora}h. Quando podemos reagendar? Fico no aguardo 📅`,
+      falta: `Olá ${nome}, senti sua falta na nossa sessão de ${dataLonga} às ${hora}h. Está tudo bem? Me avise para reagendarmos quando puder 💙`,
+    }
+
+    const msg = messages[status] || messages.agendada
     return `https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`
+  }
+
+  const WA_LABELS: Record<string, string> = {
+    agendada: '📱 Enviar lembrete',
+    realizada: '📱 Mensagem de agradecimento',
+    cancelada: '📱 Reagendar pelo WhatsApp',
+    falta: '📱 Verificar ausência',
   }
 
   const totalSessions = sessions.length
@@ -279,12 +298,12 @@ export default function Agenda() {
             <div className="space-y-2">
               {getWhatsAppLink(selectedSession) && (
                 <a
-                  href={getWhatsAppLink(selectedSession)!}
+                  href={getWhatsAppLink(selectedSession, selectedSession.status)!}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors px-4 py-2.5 rounded-lg text-sm font-medium"
                 >
-                  📱 Enviar lembrete pelo WhatsApp
+                  {WA_LABELS[selectedSession.status] || '📱 Enviar mensagem'}
                 </a>
               )}
               {selectedSession.status === 'realizada' && (

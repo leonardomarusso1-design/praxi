@@ -229,9 +229,43 @@ export default function CarneLeaoPage() {
               <span>27,5% acima de R$ 4.664</span>
             </div>
 
-            {impostoMes > 0 && (
-              <div className="mt-4 bg-violet-50 rounded-xl p-3 text-xs text-violet-700">
-                💡 Prazo de recolhimento: até o último dia útil de {MONTHS[selectedMes - 1].toLowerCase()}/{ano}
+            {impostoMes > 0 && !mesSelecionado?.pago && (
+              <div className="mt-4 bg-amber-50 border border-amber-100 rounded-xl p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🏦</span>
+                  <span className="text-sm font-bold text-amber-800">Como pagar o Carnê-Leão</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-white rounded-lg p-2.5">
+                    <div className="text-gray-400 mb-0.5">Código DARF</div>
+                    <div className="font-bold text-gray-800 text-base tracking-widest">0190</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-2.5">
+                    <div className="text-gray-400 mb-0.5">Período de apuração</div>
+                    <div className="font-bold text-gray-800">{String(selectedMes).padStart(2,'0')}/{ano}</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-2.5">
+                    <div className="text-gray-400 mb-0.5">Valor a recolher</div>
+                    <div className="font-bold text-orange-600">{fmt(impostoMes)}</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-2.5">
+                    <div className="text-gray-400 mb-0.5">Vencimento</div>
+                    <div className={`font-bold text-sm ${diasRestantes <= 5 ? 'text-red-600' : 'text-gray-800'}`}>
+                      Último dia útil de {MONTHS[selectedMes-1].slice(0,3)}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-amber-700 bg-amber-100 rounded-lg p-2.5">
+                  <strong>Como gerar o DARF:</strong> acesse o e-CAC da Receita Federal → Serviços → Carnê-Leão Online → Pagamentos, ou pelo aplicativo <strong>Receita Federal</strong> no celular.
+                </div>
+                <a
+                  href="https://cav.receita.fazenda.gov.br/autenticacao/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-amber-700 text-white hover:bg-amber-800 transition-colors px-4 py-2.5 rounded-lg text-sm font-semibold"
+                >
+                  Acessar e-CAC Receita Federal →
+                </a>
               </div>
             )}
 
