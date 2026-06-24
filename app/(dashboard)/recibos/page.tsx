@@ -4,40 +4,144 @@ import { createClient } from '@/lib/supabase/client'
 import type { Receipt, Patient, Professional } from '@/types'
 
 function generatePDF(receipt: Receipt, patient: Patient, professional: Professional) {
-  const content = `
-RECIBO DE PAGAMENTO
-===========================================
-Nº ${receipt.numero}
-Data de emissão: ${new Date(receipt.data_emissao).toLocaleDateString('pt-BR')}
+  const valor = Number(receipt.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+  const dataEmissao = new Date(receipt.data_emissao).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })
 
-PROFISSIONAL:
-${professional.nome}
-${professional.especialidade}
-${professional.crp ? `CRP: ${professional.crp}` : ''}
-${professional.cpf ? `CPF: ${professional.cpf}` : ''}
-${professional.endereco ? professional.endereco + ', ' + professional.cidade + '/' + professional.estado : ''}
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Recibo Nº ${receipt.numero}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #1a1a2e; }
+  .page { max-width: 680px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.12); }
+  .header { background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 100%); padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .logo-text { font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+  .header-right { text-align: right; }
+  .header-right .title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
+  .header-right .numero { font-size: 20px; font-weight: 700; color: white; margin-top: 2px; }
+  .body { padding: 40px; }
+  .valor-section { background: #F5F3FF; border-radius: 12px; padding: 24px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; }
+  .valor-label { font-size: 13px; color: #6B7280; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .valor-amount { font-size: 36px; font-weight: 800; color: #6D28D9; margin-top: 4px; }
+  .valor-data { text-align: right; }
+  .valor-data .data-label { font-size: 12px; color: #6B7280; }
+  .valor-data .data-value { font-size: 15px; font-weight: 600; color: #374151; margin-top: 2px; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 11px; font-weight: 700; color: #7C3AED; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #EDE9FE; }
+  .section-row { display: flex; padding: 8px 0; border-bottom: 1px solid #F9FAFB; }
+  .section-row:last-child { border-bottom: none; }
+  .row-label { font-size: 13px; color: #9CA3AF; width: 130px; flex-shrink: 0; }
+  .row-value { font-size: 13px; color: #111827; font-weight: 500; flex: 1; }
+  .descricao-box { background: #F9FAFB; border-radius: 8px; padding: 14px 16px; font-size: 14px; color: #374151; line-height: 1.6; }
+  .valor-total-row { display: flex; justify-content: space-between; align-items: center; background: #111827; border-radius: 10px; padding: 16px 20px; margin-top: 24px; }
+  .valor-total-label { font-size: 14px; font-weight: 600; color: #E5E7EB; }
+  .valor-total-value { font-size: 22px; font-weight: 800; color: white; }
+  .assinatura { margin-top: 40px; padding-top: 24px; border-top: 1px dashed #E5E7EB; display: flex; justify-content: center; }
+  .assinatura-box { text-align: center; }
+  .assinatura-line { width: 240px; border-top: 1px solid #374151; margin: 0 auto 8px; }
+  .assinatura-name { font-size: 13px; font-weight: 600; color: #374151; }
+  .assinatura-crp { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+  .footer { background: #F9FAFB; padding: 16px 40px; text-align: center; font-size: 11px; color: #9CA3AF; }
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; }
+    .print-btn { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+          <path d="M50 8C35 8 23 18 20 32C15 33 10 38 10 45C10 50 13 55 17 57C17 69 25 79 36 82L36 88C36 90 38 92 40 92L60 92C62 92 64 90 64 88L64 82C75 79 83 69 83 57C87 55 90 50 90 45C90 38 85 33 80 32C77 18 65 8 50 8Z" fill="white" opacity="0.9"/>
+          <circle cx="38" cy="45" r="5" fill="#7C3AED"/>
+          <circle cx="50" cy="38" r="5" fill="#7C3AED"/>
+          <circle cx="62" cy="45" r="5" fill="#7C3AED"/>
+          <line x1="38" y1="45" x2="50" y2="38" stroke="#7C3AED" stroke-width="2.5"/>
+          <line x1="50" y1="38" x2="62" y2="45" stroke="#7C3AED" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <span class="logo-text">Praxi</span>
+    </div>
+    <div class="header-right">
+      <div class="title">Recibo de Prestação de Serviços</div>
+      <div class="numero">Nº ${receipt.numero}</div>
+    </div>
+  </div>
 
-PACIENTE:
-${patient.nome}
-${patient.cpf ? `CPF: ${patient.cpf}` : ''}
+  <div class="body">
+    <div class="valor-section">
+      <div>
+        <div class="valor-label">Valor Total</div>
+        <div class="valor-amount">${valor}</div>
+      </div>
+      <div class="valor-data">
+        <div class="data-label">Data de Emissão</div>
+        <div class="data-value">${dataEmissao}</div>
+      </div>
+    </div>
 
-DESCRIÇÃO:
-${receipt.descricao}
+    <div class="section">
+      <div class="section-title">Prestador de Serviços</div>
+      <div class="section-row"><span class="row-label">Nome</span><span class="row-value">${professional.nome}</span></div>
+      ${professional.especialidade ? `<div class="section-row"><span class="row-label">Especialidade</span><span class="row-value">${professional.especialidade}</span></div>` : ''}
+      ${professional.crp ? `<div class="section-row"><span class="row-label">CRP</span><span class="row-value">${professional.crp}</span></div>` : ''}
+      ${professional.cpf ? `<div class="section-row"><span class="row-label">CPF</span><span class="row-value">${professional.cpf}</span></div>` : ''}
+      ${professional.endereco ? `<div class="section-row"><span class="row-label">Endereço</span><span class="row-value">${professional.endereco}${professional.cidade ? `, ${professional.cidade}/${professional.estado}` : ''}</span></div>` : ''}
+    </div>
 
-VALOR: R$ ${Number(receipt.valor).toFixed(2).replace('.', ',')}
+    <div class="section">
+      <div class="section-title">Tomador de Serviços</div>
+      <div class="section-row"><span class="row-label">Nome</span><span class="row-value">${patient.nome}</span></div>
+      ${patient.cpf ? `<div class="section-row"><span class="row-label">CPF</span><span class="row-value">${patient.cpf}</span></div>` : ''}
+    </div>
 
-${professional.nome}
-___________________________________
-Assinatura do Profissional
-  `.trim()
+    <div class="section">
+      <div class="section-title">Descrição do Serviço</div>
+      <div class="descricao-box">${receipt.descricao}</div>
+    </div>
 
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `recibo-${receipt.numero}-${patient.nome.replace(/\s+/g, '-')}.txt`
-  a.click()
-  URL.revokeObjectURL(url)
+    <div class="valor-total-row">
+      <span class="valor-total-label">Recebi(emos) de <strong>${patient.nome}</strong> a importância de</span>
+      <span class="valor-total-value">${valor}</span>
+    </div>
+
+    <div class="assinatura">
+      <div class="assinatura-box">
+        <div class="assinatura-line"></div>
+        <div class="assinatura-name">${professional.nome}</div>
+        ${professional.crp ? `<div class="assinatura-crp">CRP ${professional.crp}</div>` : ''}
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Documento gerado pelo Praxi · praxi-eight.vercel.app · ${new Date().getFullYear()}
+  </div>
+</div>
+
+<div style="text-align:center;margin:20px;display:flex;gap:12px;justify-content:center" class="print-btn">
+  <button onclick="window.print()" style="background:#7C3AED;color:white;border:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+    ⬇ Salvar / Imprimir PDF
+  </button>
+  <button onclick="window.close()" style="background:#F3F4F6;color:#374151;border:none;padding:12px 32px;border-radius:10px;font-size:15px;cursor:pointer;">
+    Fechar
+  </button>
+</div>
+</body>
+</html>`
+
+  const win = window.open('', '_blank', 'width=780,height=900')
+  if (win) {
+    win.document.write(html)
+    win.document.close()
+  }
 }
 
 export default function Recibos() {
@@ -168,7 +272,7 @@ export default function Recibos() {
                     <td className="px-4 py-3 text-sm text-gray-500">{new Date(r.data_emissao).toLocaleDateString('pt-BR')}</td>
                     <td className="px-4 py-3 text-sm font-bold text-green-700">R$ {Number(r.valor).toFixed(2).replace('.',',')}</td>
                     <td className="px-4 py-3">
-                      <button onClick={() => download(r)} className="text-xs text-violet-700 hover:underline font-medium">⬇ Baixar</button>
+                      <button onClick={() => download(r)} className="text-xs text-violet-700 hover:underline font-medium">📄 Abrir PDF</button>
                     </td>
                   </tr>
                 ))}
