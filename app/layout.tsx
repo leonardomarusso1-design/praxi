@@ -6,7 +6,16 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Praxi – Gestão para Psicólogos',
-  description: 'Agenda, recibos e controle do Carnê-Leão em um único lugar.',
+  description: 'Agenda, recibos e controle do Carnê-Leão em um único lugar. O software feito para psicólogos autônomos brasileiros.',
+  icons: {
+    icon: '/images/brain.png',
+    apple: '/images/brain.png',
+  },
+  openGraph: {
+    title: 'Praxi – Gestão para Psicólogos',
+    description: 'Agenda, recibos e Carnê-Leão automático para psicólogos autônomos.',
+    images: ['/images/og-hero.jpg'],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
