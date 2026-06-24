@@ -19,11 +19,15 @@ export default function Cadastro() {
     setLoading(true)
     setError('')
     const { error } = await supabase.auth.signUp({
-      email, password,
-      options: { data: { nome } }
+      email,
+      password,
+      options: {
+        data: { nome },
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+      }
     })
     if (error) { setError(error.message); setLoading(false); return }
-    router.push('/dashboard')
+    router.push('/verificar-email')
   }
 
   return (
