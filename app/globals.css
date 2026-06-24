@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --praxi-purple: #7C3AED;
+  --praxi-purple-light: #EDE9FE;
+  --praxi-green: #059669;
+  --praxi-red: #DC2626;
+  --praxi-gray: #6B7280;
+}
+
+body {
+  background: #F9FAFB;
+  color: #111827;
+}
+
+.btn-primary {
+  background: var(--praxi-purple);
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: #6D28D9; }
+.btn-secondary {
+  background: white;
+  color: #374151;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #D1D5DB;
+  font-weight: 500;
+  cursor: pointer;
+}
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #E5E7EB;
+  padding: 1.25rem;
+}
+.input {
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  background: white;
+}
+.input:focus { border-color: var(--praxi-purple); box-shadow: 0 0 0 2px #EDE9FE; }
+.label { font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; display: block; }
