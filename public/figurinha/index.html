@@ -215,6 +215,29 @@
     .tc.wa-style { border-left: 3px solid #25d366; }
     .tc.ig-style { border-left: 3px solid #e1306c; }
 
+    /* ── Cover / Anúncio ── */
+    .cover-img { width: 100%; max-width: 420px; display: block; margin: 0 auto; border-radius: 18px; box-shadow: 0 16px 48px rgba(0,0,0,0.7); }
+    .cover-section { padding: 28px 16px 20px; background: #000; }
+
+    /* ── Figurinhas Strip ── */
+    .strip-section { background: #000; padding: 20px 0 12px; overflow: hidden; }
+    .strip-title {
+      font-family: 'Anton', sans-serif; font-size: 13px; letter-spacing: 2px;
+      color: var(--gold); text-align: center; margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .fita-img { width: 100%; display: block; }
+
+    /* ── Depoimentos como imagem ── */
+    .testi-imgs { display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 8px;
+      scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x mandatory; }
+    .testi-imgs::-webkit-scrollbar { display: none; }
+    .testi-imgs img {
+      flex-shrink: 0; width: 230px; border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5); scroll-snap-align: start;
+      border: 1.5px solid rgba(255,255,255,0.1);
+    }
+
     /* ───────── QUIZ ───────── */
     #s-quiz { background: linear-gradient(175deg, #041a08 0%, #0a5c1e 100%); }
 
@@ -461,6 +484,12 @@
     <span class="badge-green">✅ Entrega imediata</span>
   </div>
 
+  <!-- Capa do anúncio -->
+  <div class="cover-section">
+    <img class="cover-img" src="/figurinha/cover.png"
+      alt="Transforme seu filho em figurinha da Copa 2026">
+  </div>
+
   <div class="hero">
     <div class="proof-pill">⭐ +22.000 figurinhas criadas essa semana</div>
 
@@ -517,32 +546,19 @@
     </div>
   </div>
 
+  <!-- STRIP: figurinhas reais de clientes -->
+  <div class="strip-section">
+    <div class="strip-title">⭐ Figurinhas criadas por outras famílias ⭐</div>
+    <img class="fita-img" src="/figurinha/fita.png" alt="Figurinhas criadas por clientes">
+  </div>
+
   <div class="testi">
     <h3>O que as famílias estão dizendo</h3>
-
-    <!-- Depoimentos reais via WhatsApp -->
-    <div class="tc wa-style">
-      <div class="tc-stars">★★★★★</div>
-      <div class="tc-name">Mãe do Gabriel 💬 WhatsApp</div>
-      <div class="tc-text">"Gabriel amou a figurinha 😍 ficou muito parecida com ele, super real! obrigada de coração 🙏 certeza que indicarei pra outras mães"</div>
-    </div>
-
-    <div class="tc wa-style">
-      <div class="tc-stars">★★★★★</div>
-      <div class="tc-name">Cliente Camila 💬 WhatsApp</div>
-      <div class="tc-text">"Nossa, atendimento excelente! 👏 Meu filho ficou muito feliz 😍 Vou indicar com certeza ❤️"</div>
-    </div>
-
-    <div class="tc wa-style">
-      <div class="tc-stars">★★★★★</div>
-      <div class="tc-name">Pai do Miguel 💬 WhatsApp</div>
-      <div class="tc-text">"Recebi agora 😍 Ficou igualzinho meu filho! Minha esposa amou demais! ❤️ Pode deixar, vou comentar agora!"</div>
-    </div>
-
-    <div class="tc ig-style">
-      <div class="tc-stars">★★★★★</div>
-      <div class="tc-name">@julianamartins.mãe 📸 Instagram · ❤️ 12</div>
-      <div class="tc-text">"Ficou perfeita! Meu filho amou demais ❤️ Já pedi outra para presentear meu sobrinho. Trabalho impecável 👏"</div>
+    <div class="testi-imgs">
+      <img src="/figurinha/wpp1.png" alt="Depoimento WhatsApp">
+      <img src="/figurinha/wpp3.png" alt="Depoimento WhatsApp">
+      <img src="/figurinha/wpp4.png" alt="Depoimento WhatsApp">
+      <img src="/figurinha/wpp2.png" alt="Depoimento Instagram">
     </div>
   </div>
 
@@ -938,99 +954,146 @@ function startGen() {
 // ─── CANVAS RENDERING ───────────────────────────────────────
 function renderFigurinha(cb) {
   const canvas = document.getElementById('gen-canvas');
-  const ctx = canvas.getContext('2d');
-  const W=800, H=1120;
-  canvas.width=W; canvas.height=H;
+  const ctx    = canvas.getContext('2d');
+  const W = 800, H = 1061;
+  canvas.width = W; canvas.height = H;
 
-  const STYLES = {
-    ouro:   {bg1:'#1e8c36',bg2:'#0a4c18',border:'#FFD700',accent:'#FFD700',hText:'#041a08',strip:'rgba(0,0,0,0.68)'},
-    lendas: {bg1:'#1a2a7c',bg2:'#0a1240',border:'#C0C0C0',accent:'#C0C0C0',hText:'#0a1240',strip:'rgba(0,0,30,0.72)'},
-    raio:   {bg1:'#3a7c10',bg2:'#1a4c05',border:'#CCFF00',accent:'#CCFF00',hText:'#1a3c00',strip:'rgba(0,20,0,0.72)'},
-    campeao:{bg1:'#1a0a5c',bg2:'#080328',border:'#FFD700',accent:'#FFD700',hText:'#080328',strip:'rgba(0,0,20,0.78)'},
+  // ── Área da foto no template (silhueta branca) ──
+  const PX = 108, PY = 74, PW = 584, PH = 592;
+  // ── Y onde começa a faixa do nome (banner azul escuro) ──
+  const BANNER_CUT = 662;
+
+  const tmpl = new Image();
+  tmpl.onload = () => {
+    // 1) Desenha template completo como fundo
+    ctx.drawImage(tmpl, 0, 0, W, H);
+
+    const finalize = () => {
+      // 3) Re-desenha a parte de baixo do template (banner + estrelas + stats)
+      //    por cima da foto, para restaurar os elementos visuais do template
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, BANNER_CUT, W, H - BANNER_CUT); ctx.clip();
+      ctx.drawImage(tmpl, 0, 0, W, H);
+      ctx.restore();
+
+      // 4) Texto do nome no banner azul (centro ~y=727)
+      ctx.textBaseline = 'middle';
+      ctx.textAlign    = 'center';
+      const nome = (state.nome || 'SEU FILHO').toUpperCase();
+      let fs = 48;
+      ctx.font = `bold ${fs}px Anton, Impact, sans-serif`;
+      while (ctx.measureText(nome).width > 530 && fs > 24) {
+        fs -= 2;
+        ctx.font = `bold ${fs}px Anton, Impact, sans-serif`;
+      }
+      ctx.fillStyle    = '#FFFFFF';
+      ctx.shadowColor  = 'rgba(0,0,0,0.6)';
+      ctx.shadowBlur   = 8;
+      ctx.fillText(nome, W / 2, 725);
+      ctx.shadowBlur = 0;
+
+      // 5) Posição (abaixo do banner, fundo amarelo claro ~y=800)
+      ctx.font      = 'bold 26px Inter, Arial, sans-serif';
+      ctx.fillStyle = '#002b7f';
+      ctx.fillText(state.posicao || 'ATACANTE', W / 2, 800);
+
+      // 6) Stats — 3 colunas na faixa amarela (~y=862)
+      const stats = [
+        { v: 'Nº ' + (state.numero || '10'),                 l: 'NÚMERO'  },
+        { v: state.idade ? state.idade + ' anos' : '—',      l: 'IDADE'   },
+        { v: (state.apelido || state.estilo || '—').toUpperCase(), l: 'APELIDO' },
+      ];
+      [200, W / 2, 600].forEach((x, i) => {
+        ctx.font      = 'bold 22px Inter, Arial, sans-serif';
+        ctx.fillStyle = '#002b7f';
+        ctx.fillText(stats[i].v, x, 858);
+        ctx.font      = '13px Inter, Arial, sans-serif';
+        ctx.fillStyle = '#445577';
+        ctx.fillText(stats[i].l, x, 880);
+      });
+
+      ctx.textBaseline = 'alphabetic';
+
+      // Sync ao result-canvas
+      const rc = document.getElementById('result-canvas');
+      if (rc) rc.getContext('2d').drawImage(canvas, 0, 0, rc.width, rc.height);
+      if (cb) cb();
+    };
+
+    if (state.photo) {
+      const img = new Image();
+      img.onload = () => {
+        // 2) Desenha foto do usuário por cima da silhueta
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(PX + 20, PY);
+        ctx.lineTo(PX + PW - 20, PY);
+        ctx.arcTo(PX + PW, PY, PX + PW, PY + 20, 20);
+        ctx.lineTo(PX + PW, PY + PH);
+        ctx.lineTo(PX, PY + PH);
+        ctx.lineTo(PX, PY + 20);
+        ctx.arcTo(PX, PY, PX + 20, PY, 20);
+        ctx.closePath();
+        ctx.clip();
+        const sc = Math.max(PW / img.naturalWidth, PH / img.naturalHeight);
+        const dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
+        ctx.drawImage(img, PX + (PW - dw) / 2, PY + (PH - dh) / 2, dw, dh);
+        ctx.restore();
+        finalize();
+      };
+      img.onerror = finalize;
+      img.src = state.photo;
+    } else {
+      // Sem foto: mostra emoji placeholder
+      ctx.font = '180px Arial'; ctx.textAlign = 'center';
+      ctx.fillText('👦', W / 2, PY + PH / 2 + 60);
+      finalize();
+    }
   };
-  const S = STYLES[state.estilo] || STYLES.ouro;
 
-  // BG
+  // Fallback: se template.png não carregar, usa versão antiga
+  tmpl.onerror = () => renderFigurinhaLegacy(cb);
+  tmpl.src = '/figurinha/template.png';
+}
+
+// ─── FALLBACK (estilo verde antigo) ─────────────────────────
+function renderFigurinhaLegacy(cb) {
+  const canvas = document.getElementById('gen-canvas');
+  const ctx = canvas.getContext('2d');
+  const W=800, H=1061;
+  canvas.width=W; canvas.height=H;
   const grd = ctx.createLinearGradient(0,0,W,H);
-  grd.addColorStop(0, S.bg1); grd.addColorStop(1, S.bg2);
+  grd.addColorStop(0,'#1e8c36'); grd.addColorStop(1,'#0a4c18');
   ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
-
-  // diagonal stripes
-  ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=2;
-  for(let i=-H;i<W+H;i+=36){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
-  ctx.restore();
-
-  // Outer border
-  ctx.strokeStyle=S.border; ctx.lineWidth=14;
+  ctx.strokeStyle='#FFD700'; ctx.lineWidth=14;
   rrect(ctx,18,18,W-36,H-36,26); ctx.stroke();
-
-  // Inner border
-  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=3;
-  rrect(ctx,34,34,W-68,H-68,18); ctx.stroke();
-
-  // HEADER
-  ctx.fillStyle=S.accent;
+  ctx.fillStyle='#FFD700';
   ctx.beginPath(); ctx.roundRect(34,34,W-68,108,[18,18,0,0]); ctx.fill();
-  ctx.fillStyle=S.hText; ctx.font='bold 30px Arial'; ctx.textAlign='center';
+  ctx.fillStyle='#041a08'; ctx.font='bold 30px Arial'; ctx.textAlign='center';
   ctx.fillText('★  COPA DO MUNDO 2026  ★', W/2, 72);
-  ctx.font='40px Arial'; ctx.fillText('⚽', W/2, 118);
-
-  // PHOTO AREA
-  const PX=42, PY=150, PW=W-84, PH=610;
-
-  const drawBot = () => {
-    // Gradient fade over bottom of photo
-    const fg = ctx.createLinearGradient(0, PY+PH*0.55, 0, PY+PH);
-    fg.addColorStop(0,'rgba(0,0,0,0)'); fg.addColorStop(1,'rgba(0,0,0,0.8)');
-    ctx.fillStyle=fg; ctx.fillRect(PX,PY,PW,PH);
-
-    const BY = PY+PH, BH = H-BY-34;
-    ctx.fillStyle=S.strip; ctx.fillRect(34,BY,W-68,BH);
-    ctx.fillStyle=S.accent; ctx.fillRect(38,BY,W-76,6);
-
-    // Number
-    ctx.fillStyle=S.accent; ctx.font='bold 120px Arial'; ctx.textAlign='left';
-    ctx.fillText('#'+state.numero, 52, BY+130);
-
-    // Name
-    const dName = state.apelido || state.nome;
-    let fs=68; ctx.font='bold '+fs+'px Arial'; ctx.textAlign='center';
-    while(ctx.measureText(dName).width > W-200 && fs>30){fs-=2; ctx.font='bold '+fs+'px Arial';}
-    ctx.fillStyle='#FFFFFF'; ctx.fillText(dName, W/2, BY+120);
-
-    // Position
-    ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font='34px Arial'; ctx.textAlign='center';
-    ctx.fillText(state.posicao, W/2, BY+168);
-
-    // Flag
-    ctx.font='58px Arial'; ctx.textAlign='right';
-    ctx.fillText('🇧🇷', W-52, BY+136);
-
-    // Edition
-    ctx.fillStyle=S.accent; ctx.font='bold 26px Arial'; ctx.textAlign='center';
-    ctx.fillText('★  EDIÇÃO ESPECIAL COPA 2026  ★', W/2, H-52);
-
-    // Sync to result canvas
+  const PX=42,PY=150,PW=W-84,PH=560;
+  const drawBot2 = () => {
+    const BY=PY+PH;
+    ctx.fillStyle='rgba(0,0,0,0.68)'; ctx.fillRect(34,BY,W-68,H-BY-34);
+    ctx.fillStyle='#FFD700'; ctx.font='bold 68px Arial'; ctx.textAlign='center';
+    const dName=state.apelido||state.nome;
+    ctx.fillText(dName,W/2,BY+100);
+    ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font='34px Arial';
+    ctx.fillText(state.posicao,W/2,BY+148);
     const rc=document.getElementById('result-canvas');
-    rc.getContext('2d').drawImage(canvas,0,0,rc.width,rc.height);
+    if(rc) rc.getContext('2d').drawImage(canvas,0,0,rc.width,rc.height);
     if(cb) cb();
   };
-
-  if (state.photo) {
-    const img = new Image();
-    img.onload = () => {
+  if(state.photo){
+    const img=new Image();
+    img.onload=()=>{
       ctx.save(); ctx.beginPath(); ctx.rect(PX,PY,PW,PH); ctx.clip();
       const sc=Math.max(PW/img.width,PH/img.height);
-      const dw=img.width*sc, dh=img.height*sc;
-      ctx.drawImage(img, PX+(PW-dw)/2, PY+(PH-dh)/2, dw, dh);
-      ctx.restore(); drawBot();
+      ctx.drawImage(img,PX+(PW-img.width*sc)/2,PY+(PH-img.height*sc)/2,img.width*sc,img.height*sc);
+      ctx.restore(); drawBot2();
     };
-    img.src = state.photo;
-  } else {
-    ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fillRect(PX,PY,PW,PH);
-    ctx.font='160px Arial'; ctx.textAlign='center'; ctx.fillText('👦',W/2,PY+PH/2+50);
-    drawBot();
-  }
+    img.src=state.photo;
+  } else { drawBot2(); }
 }
 
 function rrect(ctx,x,y,w,h,r){
