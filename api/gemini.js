@@ -1,3 +1,5 @@
+export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+
 // Vercel Serverless Function — proxy para Gemini image generation
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -6,7 +8,8 @@ export default async function handler(req, res) {
   if (!key) return res.status(500).json({ error: 'GEMINI_KEY não configurada' });
 
   // Modelo correto para geração de imagem com input de imagem
-  const MODEL = 'gemini-2.0-flash-exp';
+  // gemini-2.0-flash-preview-image-generation = modelo oficial para image output
+  const MODEL = 'gemini-2.0-flash-preview-image-generation';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
 
   try {

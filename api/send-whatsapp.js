@@ -1,3 +1,6 @@
+// Aumenta limite do body para 10MB (imagens em base64 são grandes)
+export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+
 // Vercel Serverless Function — proxy para Z-API send-image
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

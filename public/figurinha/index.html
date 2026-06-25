@@ -1002,8 +1002,8 @@ function startGen() {
     const e = document.getElementById(gs); if(e) e.classList.add('active');
   };
 
-  // Processar foto com Gemini e gerar canvas
-  processPhotoGemini(state.photo).then(processed => {
+  // Processar foto com Gemini e gerar canvas (redimensiona antes para evitar limite de tamanho)
+  resizeForGemini(state.photo).then(small => processPhotoGemini(small)).then(processed => {
     if (processed) state.photo = processed;
     renderFigurinha(() => { canvasDone = true; tryProceed(); });
   });
@@ -1044,6 +1044,25 @@ function startGen() {
   });
 }
 
+// ─── Redimensiona foto para no máximo 1024px antes de enviar ao Gemini ───
+async function resizeForGemini(dataUrl, maxDim = 1024) {
+  if (!dataUrl) return dataUrl;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      if (scale === 1) { resolve(dataUrl); return; } // já é pequena
+      const c = document.createElement('canvas');
+      c.width  = Math.round(img.width  * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
 // ─── GEMINI API — gera figurinha completa estilo Panini ────
 const ESTILOS_PANINI = {
   'comum':      'estilo cromo oficial Panini FIFA World Cup 2026, fundo verde e amarelo brasileiro, acabamento fosco, design limpo com faixa CBF verde na base, escudo da Seleção Brasileira no peito',
@@ -1081,10 +1100,14 @@ INSTRUÇÕES OBRIGATÓRIAS:
       })
     });
     const json = await res.json();
+    if (!res.ok) {
+      console.error('Gemini HTTP', res.status, JSON.stringify(json?.error || json));
+      return null;
+    }
     const part = json.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
     if (part) return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-    console.warn('Gemini sem imagem na resposta:', json);
-  } catch(e) { console.warn('Gemini error:', e); }
+    console.warn('Gemini sem imagem (resposta OK mas sem inlineData):', JSON.stringify(json).slice(0,400));
+  } catch(e) { console.error('Gemini fetch error:', e.message); }
   return dataUrl; // fallback: usa foto original com canvas
 }
 
@@ -1337,7 +1360,7 @@ async function enviarWPP() {
 
   // Gera imagem da figurinha como base64
   const gc = document.getElementById('gen-canvas');
-  const imgData = gc.toDataURL('image/jpeg', 0.95);
+  const imgData = gc.toDataURL('image/jpeg', 0.75); // 0.75 = ~500KB, suficiente para WPP
   const b64 = imgData.split(',')[1];
 
   const msg = `⚽🇧🇷 Aqui está a figurinha da Copa 2026 do(a) *${state.nome || 'craque'}*!\n\n` +
