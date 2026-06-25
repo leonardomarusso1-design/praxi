@@ -10,28 +10,26 @@ export default async function handler(req, res) {
   // Modelo correto para geração de imagem com input de imagem
   // gemini-2.0-flash-exp ou gemini-2.0-pro-exp-02-05
   // O modelo flash é mais rápido, mas o pro pode ser mais robusto para imagens
-  const MODEL = req.body.model || 'gemini-2.0-flash';
+  // Usando o modelo Pro que é mais estável para geração de imagem multimodal
+  const MODEL = 'gemini-2.0-flash-exp';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
 
   try {
     const body = req.body;
 
-    // Garante que responseModalities está presente
-    if (body.generationConfig) {
-      body.generationConfig.responseModalities = ['IMAGE'];
-    } else {
-      body.generationConfig = { responseModalities: ['IMAGE'] };
-    }
-
-    // Garante role: user nos contents
-    if (body.contents && body.contents[0] && !body.contents[0].role) {
-      body.contents[0].role = 'user';
-    }
+    // Limpando o body para garantir que não enviamos parâmetros conflitantes
+    const cleanBody = {
+      contents: body.contents,
+      generationConfig: {
+        responseModalities: ["IMAGE", "TEXT"]
+      },
+      safetySettings: body.safetySettings
+    };
 
     const upstream = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(cleanBody),
     });
 
     const data = await upstream.json();
