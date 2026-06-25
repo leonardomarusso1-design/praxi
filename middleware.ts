@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  const publicPaths = ['/', '/login', '/cadastro']
+  const publicPaths = ['/', '/login', '/cadastro', '/figurinha']
   const isPublic = publicPaths.includes(pathname)
 
   if (!user && !isPublic) {

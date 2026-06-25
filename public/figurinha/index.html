@@ -495,7 +495,7 @@
 <!-- ═══ LANDING ═══ -->
 <div id="s-landing" class="screen active">
   <div class="urgency-bar">
-    🔥 PROMOÇÃO RELÂMPAGO · DE R$40,90 POR R$14,90 · HOJE APENAS 🔥
+    🔥 PROMOÇÃO RELÂMPAGO · DE R$39,90 POR R$9,90 · HOJE APENAS 🔥
   </div>
 
   <div class="land-nav">
@@ -504,26 +504,27 @@
   </div>
 
   <div class="hero">
-    <div class="proof-pill">⭐ +22.000 figurinhas criadas essa semana</div>
+    <div class="proof-pill">🔥 OFERTA LIMITADA: 75% OFF ATÉ HOJE</div>
 
-    <h1>SEU FILHO É O<br><em>CRAQUE DO</em><br>BRASIL 🇧🇷</h1>
+    <h1>SEU FILHO NA<br><em>COPA 2026</em><br>BRASIL 🇧🇷</h1>
 
     <p class="hero-sub">
-      Transforme a foto dele numa <strong>figurinha oficial da Copa 2026</strong> — com nome, número e uniforme da Seleção.
-      <strong>Em 2 minutos, pronto pra imprimir.</strong>
+      Dê ao seu pequeno a emoção de se ver como um <strong>Craque da Seleção</strong>. Criamos a figurinha perfeita em 30 segundos com Inteligência Artificial!
     </p>
 
-    <!-- Cover image no lugar da cartinha -->
+    <div class="raffle-box" style="margin-top: 0; margin-bottom: 24px; background: linear-gradient(135deg, #b80000, #660000); border: 2px solid #ffcc00;">
+      <div class="rt" style="color: #fff;">🎁 BÔNUS EXCLUSIVO</div>
+      <div class="ra" style="font-size: 24px; color: #fff;">CONCORRA A R$ 100 NO PIX</div>
+      <div class="rd" style="color: rgba(255,255,255,0.9); font-weight: bold;">Sorteio automático ao criar sua figurinha!</div>
+    </div>
+
     <img src="/figurinha/cover.png" alt="Figurinha Copa 2026" class="hero-cover-img">
 
-    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR A FIGURINHA AGORA</button>
-    <p class="cta-sub">Em 2 minutos · Sem cadastro · Imprime em casa</p>
-
-    <div class="raffle-box">
-      <div class="rt">🏆 Sorteio exclusivo para compradores</div>
-      <div class="ra">R$ 100</div>
-      <div class="rd">Todo comprador concorre a R$100 no Pix.<br>Sorteio ao vivo na Final da Copa · Julho 2026 🎁</div>
-    </div>
+    <button class="btn-cta" onclick="goQuiz()" style="font-size: 22px; padding: 24px 16px;">
+      SIM! QUERO MEU FILHO NA COPA
+      <div style="font-size: 12px; font-weight: 400; opacity: 0.9; margin-top: 4px;">De R$ 39,90 por apenas R$ 9,90</div>
+    </button>
+    <p class="cta-sub">⭐ Mais de 12.400 pais já criaram hoje!</p>
   </div>
 
   <div class="hiw">
@@ -580,7 +581,7 @@
   </div>
 
   <div style="padding: 24px 20px; text-align: center;">
-    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$14,90</button>
+    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$9,90</button>
     <p class="cta-sub">Garantia: Se não ficou incrível, devolvemos o dinheiro em 7 dias.</p>
   </div>
 
@@ -758,16 +759,15 @@
       </div>
     </div>
 
-    <div class="pw-title">SUA FIGURINHA<br>TÁ <em>PRONTA.</em></div>
+    <div class="pw-title">FICOU <em>SENSACIONAL!</em></div>
     <p class="pw-sub">
-      Falta só 1 clique pra ver o <strong id="pw-nome">craque</strong> na Copa 2026 —
-      em alta resolução, pronto pra imprimir e guardar pra vida toda.
+      O <strong id="pw-nome">craque</strong> já está com o uniforme da Seleção. Desbloqueie agora para baixar em alta definição e concorrer ao <strong>PIX de R$ 100!</strong>
     </p>
 
     <div class="price-wrap">
-      <div class="price-old">De R$ 40,90</div>
-      <div class="price-new">R$ 14,90</div>
-      <span class="price-badge">⚡ PROMOÇÃO VÁLIDA SÓ HOJE</span>
+      <div class="price-old">De R$ 39,90</div>
+      <div class="price-new" style="color: #00ff99;">R$ 9,90</div>
+      <span class="price-badge" style="background: #ffcc00; color: #000;">🔥 75% DE DESCONTO LIBERADO</span>
     </div>
 
     <div class="features">
@@ -778,8 +778,8 @@
       <div class="fi"><span class="fi-check">✓</span> Download imediato após pagamento</div>
     </div>
 
-    <button class="btn-cta" onclick="goPayment()">
-      🔓 DESBLOQUEAR POR R$ 14,90
+    <button class="btn-cta" onclick="goPayment()" style="background: linear-gradient(135deg, #00d46a, #00a050); color: #fff;">
+      🔓 DESBLOQUEAR FIGURINHA AGORA
     </button>
     <p class="cta-sub">Pagamento 100% seguro · Pix instantâneo</p>
   </div>
@@ -793,7 +793,7 @@
 
     <div class="pix-box">
       <div class="pix-lbl">⚡ Pix · Liberação instantânea</div>
-      <div class="pix-value">R$ 14,90</div>
+      <div class="pix-value">R$ 9,90</div>
       <div class="pix-key" id="pix-key-txt">carregando...</div>
       <button class="btn-copy" onclick="copyPix()">📋 Copiar chave Pix</button>
     </div>
@@ -1137,16 +1137,17 @@ No rodapé: número da camisa "${s.numero}".
 Adicionar acabamento holográfico prateado. Reflexos metálicos discretos. Textura foil. Brilho elegante. Linhas holográficas suaves.
 Não esconder o rosto. Não alterar as cores naturais da pele. Visual premium. Sensação de item raro.`,
 
-  ouro: (s) => `Criar uma figurinha colecionável edição ouro.
-Layout semelhante ao modelo clássico.
-Na parte superior, centralizado: nome "${s.nome}".
-No canto superior esquerdo: idade "${s.idade}".
-No canto superior direito: posição "${s.posicao}".
-Na parte inferior: apelido "${s.apelido}".
-No rodapé: número da camisa "${s.numero}".
-Adicionar moldura dourada metálica. Detalhes premium em ouro. Reflexos dourados discretos.
-Fundo branco com padrões dourados suaves. Visual extremamente sofisticado. Sensação de figurinha ultra rara.
-O rosto deve permanecer totalmente natural. Não exagerar nos efeitos.`,
+  ouro: (s) => `Criar uma figurinha colecionável EXTRA RARA Edição Ouro (Gold Edition), idêntica às figurinhas lendárias da Panini.
+    Layout oficial de figurinha de Copa.
+    Fundo: Padrão radial de raios solares dourados e brilhantes saindo de trás do jogador. Textura metálica de ouro polido.
+    Moldura: Borda dupla dourada com efeito de relevo.
+    Na parte superior, centralizado em um banner azul: nome "${s.nome}".
+    No canto superior esquerdo: idade "${s.idade}".
+    No canto superior direito: posição "${s.posicao}".
+    Na parte inferior: apelido "${s.apelido}".
+    No rodapé: número da camisa "${s.numero}".
+    Estilo visual: Fotografia de estúdio de altíssima qualidade, cores vibrantes, contraste profissional.
+    Efeito de brilho: Adicionar faixas de luz e reflexos dourados que atravessam a figurinha, dando aspecto de material holográfico premium.`,
 
   familia: (s) => `Criar uma figurinha colecionável familiar inspirada nas clássicas figurinhas de Copa do Mundo.
 Utilizar exatamente as pessoas presentes na foto. Preservar totalmente a identidade de cada pessoa.
@@ -1190,11 +1191,11 @@ async function processPhotoGemini(dataUrl) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [
+        contents: [{ role: 'user', parts: [
           { text: prompt },
           { inline_data: { mime_type: mime, data: base64 } }
         ]}],
-        generationConfig: { responseModalities: ['IMAGE'] }
+        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] }
       })
     });
     const json = await res.json();
@@ -1478,12 +1479,22 @@ async function enviarWPP() {
     `_Quer mais figurinhas? ${SITE_URL}_`;
 
   try {
-    await fetch('/api/send-whatsapp', {
+    const resWpp = await fetch('/api/send-whatsapp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, image: 'data:image/jpeg;base64,'+b64, caption: msg })
     });
-  } catch(e) { console.warn('Z-API error:', e); }
+    const resData = await resWpp.json();
+    if (!resWpp.ok) {
+      console.error('❌ Z-API erro no envio:', resData);
+      alert('Houve um problema ao enviar pelo WhatsApp. Mas não se preocupe, sua figurinha está salva abaixo!');
+    } else {
+      console.log('✅ Z-API sucesso:', resData);
+    }
+  } catch(e) { 
+    console.error('Z-API error:', e);
+    alert('Erro de conexão ao enviar WhatsApp.');
+  }
 
   // Atualiza e mostra tela de sucesso
   const el = document.getElementById('sorteio-num'); if (el) el.textContent = sorteio;
