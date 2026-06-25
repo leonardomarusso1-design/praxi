@@ -495,7 +495,7 @@
 <!-- ═══ LANDING ═══ -->
 <div id="s-landing" class="screen active">
   <div class="urgency-bar">
-    🔥 PROMOÇÃO RELÂMPAGO · HOJE APENAS R$14,90 · TERMINA ÀS 23:59 🔥
+    🔥 PROMOÇÃO RELÂMPAGO · DE R$40,90 POR R$19,90 · TERMINA ÀS 23:59 🔥
   </div>
 
   <div class="land-nav">
@@ -580,7 +580,7 @@
   </div>
 
   <div style="padding: 24px 20px; text-align: center;">
-    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$14,90</button>
+    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$19,90</button>
     <p class="cta-sub">Garantia: Se não ficou incrível, devolvemos o dinheiro em 7 dias.</p>
   </div>
 
@@ -765,8 +765,8 @@
     </p>
 
     <div class="price-wrap">
-      <div class="price-old">De R$ 39,90</div>
-      <div class="price-new">R$ 14,90</div>
+      <div class="price-old">De R$ 40,90</div>
+      <div class="price-new">R$ 19,90</div>
       <span class="price-badge">⚡ PROMOÇÃO VÁLIDA SÓ HOJE</span>
     </div>
 
@@ -779,7 +779,7 @@
     </div>
 
     <button class="btn-cta" onclick="goPayment()">
-      🔓 DESBLOQUEAR POR R$ 14,90
+      🔓 DESBLOQUEAR POR R$ 19,90
     </button>
     <p class="cta-sub">Pagamento 100% seguro · Pix instantâneo</p>
   </div>
@@ -793,7 +793,7 @@
 
     <div class="pix-box">
       <div class="pix-lbl">⚡ Pix · Liberação instantânea</div>
-      <div class="pix-value">R$ 14,90</div>
+      <div class="pix-value">R$ 19,90</div>
       <div class="pix-key" id="pix-key-txt">carregando...</div>
       <button class="btn-copy" onclick="copyPix()">📋 Copiar chave Pix</button>
     </div>
@@ -803,7 +803,7 @@
       1. Abra o app do seu banco<br>
       2. Escolha <strong>Pix → Pagar com chave</strong><br>
       3. Cole a chave acima<br>
-      4. Confirme o valor de <strong>R$ 14,90</strong><br>
+      4. Confirme o valor de <strong>R$ 19,90</strong><br>
       5. Clique no botão verde abaixo
     </div>
 
@@ -845,10 +845,6 @@
       </button>
     </div>
 
-    <p onclick="show('s-success')"
-      style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:14px;text-align:center;cursor:pointer;text-decoration:underline;">
-      Pular — prefiro só baixar o PDF
-    </p>
   </div>
 </div>
 
@@ -873,17 +869,23 @@
     <button class="btn-share" onclick="shareWA()">📤 Compartilhar no WhatsApp</button>
 
     <div class="upsell-box">
-      <div class="ups-h">🏅 PACK FAMÍLIA</div>
-      <p class="ups-t">Crie a figurinha da mamãe, do pai, do irmão... Mais 2 figurinhas por só <strong style="color:var(--gold)">R$9,90 cada!</strong></p>
-      <button class="btn-ups" onclick="makeAnother()">➕ QUERO O PACK FAMÍLIA — R$9,90 CADA</button>
+      <img src="/figurinha/familiacraque.png" alt="Figurinha Família Craque"
+        style="width:100%;max-width:280px;border-radius:14px;display:block;margin:0 auto 12px;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+      <div class="ups-h">🏅 FIGURINHA DA FAMÍLIA</div>
+      <p class="ups-t">
+        <span style="text-decoration:line-through;color:rgba(255,255,255,0.4);font-size:13px;">De R$39,90</span>
+        <strong style="color:var(--gold);font-size:20px;display:block;margin:4px 0;">Por R$12,90</strong>
+        Coloca toda a família na mesma figurinha — mamãe, pai, irmãos — igual às raras do álbum!
+      </p>
+      <button class="btn-ups" onclick="makeAnother()">➕ QUERO A FIGURINHA DA FAMÍLIA — R$12,90</button>
     </div>
   </div>
 </div>
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────
-const CAKTO_CHECKOUT  = 'https://pay.cakto.com.br/38iwvv9_942628';
-const CAKTO_FAMILIA   = 'https://pay.cakto.com.br/3apv2oz_942634';
+const CAKTO_CHECKOUT  = 'https://pay.kiwify.com.br/EJLxlex';
+const CAKTO_FAMILIA   = 'https://pay.kiwify.com.br/fv8KdoT';
 const SITE_URL        = 'https://praxi-eight.vercel.app/figurinha';
 // Chaves ficam no servidor (Vercel env vars) — não ficam no frontend
 const GEMINI_KEY         = null; // não usado diretamente — proxy em /api/gemini
