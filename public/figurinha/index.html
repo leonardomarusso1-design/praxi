@@ -215,9 +215,11 @@
     .tc.wa-style { border-left: 3px solid #25d366; }
     .tc.ig-style { border-left: 3px solid #e1306c; }
 
-    /* ── Cover / Anúncio ── */
-    .cover-img { width: 100%; max-width: 420px; display: block; margin: 0 auto; border-radius: 18px; box-shadow: 0 16px 48px rgba(0,0,0,0.7); }
-    .cover-section { padding: 28px 16px 20px; background: #000; }
+    /* ── Cover dentro do hero ── */
+    .hero-cover-img {
+      width: 100%; max-width: 360px; display: block; margin: 0 auto 24px;
+      border-radius: 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.75);
+    }
 
     /* ── Figurinhas Strip ── */
     .strip-section { background: #000; padding: 20px 0 12px; overflow: hidden; }
@@ -226,16 +228,33 @@
       color: var(--gold); text-align: center; margin-bottom: 12px;
       text-transform: uppercase;
     }
-    .fita-img { width: 100%; display: block; }
+    .fita-outer { overflow: hidden; width: 100%; }
+    .fita-track {
+      display: flex; width: max-content;
+      animation: fita-ltr 22s linear infinite;
+    }
+    .fita-track img { height: 140px; width: auto; display: block; }
+    @keyframes fita-ltr {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
 
-    /* ── Depoimentos como imagem ── */
-    .testi-imgs { display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 8px;
-      scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x mandatory; }
-    .testi-imgs::-webkit-scrollbar { display: none; }
-    .testi-imgs img {
-      flex-shrink: 0; width: 230px; border-radius: 14px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.5); scroll-snap-align: start;
+    /* ── Depoimentos marquee ── */
+    .testi-outer { overflow: hidden; width: 100%; }
+    .testi-track {
+      display: flex; gap: 14px; padding: 4px 0;
+      width: max-content;
+      animation: testi-rtl 32s linear infinite;
+    }
+    .testi-track img {
+      height: 300px; width: auto;
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.55);
       border: 1.5px solid rgba(255,255,255,0.1);
+    }
+    @keyframes testi-rtl {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
     /* ───────── QUIZ ───────── */
@@ -457,9 +476,9 @@
     .ups-t { font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 12px; line-height: 1.5; }
     .btn-ups { display: block; width: 100%; background: var(--gold); color: #041a08; font-weight: 900; font-size: 14px; padding: 13px; border: none; border-radius: 10px; cursor: pointer; }
 
-    .raffle-conf { background: rgba(0,255,153,0.08); border: 1px solid rgba(0,255,153,0.3); border-radius: 12px; padding: 14px; }
-    .raffle-conf p { font-size: 13px; }
-    .raffle-conf strong { color: #00ff99; }
+    /* ── Tela WhatsApp ── */
+    #s-wpp { background: linear-gradient(175deg, #041a08 0%, #0a3d0f 100%); }
+    .wpp-wrap { padding: 40px 20px 60px; max-width: 400px; margin: 0 auto; }
 
     #gen-canvas { display: none; position: absolute; top: -9999px; }
 
@@ -484,12 +503,6 @@
     <span class="badge-green">✅ Entrega imediata</span>
   </div>
 
-  <!-- Capa do anúncio -->
-  <div class="cover-section">
-    <img class="cover-img" src="/figurinha/cover.png"
-      alt="Transforme seu filho em figurinha da Copa 2026">
-  </div>
-
   <div class="hero">
     <div class="proof-pill">⭐ +22.000 figurinhas criadas essa semana</div>
 
@@ -500,16 +513,8 @@
       <strong>Em 2 minutos, pronto pra imprimir.</strong>
     </p>
 
-    <div class="mockup-wrap">
-      <div class="mockup-card">
-        <div class="mc-header">⚽ COPA 2026 ⚽</div>
-        <div class="mc-photo">👦</div>
-        <div class="mc-footer">
-          <div class="mc-name">SEU FILHO</div>
-          <div class="mc-info">#10 · MEIA · 🇧🇷</div>
-        </div>
-      </div>
-    </div>
+    <!-- Cover image no lugar da cartinha -->
+    <img src="/figurinha/cover.png" alt="Figurinha Copa 2026" class="hero-cover-img">
 
     <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR A FIGURINHA AGORA</button>
     <p class="cta-sub">Em 2 minutos · Sem cadastro · Imprime em casa</p>
@@ -546,19 +551,31 @@
     </div>
   </div>
 
-  <!-- STRIP: figurinhas reais de clientes -->
+  <!-- STRIP: figurinhas reais de clientes (marquee esq→dir) -->
   <div class="strip-section">
     <div class="strip-title">⭐ Figurinhas criadas por outras famílias ⭐</div>
-    <img class="fita-img" src="/figurinha/fita.png" alt="Figurinhas criadas por clientes">
+    <div class="fita-outer">
+      <div class="fita-track">
+        <img src="/figurinha/fita.png" alt="Figurinhas">
+        <img src="/figurinha/fita.png" alt="Figurinhas">
+      </div>
+    </div>
   </div>
 
+  <!-- Depoimentos (marquee dir→esq) -->
   <div class="testi">
     <h3>O que as famílias estão dizendo</h3>
-    <div class="testi-imgs">
-      <img src="/figurinha/wpp1.png" alt="Depoimento WhatsApp">
-      <img src="/figurinha/wpp3.png" alt="Depoimento WhatsApp">
-      <img src="/figurinha/wpp4.png" alt="Depoimento WhatsApp">
-      <img src="/figurinha/wpp2.png" alt="Depoimento Instagram">
+    <div class="testi-outer">
+      <div class="testi-track">
+        <img src="/figurinha/wpp1.png" alt="Depoimento">
+        <img src="/figurinha/wpp3.png" alt="Depoimento">
+        <img src="/figurinha/wpp4.png" alt="Depoimento">
+        <img src="/figurinha/wpp2.png" alt="Depoimento">
+        <img src="/figurinha/wpp1.png" alt="Depoimento">
+        <img src="/figurinha/wpp3.png" alt="Depoimento">
+        <img src="/figurinha/wpp4.png" alt="Depoimento">
+        <img src="/figurinha/wpp2.png" alt="Depoimento">
+      </div>
     </div>
   </div>
 
@@ -644,28 +661,28 @@
     </div>
 
     <div class="qstep" id="q5">
-      <h2>ESCOLHA O ESTILO</h2>
-      <p class="q-hint">Cada edição tem uma aparência única. Qual combina?</p>
+      <h2>ESCOLHA O ESTILO<br>DA FIGURINHA</h2>
+      <p class="q-hint">Igual às figurinhas OFICIAIS do álbum Panini Copa 2026 — qual vai ser a do craque?</p>
       <div class="opt-grid">
+        <button class="opt-btn" onclick="selOpt('estilo','comum',this)">
+          <span class="opt-emoji">⚽</span>
+          <span class="opt-label">Cromo Oficial</span>
+          <span class="opt-desc">Padrão Panini 2026</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('estilo','metalizado',this)">
+          <span class="opt-emoji">✨</span>
+          <span class="opt-label">Metalizado</span>
+          <span class="opt-desc">Edição especial brilhante</span>
+        </button>
         <button class="opt-btn" onclick="selOpt('estilo','ouro',this)">
-          <span class="opt-emoji">🏆</span>
-          <span class="opt-label">Edição Ouro</span>
-          <span class="opt-desc">Brilho premium</span>
+          <span class="opt-emoji">🥇</span>
+          <span class="opt-label">Variante Ouro</span>
+          <span class="opt-desc">Raridade máxima</span>
         </button>
         <button class="opt-btn" onclick="selOpt('estilo','lendas',this)">
           <span class="opt-emoji">👑</span>
-          <span class="opt-label">Lendas</span>
-          <span class="opt-desc">Estilo clássico</span>
-        </button>
-        <button class="opt-btn" onclick="selOpt('estilo','raio',this)">
-          <span class="opt-emoji">⚡</span>
-          <span class="opt-label">Raio Verde</span>
-          <span class="opt-desc">Energia total</span>
-        </button>
-        <button class="opt-btn" onclick="selOpt('estilo','campeao',this)">
-          <span class="opt-emoji">⭐</span>
-          <span class="opt-label">Campeão 2026</span>
-          <span class="opt-desc">Edição limitada</span>
+          <span class="opt-label">Lendas da Copa</span>
+          <span class="opt-desc">Como Vini Jr. e Neymar</span>
         </button>
       </div>
     </div>
@@ -700,9 +717,9 @@
   <h2 class="gen-h">GERANDO SUA FIGURINHA...</h2>
   <p class="gen-sub">Não saia da tela! Leva até 30 segundos.</p>
 
-  <!-- Vídeo VSL (coloca o arquivo em /figurinha/vsl.mp4 depois do HeyGen) -->
-  <video id="gen-video" autoplay muted playsinline loop
-    style="width:220px;border-radius:14px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:none">
+  <!-- Vídeo VSL com áudio — sem loop, sem mute -->
+  <video id="gen-video" autoplay playsinline
+    style="width:240px;border-radius:16px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:none">
     <source src="/figurinha/vsl.mp4" type="video/mp4">
   </video>
 
@@ -800,14 +817,57 @@
   </div>
 </div>
 
+<!-- ═══ WHATSAPP (pós-pagamento) ═══ -->
+<div id="s-wpp" class="screen">
+  <div class="wpp-wrap">
+    <div style="font-size:52px;margin-bottom:10px;">🎉</div>
+    <h2 style="font-family:'Anton',sans-serif;font-size:28px;color:#fff;margin-bottom:8px;text-align:center;">
+      FIGURINHA PRONTA!
+    </h2>
+    <p style="font-size:14px;color:rgba(255,255,255,0.7);text-align:center;margin-bottom:20px;padding:0 16px;">
+      Coloca seu WhatsApp pra receber a figurinha do <strong id="wpp-nome">craque</strong> em alta resolução
+      + seu <strong style="color:var(--gold)">número do sorteio de R$100!</strong>
+    </p>
+
+    <canvas id="wpp-thumb-canvas" width="150" height="210"
+      style="border-radius:14px;margin:0 auto 20px;display:block;box-shadow:0 12px 40px rgba(0,0,0,0.6);"></canvas>
+
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;padding:0 16px;">
+      <div style="padding:14px 10px;border-radius:12px;background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.15);font-size:14px;white-space:nowrap;">🇧🇷 +55</div>
+      <input class="txt-input" id="inp-wpp" type="tel" placeholder="(11) 99999-9999" maxlength="15"
+        oninput="maskPhone(this)" style="flex:1;margin:0;">
+    </div>
+
+    <div style="padding:0 16px;">
+      <button class="btn-cta" id="btn-wpp-send" onclick="enviarWPP()"
+        style="background:linear-gradient(135deg,#25D366,#128C7E);font-size:17px;">
+        📲 RECEBER NO WHATSAPP
+      </button>
+    </div>
+
+    <p onclick="show('s-success')"
+      style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:14px;text-align:center;cursor:pointer;text-decoration:underline;">
+      Pular — prefiro só baixar o PDF
+    </p>
+  </div>
+</div>
+
 <!-- ═══ SUCCESS ═══ -->
 <div id="s-success" class="screen">
   <div class="suc-wrap">
     <div class="suc-icon">🎉</div>
     <h2 class="suc-h">FIGURINHA LIBERADA!</h2>
-    <p class="suc-sub">Baixe o PDF, imprima em papel fotográfico e coloca no álbum!</p>
+    <p class="suc-sub">Enviamos pelo WhatsApp — e aqui está o PDF pra imprimir!</p>
 
     <canvas id="result-canvas" width="400" height="560"></canvas>
+
+    <!-- Número do sorteio em destaque -->
+    <div id="sorteio-box" style="background:linear-gradient(135deg,#1a7c30,#0a4c18);border:2px solid var(--gold);border-radius:18px;padding:20px;margin:20px 0;text-align:center;">
+      <p style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;">Seu número do sorteio</p>
+      <div id="sorteio-num" style="font-family:'Anton',sans-serif;font-size:40px;color:var(--gold);letter-spacing:4px;">—</div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;">🏆 Sorteio de R$100 no Pix · Final da Copa · <span id="sorteio-data-txt">19 de julho de 2026</span></p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Guarda essa tela ou salva o print!</p>
+    </div>
 
     <button class="btn-dl" onclick="downloadPDF()">📥 BAIXAR PDF EM ALTA RESOLUÇÃO</button>
     <button class="btn-share" onclick="shareWA()">📤 Compartilhar no WhatsApp</button>
@@ -817,11 +877,6 @@
       <p class="ups-t">Crie a figurinha da mamãe, do pai, do irmão... Mais 2 figurinhas por só <strong style="color:var(--gold)">R$9,90 cada!</strong></p>
       <button class="btn-ups" onclick="makeAnother()">➕ QUERO O PACK FAMÍLIA — R$9,90 CADA</button>
     </div>
-
-    <div class="raffle-conf">
-      <p style="margin-bottom:4px;"><strong>🎁 Você está no sorteio!</strong></p>
-      <p style="font-size:12px;color:rgba(255,255,255,0.7);">Você concorre a R$100 no Pix. Sorteio ao vivo na Final da Copa · Julho 2026.</p>
-    </div>
   </div>
 </div>
 
@@ -830,6 +885,11 @@
 const CAKTO_CHECKOUT  = 'https://pay.cakto.com.br/38iwvv9_942628';
 const CAKTO_FAMILIA   = 'https://pay.cakto.com.br/3apv2oz_942634';
 const SITE_URL        = 'https://praxi-eight.vercel.app/figurinha';
+const GEMINI_KEY         = 'AQ.Ab8RN6IAPLbCus3TQo9iFT1vNTgHS0VDZzG4MesKUQKvrqN35w';
+const ZAPI_INSTANCE      = '3F53B83F1222328A8269C2EEDFAFE1A5';
+const ZAPI_TOKEN         = '0ADC01933770F9B7E502FEA9';
+const ZAPI_CLIENT_TOKEN  = 'F424af45830d740089ff0086825cd0b0bS';
+const SORTEIO_DATA       = '19 de julho de 2026'; // Final da Copa 2026
 // ──────────────────────────────────────────────────────────────
 
 const state = {
@@ -915,40 +975,117 @@ function startGen() {
   state.apelido = (document.getElementById('inp-apelido').value||'').toUpperCase();
   show('s-gen');
 
-  // Tenta tocar o vídeo VSL (só aparece se vsl.mp4 existir)
+  let canvasDone = false, vslDone = false;
+
+  const tryProceed = () => {
+    if (!canvasDone || !vslDone) return;
+    const gc = document.getElementById('gen-canvas');
+    const pc = document.getElementById('pw-canvas');
+    if (pc) pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
+    const pn = document.getElementById('pw-nome');
+    if (pn) pn.textContent = state.nome;
+    show('s-paywall');
+  };
+
+  // Progresso lento durante a VSL
+  const setProgress = (pct) => {
+    const f = document.getElementById('gen-fill');
+    const p = document.getElementById('gen-pct');
+    if (f) f.style.width = pct + '%';
+    if (p) p.textContent = pct + '%';
+  };
+  const setStep = (gs, done=[]) => {
+    done.forEach(d => { const e=document.getElementById(d); if(e){e.classList.remove('active');e.classList.add('done');} });
+    const e = document.getElementById(gs); if(e) e.classList.add('active');
+  };
+
+  // Processar foto com Gemini e gerar canvas
+  processPhotoGemini(state.photo).then(processed => {
+    if (processed) state.photo = processed;
+    renderFigurinha(() => { canvasDone = true; tryProceed(); });
+  });
+
+  // VSL video
   const vid = document.getElementById('gen-video');
+  vid.loop = false; vid.muted = false;
   vid.load();
+
+  vid.onended = () => {
+    setProgress(100); setStep('gs4', ['gs1','gs2','gs3']);
+    vslDone = true;
+    setTimeout(tryProceed, 800);
+  };
+
   vid.play().then(() => {
     vid.style.display = 'block';
     document.getElementById('gen-anim-fallback').style.display = 'none';
-  }).catch(() => { vid.style.display = 'none'; });
-
-  const tl = [
-    {pct:22, gs:'gs1', t:700},
-    {pct:55, gs:'gs2', t:1600},
-    {pct:80, gs:'gs3', t:2500},
-    {pct:100,gs:'gs4', t:3400},
-  ];
-
-  tl.forEach((item, i) => {
-    setTimeout(() => {
-      document.getElementById('gen-fill').style.width = item.pct + '%';
-      document.getElementById('gen-pct').textContent = item.pct + '%';
-      tl.slice(0,i).forEach(p => { const e=document.getElementById(p.gs); e.classList.remove('active'); e.classList.add('done'); });
-      document.getElementById(item.gs).classList.add('active');
-      if (i === tl.length-1) {
-        setTimeout(() => {
-          renderFigurinha(() => {
-            const gc = document.getElementById('gen-canvas');
-            const pc = document.getElementById('pw-canvas');
-            pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
-            document.getElementById('pw-nome').textContent = state.nome;
-            show('s-paywall');
-          });
-        }, 600);
-      }
-    }, item.t);
+    // Progresso se sincroniza com a duração do vídeo
+    const scale = (t) => {
+      const dur = vid.duration || 90; // fallback 90s
+      return (t / 100) * dur * 1000;
+    };
+    setTimeout(() => { setProgress(12); setStep('gs1'); },          scale(12));
+    setTimeout(() => { setProgress(35); setStep('gs2', ['gs1']); }, scale(35));
+    setTimeout(() => { setProgress(65); setStep('gs3', ['gs1','gs2']); }, scale(65));
+    setTimeout(() => { setProgress(90); setStep('gs4', ['gs1','gs2','gs3']); }, scale(90));
+  }).catch(() => {
+    // Vídeo falhou → fallback de 8s (vsl.mp4 com 0 bytes ou ausente)
+    vid.style.display = 'none';
+    const fb = [{pct:22,gs:'gs1',t:800},{pct:55,gs:'gs2',t:1800},
+                {pct:80,gs:'gs3',t:2800},{pct:100,gs:'gs4',t:3800}];
+    fb.forEach((item,i) => setTimeout(() => {
+      setProgress(item.pct);
+      setStep(item.gs, fb.slice(0,i).map(x=>x.gs));
+      if (i === fb.length-1) { vslDone = true; setTimeout(tryProceed, 600); }
+    }, item.t));
   });
+}
+
+// ─── GEMINI API — gera figurinha completa estilo Panini ────
+const ESTILOS_PANINI = {
+  'comum':      'estilo cromo oficial Panini FIFA World Cup 2026, fundo verde e amarelo brasileiro, acabamento fosco, design limpo com faixa CBF verde na base, escudo da Seleção Brasileira no peito',
+  'metalizado': 'estilo figurinha especial metalizada Panini Copa 2026, fundo holográfico metálico arco-íris brilhante, efeito foil dourado nas bordas, letras em relevo prateado, super brilhante',
+  'ouro':       'estilo variante Ouro raríssima Panini Copa 2026, fundo completamente dourado brilhante com estrelas, moldura gold premium, efeito metalizado dourado intenso, indicação GOLD VARIANT',
+  'lendas':     'estilo LEGENDS card Panini Copa 2026, fundo preto premium com detalhes dourados, estilo das 20 maiores lendas do mundo como Vinicius Jr, design épico com auréola dourada, texto LENDA DA COPA 2026'
+};
+
+async function processPhotoGemini(dataUrl) {
+  if (!GEMINI_KEY || !dataUrl) return dataUrl;
+  const estiloDesc = ESTILOS_PANINI[state.estilo] || ESTILOS_PANINI['comum'];
+  try {
+    const base64 = dataUrl.split(',')[1];
+    const mime   = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+    const prompt = `Crie uma figurinha oficial Panini FIFA World Cup 2026 desta criança/pessoa.
+
+INSTRUÇÕES OBRIGATÓRIAS:
+- Mantenha EXATAMENTE o mesmo rosto, expressão e feições da foto enviada
+- Vista-a com a camisa amarela da Seleção Brasileira (número ${state.numero||10} na frente, escudo CBF no peito, gola verde)
+- Fundo e design: ${estiloDesc}
+- Nome "${(state.nome||'CRAQUE').toUpperCase()}" em destaque na faixa inferior
+- Posição: ${state.posicao||'ATACANTE'} na parte de baixo
+- Formato retrato, enquadramento do busto para cima
+- Qualidade altíssima, estilo cartão colecionável oficial, foto realista não cartoon`;
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [
+            { text: prompt },
+            { inline_data: { mime_type: mime, data: base64 } }
+          ]}],
+          generationConfig: { responseModalities: ['IMAGE'] }
+        })
+      }
+    );
+    const json = await res.json();
+    const part = json.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+    if (part) return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+    console.warn('Gemini sem imagem na resposta:', json);
+  } catch(e) { console.warn('Gemini error:', e); }
+  return dataUrl; // fallback: usa foto original com canvas
 }
 
 // ─── CANVAS RENDERING ───────────────────────────────────────
@@ -1150,12 +1287,79 @@ function restoreSessionState(cb) {
 function checkPaidReturn() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('liberado') === '1') {
-    // Limpa URL sem recarregar
     window.history.replaceState({}, '', window.location.pathname);
-    // Restaura figurinha e mostra tela de sucesso
-    const hasCanvas = restoreSessionState(() => show('s-success'));
-    if (!hasCanvas) show('s-success'); // sem canvas salvo, mostra tela mesmo assim
+    const afterRestore = () => {
+      // Preenche canvas de thumbnail da tela wpp
+      const gc = document.getElementById('gen-canvas');
+      const tc = document.getElementById('wpp-thumb-canvas');
+      if (tc && gc.width > 0) tc.getContext('2d').drawImage(gc, 0, 0, tc.width, tc.height);
+      const rc = document.getElementById('result-canvas');
+      if (rc && gc.width > 0) rc.getContext('2d').drawImage(gc, 0, 0, rc.width, rc.height);
+      const wn = document.getElementById('wpp-nome'); if (wn) wn.textContent = state.nome;
+      // Preenche sorteio se já existia
+      const saved = sessionStorage.getItem('fc_sorteio');
+      if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
+      const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
+      show('s-wpp');
+    };
+    const hasCanvas = restoreSessionState(afterRestore);
+    if (!hasCanvas) { const sd=document.getElementById('sorteio-data-txt');if(sd)sd.textContent=SORTEIO_DATA; show('s-wpp'); }
   }
+}
+
+// ─── WHATSAPP ────────────────────────────────────────────────
+function maskPhone(inp) {
+  let v = inp.value.replace(/\D/g,'');
+  if (v.length > 11) v = v.slice(0,11);
+  if (v.length > 7)       v = '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if (v.length > 2)  v = '('+v.slice(0,2)+') '+v.slice(2);
+  else if (v.length > 0)  v = '('+v;
+  inp.value = v;
+}
+
+function gerarNumeroSorteio() {
+  const r = Math.floor(100000 + Math.random() * 900000);
+  return String(r);
+}
+
+async function enviarWPP() {
+  const raw = (document.getElementById('inp-wpp').value||'').replace(/\D/g,'');
+  if (raw.length < 10) { alert('Digite um número de WhatsApp válido com DDD!'); return; }
+  const phone = '55' + raw;
+
+  const btn = document.getElementById('btn-wpp-send');
+  if (btn) { btn.textContent = '⏳ Enviando...'; btn.disabled = true; }
+
+  const sorteio = gerarNumeroSorteio();
+  state.sorteio = sorteio;
+  sessionStorage.setItem('fc_sorteio', sorteio);
+  sessionStorage.setItem('fc_phone', phone);
+
+  // Gera imagem da figurinha como base64
+  const gc = document.getElementById('gen-canvas');
+  const imgData = gc.toDataURL('image/jpeg', 0.95);
+  const b64 = imgData.split(',')[1];
+
+  const msg = `⚽🇧🇷 Aqui está a figurinha da Copa 2026 do(a) *${state.nome || 'craque'}*!\n\n` +
+    `🎟️ Seu número do sorteio é: *${sorteio}*\n\n` +
+    `🏆 Sorteio de R$100 no Pix ao vivo na Final da Copa — *${SORTEIO_DATA}*.\n\n` +
+    `Guarda essa mensagem! 🌟\n\n` +
+    `_Quer mais figurinhas? ${SITE_URL}_`;
+
+  try {
+    if (ZAPI_INSTANCE && ZAPI_TOKEN) {
+      await fetch(`https://api.z-api.io/instances/${ZAPI_INSTANCE}/token/${ZAPI_TOKEN}/send-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Client-Token': ZAPI_CLIENT_TOKEN },
+        body: JSON.stringify({ phone, image: 'data:image/jpeg;base64,'+b64, caption: msg })
+      });
+    }
+  } catch(e) { console.warn('Z-API error:', e); }
+
+  // Atualiza e mostra tela de sucesso
+  const el = document.getElementById('sorteio-num'); if (el) el.textContent = sorteio;
+  const sd = document.getElementById('sorteio-data-txt'); if (sd) sd.textContent = SORTEIO_DATA;
+  show('s-success');
 }
 
 // ─── PDF ────────────────────────────────────────────────────
@@ -1181,29 +1385,42 @@ function downloadPDF() {
 
   // Tamanho álbum (×4)
   const alb={w:34,h:48}; const ay=13+big.h+14;
-  doc.setFontSize(7); doc.setTextColor(120,120,120);
-  doc.text('Tamanho álbum · Recorte e cole no pacotinho', 105, ay-1, {align:'center'});
-  for(let i=0;i<4;i++) doc.addImage(img,'PNG', 22+i*(alb.w+6), ay+3, alb.w, alb.h);
+  for(let i=0;i<4;i++){
+    const ax=20+(alb.w+6)*i;
+    doc.addImage(img,'PNG',ax,ay,alb.w,alb.h);
+  }
+  doc.setFontSize(7); doc.setTextColor(160,160,160);
+  doc.text('Tamanho álbum (×4)', 105, ay+alb.h+4, {align:'center'});
 
   // Linha divisória
-  const ay2=ay+alb.h+10;
-  doc.line(20, ay2, 190, ay2);
+  doc.line(20, ay+alb.h+9, 190, ay+alb.h+9);
 
-  // Mini (×7)
-  const sml={w:21,h:29}; const sy=ay2+5;
-  doc.setFontSize(7);
-  doc.text('Mini · Adesivo, chaveiro ou story', 105, sy, {align:'center'});
-  for(let i=0;i<7;i++) doc.addImage(img,'PNG', 14+i*(sml.w+4), sy+4, sml.w, sml.h);
+  // Tamanho sticker (×8)
+  const stk={w:22,h:31}; const sy=ay+alb.h+14;
+  for(let i=0;i<8;i++){
+    const sx=16+(stk.w+4)*i;
+    if(sx+stk.w<200) doc.addImage(img,'PNG',sx,sy,stk.w,stk.h);
+  }
+  doc.setFontSize(7); doc.setTextColor(160,160,160);
+  doc.text('Tamanho sticker (×8)', 105, sy+stk.h+4, {align:'center'});
 
-  doc.setFontSize(7); doc.setTextColor(170,170,170);
-  doc.text('Dica: papel fotográfico glossy para melhor resultado. Tamanho figurinha real: 6.5×9.1cm.', 105, 293, {align:'center'});
+  // Sorteio no rodapé
+  const sorteio = state.sorteio || sessionStorage.getItem('fc_sorteio') || '';
+  if (sorteio) {
+    doc.setFontSize(9); doc.setTextColor(0,180,80);
+    doc.text('🎟️ Nº do sorteio: '+sorteio+' · Final da Copa · '+SORTEIO_DATA, 105, 285, {align:'center'});
+  }
 
-  doc.save('figurinha-'+(state.nome||'craque').toLowerCase().replace(/\s+/g,'-')+'-copa2026.pdf');
+  doc.save('figurinha-copa-2026-'+(state.nome||'craque').toLowerCase().replace(/\s/g,'-')+'.pdf');
 }
 
-// ─── SHARE ──────────────────────────────────────────────────
 function shareWA() {
-  const txt = encodeURIComponent('🇧🇷⚽ Olha a figurinha da Copa 2026 que eu fiz pro '+state.nome+'! Ficou INCRÍVEL!\nFaz a do seu filho também 👉 '+SITE_URL);
+  const sorteio = state.sorteio || sessionStorage.getItem('fc_sorteio') || '';
+  const txt = encodeURIComponent(
+    '⚽🇧🇷 Olha a figurinha da Copa 2026 que eu fiz pro '+state.nome+'! Ficou INCRÍVEL!\n' +
+    (sorteio ? '🎟️ Meu número do sorteio é: '+sorteio+'\n' : '') +
+    'Faz a do seu filho também 👉 '+SITE_URL
+  );
   window.open('https://wa.me/?text='+txt,'_blank');
 }
 
@@ -1211,16 +1428,26 @@ function makeAnother() {
   window.open(CAKTO_FAMILIA, '_blank');
 }
 
-function makeAnotherQuiz() {
-  state.photo=null;
-  document.getElementById('photo-preview-img').style.display='none';
-  document.getElementById('upload-zone').innerHTML='<div class="uz-icon">📸</div><div class="uz-title">Toque para enviar a foto</div><div class="uz-hint">JPG, PNG ou HEIC · até 10MB</div>';
-  document.getElementById('btn-gerar').disabled=true;
-  step=1; show('s-quiz'); updateQuiz();
+function copyPix() {
+  const key = document.getElementById('pix-key-txt').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    if (btn) { btn.textContent = '✅ Copiado!'; setTimeout(()=>{ btn.textContent='📋 Copiar chave Pix'; },2000); }
+  });
 }
 
-// Init — verifica retorno do Cakto
-checkPaidReturn();
+function confirmPay() {
+  // Usuário diz que pagou via Pix manual — mostra tela de aguardo
+  window.location.href = window.location.pathname + '?liberado=1';
+}
+
+// ─── INIT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  checkPaidReturn();
+  // Pix key estática (substitua pela sua chave Pix real)
+  const pixKey = document.getElementById('pix-key-txt');
+  if (pixKey) pixKey.textContent = 'figurinha2026@pix.com'; // ← coloque sua chave Pix
+});
 </script>
 </body>
 </html>
