@@ -980,14 +980,23 @@ function startGen() {
 
   let canvasDone = false, vslDone = false;
 
-  const tryProceed = () => {
-    if (!canvasDone || !vslDone) return;
+  const doProceed = () => {
     const gc = document.getElementById('gen-canvas');
     const pc = document.getElementById('pw-canvas');
-    if (pc) pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
+    if (pc && gc.width > 0) pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
     const pn = document.getElementById('pw-nome');
     if (pn) pn.textContent = state.nome;
     show('s-paywall');
+  };
+
+  // Quando a figurinha está pronta E a VSL terminou → avança
+  // Mas se a VSL demorar mais de 90s após a figurinha pronta, avança mesmo assim
+  let vslTimer = null;
+  const tryProceed = () => {
+    if (!canvasDone) return; // figurinha ainda não pronta
+    if (vslDone) { doProceed(); return; }
+    // Figurinha pronta mas VSL ainda rodando → aguarda até 90s
+    if (!vslTimer) vslTimer = setTimeout(() => { vslDone = true; doProceed(); }, 90000);
   };
 
   // Progresso lento durante a VSL
@@ -1184,13 +1193,23 @@ async function processPhotoGemini(dataUrl) {
       })
     });
     const json = await res.json();
+    console.log('🎨 Gemini resposta completa:', JSON.stringify(json).slice(0, 2000));
     if (!res.ok) {
-      console.error('Gemini HTTP', res.status, JSON.stringify(json?.error || json));
+      console.error('❌ Gemini HTTP', res.status, JSON.stringify(json?.error || json));
       return null;
     }
-    const part = json.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-    if (part) return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-    console.warn('Gemini sem imagem (resposta OK mas sem inlineData):', JSON.stringify(json).slice(0,400));
+    const parts = json.candidates?.[0]?.content?.parts || [];
+    // Aceita inlineData (camelCase) ou inline_data (snake_case)
+    const part = parts.find(p => p.inlineData || p.inline_data);
+    if (part) {
+      const d = part.inlineData || part.inline_data;
+      console.log('✅ Gemini gerou imagem:', d.mimeType, 'tamanho base64:', d.data?.length);
+      return `data:${d.mimeType};base64,${d.data}`;
+    }
+    // Log de texto se houver (ajuda a entender recusas)
+    const textPart = parts.find(p => p.text);
+    if (textPart) console.warn('⚠️ Gemini retornou só texto:', textPart.text);
+    console.warn('⚠️ Gemini sem imagem. Parts recebidas:', JSON.stringify(parts).slice(0, 500));
   } catch(e) { console.error('Gemini error:', e.message); }
   return null;
 }
