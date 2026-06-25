@@ -885,10 +885,11 @@
 const CAKTO_CHECKOUT  = 'https://pay.cakto.com.br/38iwvv9_942628';
 const CAKTO_FAMILIA   = 'https://pay.cakto.com.br/3apv2oz_942634';
 const SITE_URL        = 'https://praxi-eight.vercel.app/figurinha';
-const GEMINI_KEY         = 'AQ.Ab8RN6IAPLbCus3TQo9iFT1vNTgHS0VDZzG4MesKUQKvrqN35w';
-const ZAPI_INSTANCE      = '3F53B83F1222328A8269C2EEDFAFE1A5';
-const ZAPI_TOKEN         = '0ADC01933770F9B7E502FEA9';
-const ZAPI_CLIENT_TOKEN  = 'F424af45830d740089ff0086825cd0b0bS';
+// Chaves ficam no servidor (Vercel env vars) — não ficam no frontend
+const GEMINI_KEY         = null; // não usado diretamente — proxy em /api/gemini
+const ZAPI_INSTANCE      = null; // não usado diretamente — proxy em /api/send-whatsapp
+const ZAPI_TOKEN         = null;
+const ZAPI_CLIENT_TOKEN  = null;
 const SORTEIO_DATA       = '19 de julho de 2026'; // Final da Copa 2026
 // ──────────────────────────────────────────────────────────────
 
@@ -1050,7 +1051,7 @@ const ESTILOS_PANINI = {
 };
 
 async function processPhotoGemini(dataUrl) {
-  if (!GEMINI_KEY || !dataUrl) return dataUrl;
+  if (!dataUrl) return dataUrl;
   const estiloDesc = ESTILOS_PANINI[state.estilo] || ESTILOS_PANINI['comum'];
   try {
     const base64 = dataUrl.split(',')[1];
@@ -1066,20 +1067,17 @@ INSTRUÇÕES OBRIGATÓRIAS:
 - Formato retrato, enquadramento do busto para cima
 - Qualidade altíssima, estilo cartão colecionável oficial, foto realista não cartoon`;
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [
-            { text: prompt },
-            { inline_data: { mime_type: mime, data: base64 } }
-          ]}],
-          generationConfig: { responseModalities: ['IMAGE'] }
-        })
-      }
-    );
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [
+          { text: prompt },
+          { inline_data: { mime_type: mime, data: base64 } }
+        ]}],
+        generationConfig: { responseModalities: ['IMAGE'] }
+      })
+    });
     const json = await res.json();
     const part = json.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
     if (part) return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
@@ -1347,13 +1345,11 @@ async function enviarWPP() {
     `_Quer mais figurinhas? ${SITE_URL}_`;
 
   try {
-    if (ZAPI_INSTANCE && ZAPI_TOKEN) {
-      await fetch(`https://api.z-api.io/instances/${ZAPI_INSTANCE}/token/${ZAPI_TOKEN}/send-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Client-Token': ZAPI_CLIENT_TOKEN },
-        body: JSON.stringify({ phone, image: 'data:image/jpeg;base64,'+b64, caption: msg })
-      });
-    }
+    await fetch('/api/send-whatsapp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, image: 'data:image/jpeg;base64,'+b64, caption: msg })
+    });
   } catch(e) { console.warn('Z-API error:', e); }
 
   // Atualiza e mostra tela de sucesso
