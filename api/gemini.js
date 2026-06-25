@@ -18,9 +18,9 @@ export default async function handler(req, res) {
 
     // Garante que responseModalities está presente
     if (body.generationConfig) {
-      body.generationConfig.responseModalities = ['IMAGE', 'TEXT'];
+      body.generationConfig.responseModalities = ['IMAGE'];
     } else {
-      body.generationConfig = { responseModalities: ['IMAGE', 'TEXT'] };
+      body.generationConfig = { responseModalities: ['IMAGE'] };
     }
 
     // Garante role: user nos contents
