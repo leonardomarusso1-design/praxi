@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🇧🇷 Figurinha Copa 2026 — Seu Filho Craque da Seleção</title>
+  <meta name="description" content="Transforme a foto do seu filho numa figurinha oficial da Copa 2026. Automático, em 2 minutos, pronto pra imprimir em casa!">
+  <meta property="og:title" content="Seu Filho é o Craque da Copa 2026 🇧🇷">
+  <meta property="og:description" content="Figurinha personalizada com foto, nome e uniforme da Seleção. Em 2 minutos, pronto pra imprimir!">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --green: #0a5c1e;
+      --dark: #041a08;
+      --gold: #FFD700;
+      --gold2: #FFAA00;
+      --gold-dark: #b8960c;
+      --green2: #00d46a;
+    }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--dark);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: block; }
+
+    /* ───────── LANDING ───────── */
+    #s-landing { background: linear-gradient(175deg, #041a08 0%, #0a5c1e 55%, #041a08 100%); }
+
+    .urgency-bar {
+      background: linear-gradient(90deg, #b80000, #ff2200, #b80000);
+      background-size: 200% auto;
+      animation: urgency-scroll 3s linear infinite;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 9px 16px;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    @keyframes urgency-scroll {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .land-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(0,0,0,0.35);
+    }
+    .logo-text {
+      font-family: 'Anton', sans-serif;
+      font-size: 20px;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .badge-green {
+      background: var(--green2);
+      color: #041a08;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 5px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero {
+      padding: 28px 20px 20px;
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .proof-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.35);
+      border-radius: 30px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: 52px;
+      line-height: 1.0;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-shadow: 2px 3px 12px rgba(0,0,0,0.5);
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 22px;
+    }
+    .hero-sub strong { color: var(--gold); }
+
+    .mockup-wrap {
+      perspective: 800px;
+      width: 160px;
+      margin: 0 auto 24px;
+    }
+    .mockup-card {
+      width: 160px;
+      height: 224px;
+      background: linear-gradient(155deg, #1a7c30, #0a4c18);
+      border: 3px solid var(--gold);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.2);
+      animation: float-card 3s ease-in-out infinite;
+    }
+    @keyframes float-card {
+      0%,100% { transform: rotateY(-5deg) rotateX(3deg) translateY(0); }
+      50% { transform: rotateY(5deg) rotateX(-3deg) translateY(-10px); }
+    }
+    .mc-header {
+      background: var(--gold);
+      height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Anton', sans-serif; font-size: 12px; color: #041a08; letter-spacing: 1px;
+    }
+    .mc-photo {
+      height: 136px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 56px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.2));
+    }
+    .mc-footer {
+      background: rgba(0,0,0,0.55);
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .mc-name { font-family: 'Anton', sans-serif; font-size: 15px; letter-spacing: 0.5px; }
+    .mc-info { font-size: 10px; color: var(--gold); margin-top: 2px; }
+
+    .btn-cta {
+      display: block;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #041a08;
+      font-size: 19px;
+      font-weight: 900;
+      padding: 20px 16px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 30px rgba(255,170,0,0.45), 0 4px 0 var(--gold-dark);
+      transition: transform 0.1s, box-shadow 0.1s;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-cta:active { transform: translateY(3px); box-shadow: 0 3px 15px rgba(255,170,0,0.4), 0 1px 0 var(--gold-dark); }
+
+    .cta-sub { text-align: center; font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 9px; }
+
+    .raffle-box {
+      background: linear-gradient(135deg, #0d0d2e, #1a1a50);
+      border: 1px solid rgba(255,215,0,0.35);
+      border-radius: 14px;
+      padding: 16px;
+      margin: 22px auto;
+      max-width: 380px;
+      text-align: center;
+    }
+    .raffle-box .rt { font-size: 12px; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .raffle-box .ra { font-family: 'Anton', sans-serif; font-size: 38px; color: #00ff99; line-height: 1; }
+    .raffle-box .rd { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+    .hiw { padding: 28px 20px; max-width: 400px; margin: 0 auto; }
+    .hiw h3 { font-family: 'Anton', sans-serif; font-size: 24px; text-align: center; margin-bottom: 18px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .step-num {
+      width: 34px; height: 34px; flex-shrink: 0;
+      background: var(--gold); color: #041a08;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px;
+    }
+    .step-body strong { display: block; font-weight: 700; margin-bottom: 2px; }
+    .step-body span { font-size: 13px; color: rgba(255,255,255,0.65); }
+
+    .testi { background: rgba(0,0,0,0.25); padding: 28px 20px; }
+    .testi h3 { text-align: center; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.45); margin-bottom: 14px; }
+    .tc { background: rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .tc-name { font-weight: 800; font-size: 13px; margin-bottom: 4px; }
+    .tc-stars { color: var(--gold); font-size: 12px; margin-bottom: 4px; }
+    .tc-text { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+    .land-footer { padding: 16px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    /* ───────── QUIZ ───────── */
+    #s-quiz { background: linear-gradient(175deg, #041a08 0%, #0a5c1e 100%); }
+
+    .quiz-nav {
+      display: flex; align-items: center; padding: 14px 16px; gap: 12px;
+      position: sticky; top: 0; background: rgba(4,26,8,0.95); z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+    .btn-back { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; padding: 6px 4px; white-space: nowrap; }
+    .prog-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .prog-fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.4s ease; }
+    .step-ct { font-size: 12px; color: rgba(255,255,255,0.45); white-space: nowrap; }
+
+    .quiz-wrap { padding: 28px 20px; max-width: 480px; margin: 0 auto; }
+
+    .qstep { display: none; animation: fadeUp 0.3s ease; }
+    .qstep.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+    .qstep h2 {
+      font-family: 'Anton', sans-serif; font-size: 30px;
+      text-transform: uppercase; line-height: 1.1; margin-bottom: 6px;
+    }
+    .q-hint { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 22px; }
+
+    .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .opt-btn {
+      background: rgba(255,255,255,0.07);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 13px; padding: 16px 10px;
+      color: #fff; font-size: 14px; font-weight: 700;
+      cursor: pointer; text-align: center;
+      transition: all 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .opt-btn:hover, .opt-btn.sel {
+      background: rgba(255,215,0,0.13); border-color: var(--gold); color: var(--gold);
+    }
+    .opt-emoji { font-size: 28px; }
+    .opt-label { font-size: 14px; font-weight: 800; }
+    .opt-desc { font-size: 11px; opacity: 0.65; font-weight: 400; }
+
+    .txt-input {
+      width: 100%; background: rgba(255,255,255,0.09);
+      border: 2px solid rgba(255,255,255,0.18); border-radius: 13px;
+      padding: 18px 20px; font-size: 24px; font-weight: 800; color: #fff;
+      text-align: center; margin-bottom: 16px; outline: none;
+      font-family: inherit; letter-spacing: 1px;
+    }
+    .txt-input:focus { border-color: var(--gold); background: rgba(255,215,0,0.08); }
+    .txt-input::placeholder { color: rgba(255,255,255,0.28); font-size: 16px; font-weight: 400; }
+
+    .num-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .num-btn {
+      width: 58px; height: 58px;
+      background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: #fff; font-size: 20px; font-weight: 900;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .num-btn.sel, .num-btn:hover { background: rgba(255,215,0,0.13); border-color: var(--gold); color: var(--gold); }
+
+    .btn-next {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #041a08; font-size: 17px; font-weight: 900;
+      padding: 18px; border: none; border-radius: 13px; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px;
+      box-shadow: 0 6px 20px rgba(255,170,0,0.4), 0 3px 0 var(--gold-dark);
+      transition: transform 0.1s;
+    }
+    .btn-next:active { transform: translateY(2px); }
+    .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    .upload-zone {
+      border: 3px dashed rgba(255,215,0,0.38);
+      border-radius: 16px; padding: 38px 20px; text-align: center;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 14px;
+    }
+    .upload-zone:hover { background: rgba(255,215,0,0.05); border-color: var(--gold); }
+    .uz-icon { font-size: 44px; margin-bottom: 10px; }
+    .uz-title { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
+    .uz-hint { font-size: 12px; color: rgba(255,255,255,0.45); }
+    #photo-preview-img {
+      width: 110px; height: 110px; border-radius: 50%;
+      object-fit: cover; border: 3px solid var(--gold);
+      display: none; margin: 0 auto 14px;
+    }
+
+    /* ───────── GENERATING ───────── */
+    #s-gen {
+      background: linear-gradient(175deg, #041a08 0%, #0a5c1e 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 40px 20px;
+    }
+    .gen-h { font-family: 'Anton', sans-serif; font-size: 30px; margin-bottom: 6px; }
+    .gen-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 32px; }
+
+    .gen-anim {
+      width: 180px; height: 252px; margin: 0 auto 32px; position: relative;
+    }
+    .gen-anim-card {
+      width: 160px; height: 224px;
+      background: linear-gradient(155deg, #1a7c30, #0a4c18);
+      border: 3px solid var(--gold); border-radius: 12px;
+      position: absolute; top: 14px; left: 10px;
+      animation: gen-float 1.8s ease-in-out infinite;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    @keyframes gen-float {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-14px) rotate(3deg); }
+    }
+    .gen-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .gen-star { position: absolute; font-size: 18px; animation: star-float 2s ease-in-out infinite; }
+    .gen-star:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+    .gen-star:nth-child(2) { top: 5%; right: 10%; animation-delay: 0.4s; }
+    .gen-star:nth-child(3) { bottom: 20%; left: 0%; animation-delay: 0.8s; }
+    .gen-star:nth-child(4) { bottom: 10%; right: 5%; animation-delay: 1.2s; }
+    @keyframes star-float {
+      0%,100% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+    }
+
+    .gen-prog-bar { width: 100%; max-width: 300px; height: 7px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin: 0 auto 8px; }
+    .gen-prog-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #00ff99); border-radius: 4px; width: 0%; transition: width 0.5s ease; }
+    .gen-pct { font-family: 'Anton', sans-serif; font-size: 22px; color: var(--gold); margin-bottom: 20px; }
+
+    .gen-steps { text-align: left; max-width: 260px; margin: 0 auto; }
+    .gsi { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13px; color: rgba(255,255,255,0.35); transition: color 0.3s; }
+    .gsi.active { color: #fff; font-weight: 700; }
+    .gsi.done { color: #00ff99; }
+    .gsi-icon { font-size: 15px; }
+
+    /* ───────── PAYWALL ───────── */
+    #s-paywall { background: linear-gradient(175deg, #041a08 0%, #0a3d0f 100%); }
+
+    .pw-wrap { padding: 32px 20px; max-width: 400px; margin: 0 auto; text-align: center; }
+
+    .pw-preview { width: 200px; margin: 0 auto 22px; position: relative; }
+    .pw-canvas-wrap { width: 200px; height: 280px; border-radius: 12px; overflow: hidden; position: relative; border: 3px solid var(--gold); }
+    #pw-canvas { width: 200px; height: 280px; filter: blur(9px) brightness(0.4) saturate(0.5); display: block; }
+    .pw-lock {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center; pointer-events: none;
+    }
+    .pw-lock-icon { font-size: 44px; display: block; }
+    .pw-lock-text { font-family: 'Anton', sans-serif; font-size: 18px; color: var(--gold); display: block; margin-top: 4px; }
+
+    .pw-title { font-family: 'Anton', sans-serif; font-size: 30px; line-height: 1.1; margin-bottom: 8px; }
+    .pw-title em { color: var(--gold); font-style: normal; }
+    .pw-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 20px; line-height: 1.5; }
+
+    .price-wrap { margin-bottom: 18px; }
+    .price-old { font-size: 13px; color: rgba(255,255,255,0.38); text-decoration: line-through; margin-bottom: 2px; }
+    .price-new { font-family: 'Anton', sans-serif; font-size: 56px; color: var(--gold); line-height: 1; }
+    .price-badge { display: inline-block; background: #b80000; color: #fff; font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 20px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .features { text-align: left; max-width: 280px; margin: 0 auto 20px; }
+    .fi { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13px; }
+    .fi-check { color: #00ff99; font-size: 15px; font-weight: 900; }
+
+    /* ───────── PAYMENT ───────── */
+    #s-payment { background: linear-gradient(175deg, #041a08 0%, #0a3d0f 100%); }
+
+    .pay-wrap { padding: 36px 20px; max-width: 400px; margin: 0 auto; text-align: center; }
+    .pay-h { font-family: 'Anton', sans-serif; font-size: 28px; margin-bottom: 6px; }
+    .pay-sub { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 20px; }
+
+    .pix-box { background: rgba(255,255,255,0.05); border: 2px solid rgba(0,255,153,0.3); border-radius: 16px; padding: 22px; margin-bottom: 16px; }
+    .pix-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+    .pix-value { font-family: 'Anton', sans-serif; font-size: 36px; color: var(--gold); margin-bottom: 10px; }
+    .pix-key { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 12px 14px; font-family: monospace; font-size: 15px; color: #00ff99; word-break: break-all; margin-bottom: 10px; }
+    .btn-copy { background: rgba(0,255,153,0.12); border: 1px solid rgba(0,255,153,0.3); color: #00ff99; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer; }
+
+    .pay-steps { background: rgba(255,215,0,0.07); border: 1px solid rgba(255,215,0,0.2); border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: left; font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.9; }
+    .pay-steps strong { color: var(--gold); }
+
+    .btn-confirm {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, #00d46a, #00a050);
+      color: #fff; font-size: 18px; font-weight: 900;
+      padding: 20px; border: none; border-radius: 14px; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      box-shadow: 0 6px 20px rgba(0,180,100,0.35);
+    }
+
+    /* ───────── SUCCESS ───────── */
+    #s-success { background: linear-gradient(175deg, #041a08 0%, #0a5c1e 100%); }
+
+    .suc-wrap { padding: 40px 20px; max-width: 400px; margin: 0 auto; text-align: center; }
+    .suc-icon { font-size: 64px; margin-bottom: 14px; animation: bounce 0.5s ease; }
+    @keyframes bounce { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+    .suc-h { font-family: 'Anton', sans-serif; font-size: 34px; margin-bottom: 6px; }
+    .suc-sub { font-size: 15px; color: rgba(255,255,255,0.8); margin-bottom: 24px; }
+
+    #result-canvas { border-radius: 12px; border: 3px solid var(--gold); box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.2); display: block; margin: 0 auto 22px; max-width: 240px; width: 100%; }
+
+    .btn-dl {
+      display: block; width: 100%;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #041a08; font-size: 17px; font-weight: 900;
+      padding: 19px; border: none; border-radius: 13px; cursor: pointer;
+      text-transform: uppercase; margin-bottom: 10px;
+      box-shadow: 0 8px 28px rgba(255,170,0,0.4);
+    }
+    .btn-share {
+      display: block; width: 100%;
+      background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15);
+      color: #fff; font-size: 15px; font-weight: 700;
+      padding: 16px; border-radius: 13px; cursor: pointer; margin-bottom: 20px;
+    }
+
+    .upsell-box { background: linear-gradient(135deg, #0d0d2e, #1a1050); border: 2px solid var(--gold); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+    .ups-h { font-family: 'Anton', sans-serif; font-size: 20px; color: var(--gold); margin-bottom: 6px; }
+    .ups-t { font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 12px; line-height: 1.5; }
+    .btn-ups { display: block; width: 100%; background: var(--gold); color: #041a08; font-weight: 900; font-size: 14px; padding: 13px; border: none; border-radius: 10px; cursor: pointer; }
+
+    .raffle-conf { background: rgba(0,255,153,0.08); border: 1px solid rgba(0,255,153,0.3); border-radius: 12px; padding: 14px; }
+    .raffle-conf p { font-size: 13px; }
+    .raffle-conf strong { color: #00ff99; }
+
+    #gen-canvas { display: none; position: absolute; top: -9999px; }
+
+    @media (max-width: 360px) {
+      .hero h1 { font-size: 42px; }
+      .qstep h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gen-canvas" width="800" height="1120"></canvas>
+
+<!-- ═══ LANDING ═══ -->
+<div id="s-landing" class="screen active">
+  <div class="urgency-bar">
+    🔥 PROMOÇÃO RELÂMPAGO · HOJE APENAS R$14,90 · TERMINA ÀS 23:59 🔥
+  </div>
+
+  <div class="land-nav">
+    <span class="logo-text">🏆 CRAQUE FC</span>
+    <span class="badge-green">✅ Entrega imediata</span>
+  </div>
+
+  <div class="hero">
+    <div class="proof-pill">⭐ +22.000 figurinhas criadas essa semana</div>
+
+    <h1>SEU FILHO É O<br><em>CRAQUE DO</em><br>BRASIL 🇧🇷</h1>
+
+    <p class="hero-sub">
+      Transforme a foto dele numa <strong>figurinha oficial da Copa 2026</strong> — com nome, número e uniforme da Seleção.
+      <strong>Em 2 minutos, pronto pra imprimir.</strong>
+    </p>
+
+    <div class="mockup-wrap">
+      <div class="mockup-card">
+        <div class="mc-header">⚽ COPA 2026 ⚽</div>
+        <div class="mc-photo">👦</div>
+        <div class="mc-footer">
+          <div class="mc-name">SEU FILHO</div>
+          <div class="mc-info">#10 · MEIA · 🇧🇷</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR A FIGURINHA AGORA</button>
+    <p class="cta-sub">Em 2 minutos · Sem cadastro · Imprime em casa</p>
+
+    <div class="raffle-box">
+      <div class="rt">🏆 Sorteio exclusivo para compradores</div>
+      <div class="ra">R$ 300</div>
+      <div class="rd">Todo comprador concorre a R$300 no Pix.<br>Sorteio ao vivo na Final da Copa · Julho 2026 🎁</div>
+    </div>
+  </div>
+
+  <div class="hiw">
+    <h3>EM 3 PASSOS SIMPLES</h3>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Escolha o estilo e o nome</strong>
+        <span>Posição, número da camisa e a edição favorita</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Envie a foto sorrindo</strong>
+        <span>Qualquer foto com o rosto visível serve perfeitamente</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Receba o PDF e imprima</strong>
+        <span>Alta resolução, tamanho figurinha real — na hora, sem espera</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="testi">
+    <h3>O que as famílias estão dizendo</h3>
+    <div class="tc">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-name">Ana Claudia M. · São Paulo</div>
+      <div class="tc-text">"Meu filho ficou em CHOQUE quando viu a figurinha dele no pacote. Achou que tinha comprado de verdade! 😂 Valeu demais!"</div>
+    </div>
+    <div class="tc">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-name">Fernanda S. · Belo Horizonte</div>
+      <div class="tc-text">"Fiz de surpresa pro aniversário. Quando revelei na festinha todo mundo gritou. Recomendo 1000%! 🎉"</div>
+    </div>
+    <div class="tc">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-name">Rodrigo P. · Curitiba</div>
+      <div class="tc-text">"3 minutos e ficou pronto. Parece profissional de verdade. O número 9 do meu sobrinho ficou incrível!"</div>
+    </div>
+  </div>
+
+  <div style="padding: 24px 20px; text-align: center;">
+    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$14,90</button>
+    <p class="cta-sub">Garantia: Se não ficou incrível, devolvemos o dinheiro em 7 dias.</p>
+  </div>
+
+  <div class="land-footer">
+    Produto digital para entretenimento. Não é produto oficial da FIFA, CBF ou Panini®.
+  </div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="s-quiz" class="screen">
+  <div class="quiz-nav">
+    <button class="btn-back" id="btn-back" onclick="quizBack()">← Voltar</button>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <span class="step-ct" id="step-ct">1 de 6</span>
+  </div>
+
+  <div class="quiz-wrap">
+
+    <div class="qstep active" id="q1">
+      <h2>QUAL O NOME<br>DO CRAQUE?</h2>
+      <p class="q-hint">Esse nome vai estampar a figurinha. Capricha!</p>
+      <input class="txt-input" id="inp-nome" type="text" placeholder="Ex: GABRIEL" maxlength="14"
+        oninput="this.value=this.value.toUpperCase()" autocomplete="off" autocorrect="off">
+      <button class="btn-next" onclick="nextQ(2)">CONTINUAR →</button>
+    </div>
+
+    <div class="qstep" id="q2">
+      <h2 id="q2-title">QUANTOS ANOS TEM?</h2>
+      <p class="q-hint">Pra adaptar o visual da figurinha.</p>
+      <div class="opt-grid">
+        <button class="opt-btn" onclick="selOpt('idade','1-3',this)">
+          <span class="opt-emoji">👶</span><span class="opt-label">1-3 anos</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('idade','4-6',this)">
+          <span class="opt-emoji">🧒</span><span class="opt-label">4-6 anos</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('idade','7-9',this)">
+          <span class="opt-emoji">👦</span><span class="opt-label">7-9 anos</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('idade','10+',this)">
+          <span class="opt-emoji">🧑</span><span class="opt-label">10+ anos</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="qstep" id="q3">
+      <h2 id="q3-title">QUAL A POSIÇÃO?</h2>
+      <p class="q-hint">Todo craque tem uma vocação — qual é a dele?</p>
+      <div class="opt-grid">
+        <button class="opt-btn" onclick="selOpt('posicao','ATACANTE',this)">
+          <span class="opt-emoji">⚡</span><span class="opt-label">ATACANTE</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('posicao','MEIA',this)">
+          <span class="opt-emoji">🎯</span><span class="opt-label">MEIA</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('posicao','ZAGUEIRO',this)">
+          <span class="opt-emoji">🛡️</span><span class="opt-label">ZAGUEIRO</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('posicao','GOLEIRO',this)">
+          <span class="opt-emoji">🧤</span><span class="opt-label">GOLEIRO</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="qstep" id="q4">
+      <h2>NÚMERO DA CAMISA?</h2>
+      <p class="q-hint">O número que ele vai usar quando levantar a taça. 🏆</p>
+      <div class="num-row" id="num-row">
+        <button class="num-btn" onclick="selNum('7',this)">7</button>
+        <button class="num-btn" onclick="selNum('9',this)">9</button>
+        <button class="num-btn sel" onclick="selNum('10',this)">10</button>
+        <button class="num-btn" onclick="selNum('11',this)">11</button>
+        <button class="num-btn" onclick="selNum('23',this)">23</button>
+      </div>
+      <input class="txt-input" id="inp-num" type="number" placeholder="ou outro número (1-99)"
+        min="1" max="99" oninput="clearNums();state.numero=this.value" style="font-size:18px;">
+      <button class="btn-next" onclick="nextQ(5)">CONTINUAR →</button>
+    </div>
+
+    <div class="qstep" id="q5">
+      <h2>ESCOLHA O ESTILO</h2>
+      <p class="q-hint">Cada edição tem uma aparência única. Qual combina?</p>
+      <div class="opt-grid">
+        <button class="opt-btn" onclick="selOpt('estilo','ouro',this)">
+          <span class="opt-emoji">🏆</span>
+          <span class="opt-label">Edição Ouro</span>
+          <span class="opt-desc">Brilho premium</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('estilo','lendas',this)">
+          <span class="opt-emoji">👑</span>
+          <span class="opt-label">Lendas</span>
+          <span class="opt-desc">Estilo clássico</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('estilo','raio',this)">
+          <span class="opt-emoji">⚡</span>
+          <span class="opt-label">Raio Verde</span>
+          <span class="opt-desc">Energia total</span>
+        </button>
+        <button class="opt-btn" onclick="selOpt('estilo','campeao',this)">
+          <span class="opt-emoji">⭐</span>
+          <span class="opt-label">Campeão 2026</span>
+          <span class="opt-desc">Edição limitada</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="qstep" id="q6">
+      <h2>FOTO DO CRAQUE 📸</h2>
+      <p class="q-hint">Use uma foto com o rosto visível. Quanto melhor a foto, mais épica a figurinha!</p>
+
+      <img id="photo-preview-img" src="" alt="preview">
+
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-inp').click()">
+        <div class="uz-icon">📸</div>
+        <div class="uz-title">Toque para enviar a foto</div>
+        <div class="uz-hint">JPG, PNG ou HEIC · até 10MB</div>
+      </div>
+      <input type="file" id="file-inp" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this)">
+
+      <input class="txt-input" id="inp-apelido" type="text"
+        placeholder="Apelido (opcional, ex: GABRIELZINHO)" maxlength="13"
+        oninput="this.value=this.value.toUpperCase()" style="font-size:15px;margin-top:8px;">
+
+      <button class="btn-next" id="btn-gerar" onclick="startGen()" disabled>
+        ⚡ GERAR MINHA FIGURINHA
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ GENERATING ═══ -->
+<div id="s-gen" class="screen">
+  <h2 class="gen-h">GERANDO SUA FIGURINHA...</h2>
+  <p class="gen-sub">Não saia da tela! Leva até 30 segundos.</p>
+
+  <!-- Vídeo VSL (coloca o arquivo em /figurinha/vsl.mp4 depois do HeyGen) -->
+  <video id="gen-video" autoplay muted playsinline loop
+    style="width:220px;border-radius:14px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:none">
+    <source src="/figurinha/vsl.mp4" type="video/mp4">
+  </video>
+
+  <!-- Animação fallback (some quando o vídeo carrega) -->
+  <div class="gen-anim" id="gen-anim-fallback">
+    <div class="gen-stars">
+      <span class="gen-star">⭐</span>
+      <span class="gen-star">✨</span>
+      <span class="gen-star">🌟</span>
+      <span class="gen-star">⚽</span>
+    </div>
+    <div class="gen-anim-card"></div>
+  </div>
+
+  <div class="gen-prog-bar"><div class="gen-prog-fill" id="gen-fill"></div></div>
+  <div class="gen-pct" id="gen-pct">0%</div>
+
+  <div class="gen-steps">
+    <div class="gsi active" id="gs1"><span class="gsi-icon">🖼️</span> Processando sua foto...</div>
+    <div class="gsi" id="gs2"><span class="gsi-icon">👕</span> Aplicando o uniforme da Seleção...</div>
+    <div class="gsi" id="gs3"><span class="gsi-icon">🏆</span> Adicionando detalhes da Copa...</div>
+    <div class="gsi" id="gs4"><span class="gsi-icon">✅</span> Figurinha pronta!</div>
+  </div>
+</div>
+
+<!-- ═══ PAYWALL ═══ -->
+<div id="s-paywall" class="screen">
+  <div class="pw-wrap">
+    <div class="pw-preview">
+      <div class="pw-canvas-wrap">
+        <canvas id="pw-canvas" width="400" height="560"></canvas>
+        <div class="pw-lock">
+          <span class="pw-lock-icon">🔒</span>
+          <span class="pw-lock-text">BLOQUEADA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pw-title">SUA FIGURINHA<br>TÁ <em>PRONTA.</em></div>
+    <p class="pw-sub">
+      Falta só 1 clique pra ver o <strong id="pw-nome">craque</strong> na Copa 2026 —
+      em alta resolução, pronto pra imprimir e guardar pra vida toda.
+    </p>
+
+    <div class="price-wrap">
+      <div class="price-old">De R$ 39,90</div>
+      <div class="price-new">R$ 14,90</div>
+      <span class="price-badge">⚡ PROMOÇÃO VÁLIDA SÓ HOJE</span>
+    </div>
+
+    <div class="features">
+      <div class="fi"><span class="fi-check">✓</span> Arquivo em alta resolução (4K)</div>
+      <div class="fi"><span class="fi-check">✓</span> Versão pra imprimir e pra story</div>
+      <div class="fi"><span class="fi-check">✓</span> Você entra no sorteio de R$300 na Final</div>
+      <div class="fi"><span class="fi-check">✓</span> Garantia de 7 dias — não amou, devolvemos</div>
+      <div class="fi"><span class="fi-check">✓</span> Download imediato após pagamento</div>
+    </div>
+
+    <button class="btn-cta" onclick="goPayment()">
+      🔓 DESBLOQUEAR POR R$ 14,90
+    </button>
+    <p class="cta-sub">Pagamento 100% seguro · Pix instantâneo</p>
+  </div>
+</div>
+
+<!-- ═══ PAYMENT ═══ -->
+<div id="s-payment" class="screen">
+  <div class="pay-wrap">
+    <h2 class="pay-h">QUASE LÁ! 🎉</h2>
+    <p class="pay-sub">Pague via Pix e sua figurinha é liberada na hora.</p>
+
+    <div class="pix-box">
+      <div class="pix-lbl">⚡ Pix · Liberação instantânea</div>
+      <div class="pix-value">R$ 14,90</div>
+      <div class="pix-key" id="pix-key-txt">carregando...</div>
+      <button class="btn-copy" onclick="copyPix()">📋 Copiar chave Pix</button>
+    </div>
+
+    <div class="pay-steps">
+      <strong>📱 Como pagar em 30 segundos:</strong><br>
+      1. Abra o app do seu banco<br>
+      2. Escolha <strong>Pix → Pagar com chave</strong><br>
+      3. Cole a chave acima<br>
+      4. Confirme o valor de <strong>R$ 14,90</strong><br>
+      5. Clique no botão verde abaixo
+    </div>
+
+    <button class="btn-confirm" onclick="confirmPay()">
+      ✅ JÁ PAGUEI — LIBERAR MINHA FIGURINHA
+    </button>
+
+    <p style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:14px;text-align:center;">
+      Ao confirmar, você concorda com nossos termos. Garantia de 7 dias.
+    </p>
+  </div>
+</div>
+
+<!-- ═══ SUCCESS ═══ -->
+<div id="s-success" class="screen">
+  <div class="suc-wrap">
+    <div class="suc-icon">🎉</div>
+    <h2 class="suc-h">FIGURINHA LIBERADA!</h2>
+    <p class="suc-sub">Baixe o PDF, imprima em papel fotográfico e coloca no álbum!</p>
+
+    <canvas id="result-canvas" width="400" height="560"></canvas>
+
+    <button class="btn-dl" onclick="downloadPDF()">📥 BAIXAR PDF EM ALTA RESOLUÇÃO</button>
+    <button class="btn-share" onclick="shareWA()">📤 Compartilhar no WhatsApp</button>
+
+    <div class="upsell-box">
+      <div class="ups-h">🏅 PACK FAMÍLIA</div>
+      <p class="ups-t">Crie a figurinha da mamãe, do pai, do irmão... Mais 2 figurinhas por só <strong style="color:var(--gold)">R$9,90 cada!</strong></p>
+      <button class="btn-ups" onclick="makeAnother()">➕ QUERO O PACK FAMÍLIA — R$9,90 CADA</button>
+    </div>
+
+    <div class="raffle-conf">
+      <p style="margin-bottom:4px;"><strong>🎁 Você está no sorteio!</strong></p>
+      <p style="font-size:12px;color:rgba(255,255,255,0.7);">Você concorre a R$300 no Pix. Sorteio ao vivo na Final da Copa · Julho 2026.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────
+const CAKTO_CHECKOUT  = 'https://pay.cakto.com.br/38iwvv9_942628';
+const CAKTO_FAMILIA   = 'https://pay.cakto.com.br/3apv2oz_942634';
+const SITE_URL        = 'https://praxi-eight.vercel.app/figurinha';
+// ──────────────────────────────────────────────────────────────
+
+const state = {
+  nome: '', idade: '', posicao: 'ATACANTE',
+  numero: '10', estilo: 'ouro', apelido: '', photo: null
+};
+let step = 1;
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goQuiz() {
+  step = 1; show('s-quiz'); updateQuiz();
+}
+
+function updateQuiz() {
+  document.querySelectorAll('.qstep').forEach(q => q.classList.remove('active'));
+  const el = document.getElementById('q' + step);
+  if (el) el.classList.add('active');
+  document.getElementById('prog-fill').style.width = ((step-1)/6*100) + '%';
+  document.getElementById('step-ct').textContent = step + ' de 6';
+  document.getElementById('btn-back').style.visibility = step > 1 ? 'visible' : 'hidden';
+  if (step===2 && state.nome) document.getElementById('q2-title').textContent = 'QUANTOS ANOS O '+state.nome+' TEM?';
+  if (step===3 && state.nome) document.getElementById('q3-title').textContent = 'QUAL A POSIÇÃO DO '+state.nome+'?';
+}
+
+function quizBack() {
+  if (step > 1) { step--; updateQuiz(); } else show('s-landing');
+}
+
+function nextQ(to) {
+  if (step===1) {
+    state.nome = (document.getElementById('inp-nome').value||'').trim().toUpperCase();
+    if (!state.nome) { document.getElementById('inp-nome').style.borderColor='#ff4444'; document.getElementById('inp-nome').focus(); return; }
+  }
+  if (step===4) {
+    const v = document.getElementById('inp-num').value;
+    if (v) state.numero = v;
+    if (!state.numero) { alert('Escolha ou digite um número!'); return; }
+  }
+  step = to; updateQuiz();
+}
+
+function selOpt(key, val, btn) {
+  state[key] = val;
+  btn.closest('.opt-grid').querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  setTimeout(() => nextQ(step+1), 280);
+}
+
+function selNum(n, btn) {
+  state.numero = n;
+  document.getElementById('inp-num').value = '';
+  document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function clearNums() {
+  state.numero = '';
+  document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('sel'));
+}
+
+function onPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.photo = e.target.result;
+    const prev = document.getElementById('photo-preview-img');
+    prev.src = e.target.result; prev.style.display = 'block';
+    document.getElementById('upload-zone').innerHTML =
+      '<div class="uz-icon">✅</div><div class="uz-title">Foto enviada!</div><div class="uz-hint">Toque aqui para trocar</div>';
+    document.getElementById('btn-gerar').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── GENERATION ─────────────────────────────────────────────
+function startGen() {
+  state.apelido = (document.getElementById('inp-apelido').value||'').toUpperCase();
+  show('s-gen');
+
+  // Tenta tocar o vídeo VSL (só aparece se vsl.mp4 existir)
+  const vid = document.getElementById('gen-video');
+  vid.load();
+  vid.play().then(() => {
+    vid.style.display = 'block';
+    document.getElementById('gen-anim-fallback').style.display = 'none';
+  }).catch(() => { vid.style.display = 'none'; });
+
+  const tl = [
+    {pct:22, gs:'gs1', t:700},
+    {pct:55, gs:'gs2', t:1600},
+    {pct:80, gs:'gs3', t:2500},
+    {pct:100,gs:'gs4', t:3400},
+  ];
+
+  tl.forEach((item, i) => {
+    setTimeout(() => {
+      document.getElementById('gen-fill').style.width = item.pct + '%';
+      document.getElementById('gen-pct').textContent = item.pct + '%';
+      tl.slice(0,i).forEach(p => { const e=document.getElementById(p.gs); e.classList.remove('active'); e.classList.add('done'); });
+      document.getElementById(item.gs).classList.add('active');
+      if (i === tl.length-1) {
+        setTimeout(() => {
+          renderFigurinha(() => {
+            const gc = document.getElementById('gen-canvas');
+            const pc = document.getElementById('pw-canvas');
+            pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
+            document.getElementById('pw-nome').textContent = state.nome;
+            show('s-paywall');
+          });
+        }, 600);
+      }
+    }, item.t);
+  });
+}
+
+// ─── CANVAS RENDERING ───────────────────────────────────────
+function renderFigurinha(cb) {
+  const canvas = document.getElementById('gen-canvas');
+  const ctx = canvas.getContext('2d');
+  const W=800, H=1120;
+  canvas.width=W; canvas.height=H;
+
+  const STYLES = {
+    ouro:   {bg1:'#1e8c36',bg2:'#0a4c18',border:'#FFD700',accent:'#FFD700',hText:'#041a08',strip:'rgba(0,0,0,0.68)'},
+    lendas: {bg1:'#1a2a7c',bg2:'#0a1240',border:'#C0C0C0',accent:'#C0C0C0',hText:'#0a1240',strip:'rgba(0,0,30,0.72)'},
+    raio:   {bg1:'#3a7c10',bg2:'#1a4c05',border:'#CCFF00',accent:'#CCFF00',hText:'#1a3c00',strip:'rgba(0,20,0,0.72)'},
+    campeao:{bg1:'#1a0a5c',bg2:'#080328',border:'#FFD700',accent:'#FFD700',hText:'#080328',strip:'rgba(0,0,20,0.78)'},
+  };
+  const S = STYLES[state.estilo] || STYLES.ouro;
+
+  // BG
+  const grd = ctx.createLinearGradient(0,0,W,H);
+  grd.addColorStop(0, S.bg1); grd.addColorStop(1, S.bg2);
+  ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
+
+  // diagonal stripes
+  ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=2;
+  for(let i=-H;i<W+H;i+=36){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}
+  ctx.restore();
+
+  // Outer border
+  ctx.strokeStyle=S.border; ctx.lineWidth=14;
+  rrect(ctx,18,18,W-36,H-36,26); ctx.stroke();
+
+  // Inner border
+  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=3;
+  rrect(ctx,34,34,W-68,H-68,18); ctx.stroke();
+
+  // HEADER
+  ctx.fillStyle=S.accent;
+  ctx.beginPath(); ctx.roundRect(34,34,W-68,108,[18,18,0,0]); ctx.fill();
+  ctx.fillStyle=S.hText; ctx.font='bold 30px Arial'; ctx.textAlign='center';
+  ctx.fillText('★  COPA DO MUNDO 2026  ★', W/2, 72);
+  ctx.font='40px Arial'; ctx.fillText('⚽', W/2, 118);
+
+  // PHOTO AREA
+  const PX=42, PY=150, PW=W-84, PH=610;
+
+  const drawBot = () => {
+    // Gradient fade over bottom of photo
+    const fg = ctx.createLinearGradient(0, PY+PH*0.55, 0, PY+PH);
+    fg.addColorStop(0,'rgba(0,0,0,0)'); fg.addColorStop(1,'rgba(0,0,0,0.8)');
+    ctx.fillStyle=fg; ctx.fillRect(PX,PY,PW,PH);
+
+    const BY = PY+PH, BH = H-BY-34;
+    ctx.fillStyle=S.strip; ctx.fillRect(34,BY,W-68,BH);
+    ctx.fillStyle=S.accent; ctx.fillRect(38,BY,W-76,6);
+
+    // Number
+    ctx.fillStyle=S.accent; ctx.font='bold 120px Arial'; ctx.textAlign='left';
+    ctx.fillText('#'+state.numero, 52, BY+130);
+
+    // Name
+    const dName = state.apelido || state.nome;
+    let fs=68; ctx.font='bold '+fs+'px Arial'; ctx.textAlign='center';
+    while(ctx.measureText(dName).width > W-200 && fs>30){fs-=2; ctx.font='bold '+fs+'px Arial';}
+    ctx.fillStyle='#FFFFFF'; ctx.fillText(dName, W/2, BY+120);
+
+    // Position
+    ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font='34px Arial'; ctx.textAlign='center';
+    ctx.fillText(state.posicao, W/2, BY+168);
+
+    // Flag
+    ctx.font='58px Arial'; ctx.textAlign='right';
+    ctx.fillText('🇧🇷', W-52, BY+136);
+
+    // Edition
+    ctx.fillStyle=S.accent; ctx.font='bold 26px Arial'; ctx.textAlign='center';
+    ctx.fillText('★  EDIÇÃO ESPECIAL COPA 2026  ★', W/2, H-52);
+
+    // Sync to result canvas
+    const rc=document.getElementById('result-canvas');
+    rc.getContext('2d').drawImage(canvas,0,0,rc.width,rc.height);
+    if(cb) cb();
+  };
+
+  if (state.photo) {
+    const img = new Image();
+    img.onload = () => {
+      ctx.save(); ctx.beginPath(); ctx.rect(PX,PY,PW,PH); ctx.clip();
+      const sc=Math.max(PW/img.width,PH/img.height);
+      const dw=img.width*sc, dh=img.height*sc;
+      ctx.drawImage(img, PX+(PW-dw)/2, PY+(PH-dh)/2, dw, dh);
+      ctx.restore(); drawBot();
+    };
+    img.src = state.photo;
+  } else {
+    ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fillRect(PX,PY,PW,PH);
+    ctx.font='160px Arial'; ctx.textAlign='center'; ctx.fillText('👦',W/2,PY+PH/2+50);
+    drawBot();
+  }
+}
+
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+// ─── PAYMENT ────────────────────────────────────────────────
+function goPayment() {
+  // Salva estado + canvas antes de sair da página
+  saveSessionState();
+  // Redireciona pro checkout Cakto
+  window.location.href = CAKTO_CHECKOUT;
+}
+
+function saveSessionState() {
+  try {
+    sessionStorage.setItem('fc_state', JSON.stringify({
+      nome: state.nome, idade: state.idade, posicao: state.posicao,
+      numero: state.numero, estilo: state.estilo, apelido: state.apelido
+    }));
+    const gc = document.getElementById('gen-canvas');
+    if (gc.width > 0) sessionStorage.setItem('fc_canvas', gc.toDataURL('image/png'));
+  } catch(e) { console.warn('sessionStorage error:', e); }
+}
+
+function restoreSessionState(cb) {
+  try {
+    const saved = sessionStorage.getItem('fc_state');
+    const canvasData = sessionStorage.getItem('fc_canvas');
+    if (saved) Object.assign(state, JSON.parse(saved));
+    if (canvasData) {
+      const img = new Image();
+      img.onload = () => {
+        const gc = document.getElementById('gen-canvas');
+        gc.width = 800; gc.height = 1120;
+        gc.getContext('2d').drawImage(img, 0, 0, gc.width, gc.height);
+        const rc = document.getElementById('result-canvas');
+        rc.getContext('2d').drawImage(img, 0, 0, rc.width, rc.height);
+        if (cb) cb();
+      };
+      img.src = canvasData;
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// Detecta retorno do Cakto com ?liberado=1
+function checkPaidReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('liberado') === '1') {
+    // Limpa URL sem recarregar
+    window.history.replaceState({}, '', window.location.pathname);
+    // Restaura figurinha e mostra tela de sucesso
+    const hasCanvas = restoreSessionState(() => show('s-success'));
+    if (!hasCanvas) show('s-success'); // sem canvas salvo, mostra tela mesmo assim
+  }
+}
+
+// ─── PDF ────────────────────────────────────────────────────
+function downloadPDF() {
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const canvas = document.getElementById('gen-canvas');
+  const img = canvas.toDataURL('image/png');
+
+  doc.setFillColor(255,255,255); doc.rect(0,0,210,297,'F');
+  doc.setFontSize(8); doc.setTextColor(130,130,130);
+  doc.text('FIGURINHA COPA 2026 · '+(state.nome||'CRAQUE')+' · Imprima em papel fotográfico', 105,9,{align:'center'});
+
+  // Grande (para emoldurar)
+  const big={w:88,h:123}; const bx=(210-big.w)/2;
+  doc.addImage(img,'PNG',bx,13,big.w,big.h);
+  doc.setFontSize(7); doc.setTextColor(160,160,160);
+  doc.text('Tamanho para emoldurar', 105, 13+big.h+4, {align:'center'});
+
+  // Linha divisória
+  doc.setDrawColor(220,220,220); doc.setLineWidth(0.3);
+  doc.line(20, 13+big.h+9, 190, 13+big.h+9);
+
+  // Tamanho álbum (×4)
+  const alb={w:34,h:48}; const ay=13+big.h+14;
+  doc.setFontSize(7); doc.setTextColor(120,120,120);
+  doc.text('Tamanho álbum · Recorte e cole no pacotinho', 105, ay-1, {align:'center'});
+  for(let i=0;i<4;i++) doc.addImage(img,'PNG', 22+i*(alb.w+6), ay+3, alb.w, alb.h);
+
+  // Linha divisória
+  const ay2=ay+alb.h+10;
+  doc.line(20, ay2, 190, ay2);
+
+  // Mini (×7)
+  const sml={w:21,h:29}; const sy=ay2+5;
+  doc.setFontSize(7);
+  doc.text('Mini · Adesivo, chaveiro ou story', 105, sy, {align:'center'});
+  for(let i=0;i<7;i++) doc.addImage(img,'PNG', 14+i*(sml.w+4), sy+4, sml.w, sml.h);
+
+  doc.setFontSize(7); doc.setTextColor(170,170,170);
+  doc.text('Dica: papel fotográfico glossy para melhor resultado. Tamanho figurinha real: 6.5×9.1cm.', 105, 293, {align:'center'});
+
+  doc.save('figurinha-'+(state.nome||'craque').toLowerCase().replace(/\s+/g,'-')+'-copa2026.pdf');
+}
+
+// ─── SHARE ──────────────────────────────────────────────────
+function shareWA() {
+  const txt = encodeURIComponent('🇧🇷⚽ Olha a figurinha da Copa 2026 que eu fiz pro '+state.nome+'! Ficou INCRÍVEL!\nFaz a do seu filho também 👉 '+SITE_URL);
+  window.open('https://wa.me/?text='+txt,'_blank');
+}
+
+function makeAnother() {
+  window.open(CAKTO_FAMILIA, '_blank');
+}
+
+function makeAnotherQuiz() {
+  state.photo=null;
+  document.getElementById('photo-preview-img').style.display='none';
+  document.getElementById('upload-zone').innerHTML='<div class="uz-icon">📸</div><div class="uz-title">Toque para enviar a foto</div><div class="uz-hint">JPG, PNG ou HEIC · até 10MB</div>';
+  document.getElementById('btn-gerar').disabled=true;
+  step=1; show('s-quiz'); updateQuiz();
+}
+
+// Init — verifica retorno do Cakto
+checkPaidReturn();
+</script>
+</body>
+</html>
