@@ -1002,10 +1002,23 @@ function startGen() {
     const e = document.getElementById(gs); if(e) e.classList.add('active');
   };
 
-  // Processar foto com Gemini e gerar canvas (redimensiona antes para evitar limite de tamanho)
-  resizeForGemini(state.photo).then(small => processPhotoGemini(small)).then(processed => {
-    if (processed) state.photo = processed;
-    renderFigurinha(() => { canvasDone = true; tryProceed(); });
+  // Gemini gera a figurinha completa — sem fallback de canvas
+  resizeForGemini(state.photo).then(small => processPhotoGemini(small)).then(geminiImg => {
+    if (geminiImg) {
+      // ✅ Gemini gerou — desenha no canvas (apenas para exportar para Z-API)
+      const gc = document.getElementById('gen-canvas');
+      const img = new Image();
+      img.onload = () => {
+        gc.width = 800; gc.height = 1061;
+        gc.getContext('2d').drawImage(img, 0, 0, 800, 1061);
+        canvasDone = true; tryProceed();
+      };
+      img.src = geminiImg;
+    } else {
+      // ❌ Gemini falhou — mostra erro com botão de tentar de novo
+      const fb = document.getElementById('gen-anim-fallback');
+      if (fb) fb.innerHTML = '<p style="color:#f44;font-size:16px;text-align:center;padding:20px">Não foi possível gerar a figurinha.<br>Verifique sua foto e tente novamente.</p><button class="btn-cta" onclick="show(\'s-quiz\')" style="margin-top:16px">🔄 Tentar novamente</button>';
+    }
   });
 
   // VSL video
@@ -1063,31 +1076,102 @@ async function resizeForGemini(dataUrl, maxDim = 1024) {
   });
 }
 
-// ─── GEMINI API — gera figurinha completa estilo Panini ────
-const ESTILOS_PANINI = {
-  'comum':      'estilo cromo oficial Panini FIFA World Cup 2026, fundo verde e amarelo brasileiro, acabamento fosco, design limpo com faixa CBF verde na base, escudo da Seleção Brasileira no peito',
-  'metalizado': 'estilo figurinha especial metalizada Panini Copa 2026, fundo holográfico metálico arco-íris brilhante, efeito foil dourado nas bordas, letras em relevo prateado, super brilhante',
-  'ouro':       'estilo variante Ouro raríssima Panini Copa 2026, fundo completamente dourado brilhante com estrelas, moldura gold premium, efeito metalizado dourado intenso, indicação GOLD VARIANT',
-  'lendas':     'estilo LEGENDS card Panini Copa 2026, fundo preto premium com detalhes dourados, estilo das 20 maiores lendas do mundo como Vinicius Jr, design épico com auréola dourada, texto LENDA DA COPA 2026'
+// ─── GEMINI — DIREÇÃO DE ARTE RÍGIDA ────────────────────────
+
+const REGRAS_GERAIS = `
+Utilize EXCLUSIVAMENTE a foto enviada como referência facial.
+Preserve completamente a identidade da criança — ela deve ser imediatamente reconhecível.
+NÃO alterar: formato do rosto, olhos, nariz, boca, orelhas, sobrancelhas, tom de pele, proporções faciais.
+Remover totalmente o fundo da foto original.
+Mostrar apenas cabeça, pescoço e parte superior dos ombros.
+Adicionar apenas uma camisa de futebol limpa e moderna, sem patrocinadores, sem logotipos reais.
+Não adicionar barba. Não envelhecer a criança. Não deixar aparência de IA.
+Fotografia extremamente realista. Nitidez muito alta. Iluminação de estúdio profissional.
+Olhando para frente. Expressão leve e natural. Qualidade fotográfica de estúdio.
+Aspect ratio 49 x 65 mm (proporção aproximada 0,754). 300 DPI. Preparada para impressão. Vertical. Margens uniformes.`;
+
+const NEGATIVE_PROMPT = `
+RESTRIÇÕES ABSOLUTAS — nunca fazer:
+Não alterar a identidade. Não criar rosto diferente. Não gerar aparência artificial.
+Não gerar desenho, cartoon, anime, 3D, pintura ou ilustração.
+Não modificar idade, gênero ou tom de pele.
+Não adicionar acessórios, chapéu, óculos, barba ou maquiagem.
+Não adicionar fundo. Não cortar cabeça. Não desfocar rosto.
+Não deformar olhos, boca, nariz ou orelhas.
+Não gerar dedos ou corpo inteiro. Não adicionar objetos.
+Não adicionar textos extras, marcas, logotipos ou patrocinadores.
+Sem watermark. Sem assinatura. Sem molduras diferentes das especificadas. Máxima fidelidade facial.`;
+
+const ESTILOS_FIGURINHA = {
+  comum: (s) => `Criar uma figurinha colecionável inspirada nas clássicas figurinhas de Copa do Mundo.
+Visual limpo. Fundo branco com leve textura. Borda branca fina.
+Na parte superior, centralizado: nome "${s.nome}".
+No canto superior esquerdo: idade "${s.idade}".
+No canto superior direito: posição "${s.posicao}".
+Na parte inferior: apelido "${s.apelido}".
+No rodapé: número da camisa "${s.numero}".
+A fotografia deve ocupar praticamente toda a figurinha.
+Sem efeitos especiais. Sem brilhos. Sem metal. Visual clássico. Aparência de coleção oficial.`,
+
+  metalizado: (s) => `Criar uma figurinha colecionável premium inspirada nas versões metalizadas das figurinhas de Copa.
+Mesmo layout da figurinha clássica.
+Na parte superior, centralizado: nome "${s.nome}".
+No canto superior esquerdo: idade "${s.idade}".
+No canto superior direito: posição "${s.posicao}".
+Na parte inferior: apelido "${s.apelido}".
+No rodapé: número da camisa "${s.numero}".
+Adicionar acabamento holográfico prateado. Reflexos metálicos discretos. Textura foil. Brilho elegante. Linhas holográficas suaves.
+Não esconder o rosto. Não alterar as cores naturais da pele. Visual premium. Sensação de item raro.`,
+
+  ouro: (s) => `Criar uma figurinha colecionável edição ouro.
+Layout semelhante ao modelo clássico.
+Na parte superior, centralizado: nome "${s.nome}".
+No canto superior esquerdo: idade "${s.idade}".
+No canto superior direito: posição "${s.posicao}".
+Na parte inferior: apelido "${s.apelido}".
+No rodapé: número da camisa "${s.numero}".
+Adicionar moldura dourada metálica. Detalhes premium em ouro. Reflexos dourados discretos.
+Fundo branco com padrões dourados suaves. Visual extremamente sofisticado. Sensação de figurinha ultra rara.
+O rosto deve permanecer totalmente natural. Não exagerar nos efeitos.`,
+
+  familia: (s) => `Criar uma figurinha colecionável familiar inspirada nas clássicas figurinhas de Copa do Mundo.
+Utilizar exatamente as pessoas presentes na foto. Preservar totalmente a identidade de cada pessoa.
+Não criar pessoas novas. Não remover pessoas. Remover totalmente o fundo original.
+Adicionar camisas de futebol iguais para todos, sem patrocinadores, sem logotipos reais.
+Organizar em composição harmônica: adultos atrás, crianças na frente, todos olhando para a câmera, expressão natural.
+No topo, centralizado: "Família ${s.apelido}".
+Na parte inferior: apelido "${s.apelido}".
+Visual inspirado em figurinhas clássicas de Copa. Aspect ratio 49 x 65 mm. 300 DPI. Preparada para impressão.
+Sem logotipos. Sem patrocinadores. Sem marcas. Fotografia extremamente realista. Alta nitidez. Qualidade de estúdio.`,
+
+  lendas: (s) => `Criar uma figurinha especial colecionável "Lendas da Copa".
+Visual épico e premium.
+Na parte superior, centralizado: nome "${s.nome}".
+No canto superior esquerdo: idade "${s.idade}".
+No canto superior direito: posição "${s.posicao}".
+Na parte inferior: apelido "${s.apelido}".
+No rodapé: número da camisa "${s.numero}".
+Fundo com estádio desfocado. Luzes suaves. Faixas luminosas discretas. Moldura premium.
+Elementos gráficos inspirados em grandes momentos do futebol.
+A criança continua sendo a protagonista absoluta.
+Não adicionar troféus reais, logotipos ou marcas. Visual digno de um jogador lendário.`,
 };
 
 async function processPhotoGemini(dataUrl) {
-  if (!dataUrl) return dataUrl;
-  const estiloDesc = ESTILOS_PANINI[state.estilo] || ESTILOS_PANINI['comum'];
+  if (!dataUrl) return null;
+  const s = {
+    nome:    (state.nome    || 'CRAQUE').toUpperCase(),
+    apelido: (state.apelido || state.nome || 'CRAQUE').toUpperCase(),
+    idade:   state.idade  || '',
+    posicao: (state.posicao || 'ATACANTE').toUpperCase(),
+    numero:  state.numero || '10',
+  };
+  const estiloFn = ESTILOS_FIGURINHA[state.estilo] || ESTILOS_FIGURINHA['comum'];
+  const prompt = estiloFn(s) + '\n\n' + REGRAS_GERAIS + '\n\n' + NEGATIVE_PROMPT;
+
   try {
     const base64 = dataUrl.split(',')[1];
     const mime   = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
-    const prompt = `Crie uma figurinha oficial Panini FIFA World Cup 2026 desta criança/pessoa.
-
-INSTRUÇÕES OBRIGATÓRIAS:
-- Mantenha EXATAMENTE o mesmo rosto, expressão e feições da foto enviada
-- Vista-a com a camisa amarela da Seleção Brasileira (número ${state.numero||10} na frente, escudo CBF no peito, gola verde)
-- Fundo e design: ${estiloDesc}
-- Nome "${(state.nome||'CRAQUE').toUpperCase()}" em destaque na faixa inferior
-- Posição: ${state.posicao||'ATACANTE'} na parte de baixo
-- Formato retrato, enquadramento do busto para cima
-- Qualidade altíssima, estilo cartão colecionável oficial, foto realista não cartoon`;
-
     const res = await fetch('/api/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1107,8 +1191,8 @@ INSTRUÇÕES OBRIGATÓRIAS:
     const part = json.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
     if (part) return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
     console.warn('Gemini sem imagem (resposta OK mas sem inlineData):', JSON.stringify(json).slice(0,400));
-  } catch(e) { console.error('Gemini fetch error:', e.message); }
-  return dataUrl; // fallback: usa foto original com canvas
+  } catch(e) { console.error('Gemini error:', e.message); }
+  return null;
 }
 
 // ─── CANVAS RENDERING ───────────────────────────────────────
