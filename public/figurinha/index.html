@@ -1376,10 +1376,14 @@ function rrect(ctx,x,y,w,h,r){
 
 // ─── PAYMENT ────────────────────────────────────────────────
 function goPayment() {
-  // MODO TESTE — remove essa linha quando quiser ativar o checkout
-  saveSessionState(); window.location.href = window.location.pathname + '?liberado=1'; return;
-  // Checkout real (descomentar quando pronto):
-  // saveSessionState(); window.location.href = CAKTO_CHECKOUT;
+  saveSessionState();
+  
+  // PARA TESTAR GERAÇÕES (comente as 2 linhas abaixo para ativar o checkout real)
+  // window.location.href = window.location.pathname + '?liberado=1'; 
+  // return;
+
+  // CHECKOUT REAL (Kiwify/Cakto)
+  window.location.href = CAKTO_CHECKOUT;
 }
 
 function saveSessionState() {
@@ -1418,24 +1422,35 @@ function restoreSessionState(cb) {
 // Detecta retorno do Cakto com ?liberado=1
 function checkPaidReturn() {
   const params = new URLSearchParams(window.location.search);
+  // O parâmetro 'liberado=1' deve ser configurado como URL de retorno no Kiwify
   if (params.get('liberado') === '1') {
+    // Salva no localStorage que o usuário pagou para persistir se ele atualizar a página
+    localStorage.setItem('fc_paid', 'true');
     window.history.replaceState({}, '', window.location.pathname);
+  }
+
+  // Se estiver pago (via URL ou via localStorage), mostra a tela de sucesso
+  if (localStorage.getItem('fc_paid') === 'true') {
     const afterRestore = () => {
-      // Preenche canvas de thumbnail da tela wpp
       const gc = document.getElementById('gen-canvas');
       const tc = document.getElementById('wpp-thumb-canvas');
       if (tc && gc.width > 0) tc.getContext('2d').drawImage(gc, 0, 0, tc.width, tc.height);
       const rc = document.getElementById('result-canvas');
       if (rc && gc.width > 0) rc.getContext('2d').drawImage(gc, 0, 0, rc.width, rc.height);
       const wn = document.getElementById('wpp-nome'); if (wn) wn.textContent = state.nome;
-      // Preenche sorteio se já existia
+      
       const saved = sessionStorage.getItem('fc_sorteio');
       if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
       const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
       show('s-wpp');
     };
+    
     const hasCanvas = restoreSessionState(afterRestore);
-    if (!hasCanvas) { const sd=document.getElementById('sorteio-data-txt');if(sd)sd.textContent=SORTEIO_DATA; show('s-wpp'); }
+    // Se não tem a figurinha no estado mas está pago, volta pro início (segurança)
+    if (!hasCanvas) {
+       localStorage.removeItem('fc_paid');
+       show('s-landing');
+    }
   }
 }
 
