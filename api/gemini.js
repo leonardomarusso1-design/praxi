@@ -4,8 +4,9 @@ export const config = { api: { bodyParser: { sizeLimit: '10mb' } }, maxDuration:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const key = process.env.GEMINI_KEY;
-  if (!key) return res.status(500).json({ error: 'GEMINI_KEY não configurada' });
+  // Aceita tanto GEMINI_KEY quanto GEMINI_API_KEY para compatibilidade
+  const key = process.env.GEMINI_KEY || process.env.GEMINI_API_KEY;
+  if (!key) return res.status(500).json({ error: 'GEMINI_KEY ou GEMINI_API_KEY não configurada' });
 
   // Modelo correto para geração de imagem com input de imagem
   // gemini-2.0-flash-exp ou gemini-2.0-pro-exp-02-05
