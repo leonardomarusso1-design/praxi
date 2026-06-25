@@ -8,8 +8,8 @@ export default async function handler(req, res) {
   if (!key) return res.status(500).json({ error: 'GEMINI_KEY não configurada' });
 
   // Modelo correto para geração de imagem com input de imagem
-  // gemini-2.0-flash-preview-image-generation = modelo oficial para image output
-  const MODEL = 'gemini-2.0-flash-preview-image-generation';
+  // gemini-2.0-flash-exp suporta responseModalities IMAGE via v1beta
+  const MODEL = 'gemini-2.0-flash-exp';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
 
   try {
