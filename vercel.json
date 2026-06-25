@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/gemini.js": {
+      "maxDuration": 60
+    },
+    "api/send-whatsapp.js": {
+      "maxDuration": 30
+    }
+  }
+}

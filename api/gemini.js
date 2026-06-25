@@ -1,4 +1,4 @@
-export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+export const config = { api: { bodyParser: { sizeLimit: '10mb' } }, maxDuration: 60 };
 
 // Vercel Serverless Function — proxy para Gemini image generation
 export default async function handler(req, res) {

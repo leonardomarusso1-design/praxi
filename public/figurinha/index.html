@@ -718,7 +718,7 @@
   <p class="gen-sub">Não saia da tela! Leva até 30 segundos.</p>
 
   <!-- Vídeo VSL com áudio — sem loop, sem mute -->
-  <video id="gen-video" autoplay playsinline
+  <video id="gen-video" playsinline
     style="width:240px;border-radius:16px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:none">
     <source src="/figurinha/vsl.mp4" type="video/mp4">
   </video>
@@ -1024,9 +1024,14 @@ function startGen() {
       };
       img.src = geminiImg;
     } else {
-      // ❌ Gemini falhou — mostra erro com botão de tentar de novo
+      // ❌ Gemini falhou — para o vídeo e mostra erro visível
+      try { vid.pause(); vid.currentTime = 0; } catch(e) {}
+      vid.style.display = 'none';
       const fb = document.getElementById('gen-anim-fallback');
-      if (fb) fb.innerHTML = '<p style="color:#f44;font-size:16px;text-align:center;padding:20px">Não foi possível gerar a figurinha.<br>Verifique sua foto e tente novamente.</p><button class="btn-cta" onclick="show(\'s-quiz\')" style="margin-top:16px">🔄 Tentar novamente</button>';
+      if (fb) {
+        fb.style.display = 'block';
+        fb.innerHTML = '<div style="text-align:center;padding:30px 20px"><p style="color:#f66;font-size:17px;margin-bottom:16px">⚠️ Não foi possível gerar a figurinha.<br>Tente com uma foto diferente ou tente novamente.</p><button class="btn-cta" onclick="show(\'s-quiz\')" style="width:100%">🔄 Tentar novamente</button></div>';
+      }
     }
   });
 
