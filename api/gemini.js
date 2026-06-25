@@ -18,12 +18,18 @@ export default async function handler(req, res) {
     const body = req.body;
 
     // Limpando o body para garantir que não enviamos parâmetros conflitantes
+    // Modelos Pro e Flash 2.0 exigem enquadramento rigoroso do body
     const cleanBody = {
       contents: body.contents,
       generationConfig: {
-        responseModalities: ["IMAGE", "TEXT"]
+        responseModalities: ["IMAGE"]
       },
-      safetySettings: body.safetySettings
+      safetySettings: body.safetySettings || [
+        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+      ]
     };
 
     const upstream = await fetch(url, {
