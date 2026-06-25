@@ -495,7 +495,7 @@
 <!-- ═══ LANDING ═══ -->
 <div id="s-landing" class="screen active">
   <div class="urgency-bar">
-    🔥 PROMOÇÃO RELÂMPAGO · DE R$40,90 POR R$19,90 · TERMINA ÀS 23:59 🔥
+    🔥 PROMOÇÃO RELÂMPAGO · DE R$40,90 POR R$14,90 · HOJE APENAS 🔥
   </div>
 
   <div class="land-nav">
@@ -580,7 +580,7 @@
   </div>
 
   <div style="padding: 24px 20px; text-align: center;">
-    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$19,90</button>
+    <button class="btn-cta" onclick="goQuiz()">⚽ CRIAR MINHA FIGURINHA — R$14,90</button>
     <p class="cta-sub">Garantia: Se não ficou incrível, devolvemos o dinheiro em 7 dias.</p>
   </div>
 
@@ -766,7 +766,7 @@
 
     <div class="price-wrap">
       <div class="price-old">De R$ 40,90</div>
-      <div class="price-new">R$ 19,90</div>
+      <div class="price-new">R$ 14,90</div>
       <span class="price-badge">⚡ PROMOÇÃO VÁLIDA SÓ HOJE</span>
     </div>
 
@@ -779,7 +779,7 @@
     </div>
 
     <button class="btn-cta" onclick="goPayment()">
-      🔓 DESBLOQUEAR POR R$ 19,90
+      🔓 DESBLOQUEAR POR R$ 14,90
     </button>
     <p class="cta-sub">Pagamento 100% seguro · Pix instantâneo</p>
   </div>
@@ -793,7 +793,7 @@
 
     <div class="pix-box">
       <div class="pix-lbl">⚡ Pix · Liberação instantânea</div>
-      <div class="pix-value">R$ 19,90</div>
+      <div class="pix-value">R$ 14,90</div>
       <div class="pix-key" id="pix-key-txt">carregando...</div>
       <button class="btn-copy" onclick="copyPix()">📋 Copiar chave Pix</button>
     </div>
@@ -803,7 +803,7 @@
       1. Abra o app do seu banco<br>
       2. Escolha <strong>Pix → Pagar com chave</strong><br>
       3. Cole a chave acima<br>
-      4. Confirme o valor de <strong>R$ 19,90</strong><br>
+      4. Confirme o valor de <strong>R$ 14,90</strong><br>
       5. Clique no botão verde abaixo
     </div>
 
@@ -1244,10 +1244,10 @@ function rrect(ctx,x,y,w,h,r){
 
 // ─── PAYMENT ────────────────────────────────────────────────
 function goPayment() {
-  // Salva estado + canvas antes de sair da página
-  saveSessionState();
-  // Redireciona pro checkout Cakto
-  window.location.href = CAKTO_CHECKOUT;
+  // MODO TESTE — remove essa linha quando quiser ativar o checkout
+  saveSessionState(); window.location.href = window.location.pathname + '?liberado=1'; return;
+  // Checkout real (descomentar quando pronto):
+  // saveSessionState(); window.location.href = CAKTO_CHECKOUT;
 }
 
 function saveSessionState() {
