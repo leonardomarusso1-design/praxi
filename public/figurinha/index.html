@@ -1093,16 +1093,14 @@ async function resizeForGemini(dataUrl, maxDim = 1024) {
 // ─── GEMINI — DIREÇÃO DE ARTE RÍGIDA ────────────────────────
 
 const REGRAS_GERAIS = `
-Utilize EXCLUSIVAMENTE a foto enviada como referência facial.
-Preserve completamente a identidade da criança — ela deve ser imediatamente reconhecível.
+Utilize EXCLUSIVAMENTE a pessoa da foto enviada como referência.
+Preserve 100% a identidade da pessoa — ela deve ser imediatamente reconhecível, mantendo traços, idade e etnia.
 NÃO alterar: formato do rosto, olhos, nariz, boca, orelhas, sobrancelhas, tom de pele, proporções faciais.
-Remover totalmente o fundo da foto original.
-Mostrar apenas cabeça, pescoço e parte superior dos ombros.
-Adicionar apenas uma camisa de futebol limpa e moderna, sem patrocinadores, sem logotipos reais.
-Não adicionar barba. Não envelhecer a criança. Não deixar aparência de IA.
-Fotografia extremamente realista. Nitidez muito alta. Iluminação de estúdio profissional.
-Olhando para frente. Expressão leve e natural. Qualidade fotográfica de estúdio.
-Aspect ratio 49 x 65 mm (proporção aproximada 0,754). 300 DPI. Preparada para impressão. Vertical. Margens uniformes.`;
+REMOÇÃO DE FUNDO: Remova 100% do fundo original da foto. Substitua por um fundo de estúdio limpo ou o fundo especificado no estilo.
+ENQUADRAMENTO: Mostre apenas da cabeça até a parte superior dos ombros (estilo busto de figurinha).
+VESTIMENTA: Adicione uma camisa de futebol de seleção (Brasil), limpa e moderna, sem logotipos de marcas ou patrocinadores.
+QUALIDADE: Fotografia hiper-realista, nitidez extrema, iluminação de estúdio profissional.
+Aparência natural, sem filtros exagerados de IA.`;
 
 const NEGATIVE_PROMPT = `
 RESTRIÇÕES ABSOLUTAS — nunca fazer:
@@ -1117,25 +1115,15 @@ Não adicionar textos extras, marcas, logotipos ou patrocinadores.
 Sem watermark. Sem assinatura. Sem molduras diferentes das especificadas. Máxima fidelidade facial.`;
 
 const ESTILOS_FIGURINHA = {
-  comum: (s) => `Criar uma figurinha colecionável inspirada nas clássicas figurinhas de Copa do Mundo.
-Visual limpo. Fundo branco com leve textura. Borda branca fina.
-Na parte superior, centralizado: nome "${s.nome}".
-No canto superior esquerdo: idade "${s.idade}".
-No canto superior direito: posição "${s.posicao}".
-Na parte inferior: apelido "${s.apelido}".
-No rodapé: número da camisa "${s.numero}".
-A fotografia deve ocupar praticamente toda a figurinha.
-Sem efeitos especiais. Sem brilhos. Sem metal. Visual clássico. Aparência de coleção oficial.`,
+	  comum: (s) => `Criar uma figurinha colecionável de Copa do Mundo.
+    Visual clássico Panini. Fundo branco limpo. Borda branca.
+    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
+    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
 
-  metalizado: (s) => `Criar uma figurinha colecionável premium inspirada nas versões metalizadas das figurinhas de Copa.
-Mesmo layout da figurinha clássica.
-Na parte superior, centralizado: nome "${s.nome}".
-No canto superior esquerdo: idade "${s.idade}".
-No canto superior direito: posição "${s.posicao}".
-Na parte inferior: apelido "${s.apelido}".
-No rodapé: número da camisa "${s.numero}".
-Adicionar acabamento holográfico prateado. Reflexos metálicos discretos. Textura foil. Brilho elegante. Linhas holográficas suaves.
-Não esconder o rosto. Não alterar as cores naturais da pele. Visual premium. Sensação de item raro.`,
+	  metalizado: (s) => `Criar uma figurinha METALIZADA (Silver Foil) de Copa do Mundo.
+    Efeito holográfico prateado e brilhante.
+    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
+    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
 
   ouro: (s) => `Criar uma figurinha colecionável EXTRA RARA Edição Ouro (Gold Edition), idêntica às figurinhas lendárias da Panini.
     Layout oficial de figurinha de Copa.
@@ -1159,17 +1147,10 @@ Na parte inferior: apelido "${s.apelido}".
 Visual inspirado em figurinhas clássicas de Copa. Aspect ratio 49 x 65 mm. 300 DPI. Preparada para impressão.
 Sem logotipos. Sem patrocinadores. Sem marcas. Fotografia extremamente realista. Alta nitidez. Qualidade de estúdio.`,
 
-  lendas: (s) => `Criar uma figurinha especial colecionável "Lendas da Copa".
-Visual épico e premium.
-Na parte superior, centralizado: nome "${s.nome}".
-No canto superior esquerdo: idade "${s.idade}".
-No canto superior direito: posição "${s.posicao}".
-Na parte inferior: apelido "${s.apelido}".
-No rodapé: número da camisa "${s.numero}".
-Fundo com estádio desfocado. Luzes suaves. Faixas luminosas discretas. Moldura premium.
-Elementos gráficos inspirados em grandes momentos do futebol.
-A criança continua sendo a protagonista absoluta.
-Não adicionar troféus reais, logotipos ou marcas. Visual digno de um jogador lendário.`,
+	  lendas: (s) => `Criar uma figurinha LENDAS DA COPA (Legend Edition).
+    Fundo épico com estádio desfocado e luzes de vitória.
+    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
+    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
 };
 
 async function processPhotoGemini(dataUrl) {

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   // Modelo correto para geração de imagem com input de imagem
   // gemini-2.0-flash-exp ou gemini-2.0-pro-exp-02-05
   // O modelo flash é mais rápido, mas o pro pode ser mais robusto para imagens
-  const MODEL = req.body.model || 'gemini-2.0-flash-exp';
+  const MODEL = req.body.model || 'gemini-2.0-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`;
 
   try {
