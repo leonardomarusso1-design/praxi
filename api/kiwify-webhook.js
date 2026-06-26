@@ -13,14 +13,17 @@ export default async function handler(req, res) {
     const body = req.body;
     console.log('Kiwify webhook recebido:', JSON.stringify(body).slice(0, 500));
 
-    // Kiwify envia: { order_id, status, customer: { name, email }, ... }
-    // Status aprovado pode ser: 'paid', 'approved', 'active', 'complete'
-    const orderId = body?.order?.id || body?.order_id || body?.id;
-    const status  = body?.order?.status || body?.status;
-    const email   = body?.customer?.email || body?.order?.customer?.email || '';
-    const name    = body?.customer?.name  || body?.order?.customer?.name  || '';
+    // Kiwify pode enviar em vários formatos — tentamos todos
+    // Formato 1: { type: 'PURCHASE_APPROVED', data: { id, status, customer } }
+    // Formato 2: { order: { id, status }, customer: { name, email } }
+    // Formato 3: { order_id, status, customer_email }
+    const orderId = body?.data?.id || body?.order?.id || body?.order_id || body?.id;
+    const status  = body?.data?.status || body?.order?.status || body?.status || body?.type || '';
+    const email   = body?.data?.customer?.email || body?.customer?.email || body?.customer_email || '';
+    const name    = body?.data?.customer?.name  || body?.customer?.name  || body?.customer_name  || '';
 
-    const isPaid = ['paid', 'approved', 'active', 'complete'].includes(String(status).toLowerCase());
+    const isPaid = ['paid', 'approved', 'active', 'complete', 'purchase_approved']
+      .includes(String(status).toLowerCase());
 
     if (!orderId) {
       console.warn('Webhook sem order_id. Body:', JSON.stringify(body).slice(0, 300));
