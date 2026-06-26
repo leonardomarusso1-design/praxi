@@ -1,6 +1,6 @@
 export const config = { api: { bodyParser: { sizeLimit: '10mb' } }, maxDuration: 60 };
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash-exp-image-generation';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-flash-image';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -13,35 +13,25 @@ export default async function handler(req, res) {
   try {
     const body = req.body;
 
-    const payload = {
-      model: MODEL,
-      input: {
-        type: 'text',
-        parts: []
-      },
-      response_modalities: ['text', 'image']
-    };
-
-    const rawParts = body.contents?.[0]?.parts || body.input?.parts;
+    const rawParts = body.contents?.[0]?.parts || body.input?.parts || body.input;
     if (!rawParts || !rawParts.length) {
-      return res.status(400).json({ error: 'Payload inválido: envie contents[0].parts ou input.parts' });
+      return res.status(400).json({ error: 'Payload inválido: envie contents[0].parts ou input' });
     }
 
-    payload.input.parts = rawParts.map(p => {
+    const input = rawParts.map(p => {
       if (p.text) return { type: 'text', text: p.text };
       if (p.inline_data || p.inlineData) {
         const d = p.inline_data || p.inlineData;
         return {
           type: 'image',
-          source: {
-            type: 'base64',
-            media_type: d.mime_type || d.mimeType,
-            data: d.data
-          }
+          mime_type: d.mime_type || d.mimeType,
+          data: d.data
         };
       }
       return null;
     }).filter(Boolean);
+
+    const payload = { model: MODEL, input };
 
     const upstream = await fetch(url, {
       method: 'POST',
