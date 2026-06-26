@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const payload = {
       model: MODEL,
       input: {
-        type: 'user_input',
+        type: 'text',
         content: []
       },
       response_modalities: ['text', 'image']
