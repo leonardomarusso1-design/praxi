@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         type: 'user_input',
         content: []
       },
-      response_modalities: ['TEXT', 'IMAGE']
+      response_modalities: ['text', 'image']
     };
 
     const rawParts = body.contents?.[0]?.parts || body.input?.parts;
