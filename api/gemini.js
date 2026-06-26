@@ -16,17 +16,32 @@ export default async function handler(req, res) {
     const payload = {
       model: MODEL,
       input: {
-        parts: []
-      }
+        type: 'user_input',
+        content: []
+      },
+      response_modalities: ['TEXT', 'IMAGE']
     };
 
-    if (body.contents?.[0]?.parts) {
-      payload.input.parts = body.contents[0].parts;
-    } else if (body.input?.parts) {
-      payload.input.parts = body.input.parts;
-    } else {
+    const rawParts = body.contents?.[0]?.parts || body.input?.parts;
+    if (!rawParts || !rawParts.length) {
       return res.status(400).json({ error: 'Payload inválido: envie contents[0].parts ou input.parts' });
     }
+
+    payload.input.content = rawParts.map(p => {
+      if (p.text) return { type: 'text', text: p.text };
+      if (p.inline_data || p.inlineData) {
+        const d = p.inline_data || p.inlineData;
+        return {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: d.mime_type || d.mimeType,
+            data: d.data
+          }
+        };
+      }
+      return null;
+    }).filter(Boolean);
 
     const upstream = await fetch(url, {
       method: 'POST',
