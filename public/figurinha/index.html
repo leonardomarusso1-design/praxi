@@ -1174,30 +1174,39 @@ async function resizeForGemini(dataUrl, maxDim = 1024) {
 // ─── GEMINI — DIREÇÃO DE ARTE RÍGIDA ────────────────────────
 
 const REGRAS_GERAIS = `
-Utilize EXCLUSIVAMENTE a pessoa da foto enviada como referência.
-Preserve 100% a identidade da pessoa — ela deve ser imediatamente reconhecível, mantendo traços, idade e etnia.
-NÃO alterar: formato do rosto, olhos, nariz, boca, orelhas, sobrancelhas, tom de pele, proporções faciais.
-REMOÇÃO DE FUNDO: Remova 100% do fundo original da foto. Substitua por um fundo de estúdio limpo ou o fundo especificado no estilo.
-ENQUADRAMENTO: Mostre apenas da cabeça até a parte superior dos ombros (estilo busto de figurinha).
-VESTIMENTA: Adicione uma camisa de futebol de seleção (Brasil), limpa e moderna, sem logotipos de marcas ou patrocinadores.
-QUALIDADE: Fotografia hiper-realista, nitidez extrema, iluminação de estúdio profissional.
-Aparência natural, sem filtros exagerados de IA.`;
+REGRA PRINCIPAL — IDENTIDADE E EXPRESSÃO:
+Utilize EXCLUSIVAMENTE a pessoa da foto enviada. A figurinha gerada deve ser INDISTINGUÍVEL da pessoa real — como se fosse uma foto dela vestida de jogador.
+
+ROSTO: Preserve 100% — formato do rosto, olhos, nariz, boca, orelhas, sobrancelhas, tom de pele, textura de pele, proporções faciais. NENHUM detalhe facial pode ser alterado.
+
+EXPRESSÃO FACIAL: Copie EXATAMENTE a expressão da foto original.
+— Se a pessoa está SORRINDO na foto → figurinha SORRINDO com os mesmos dentes, formato e intensidade do sorriso.
+— Se está SÉRIA → figurinha SÉRIA.
+— Se está com boca fechada → boca fechada. Se aberta → aberta.
+— NUNCA mudar a expressão. NUNCA adicionar sorriso. NUNCA remover sorriso.
+
+FUNDO: Remova 100% do fundo original. Substitua pelo fundo especificado no estilo.
+VESTIMENTA: Camisa de futebol da Seleção Brasileira (amarela com detalhe verde/azul), sem logotipos de marcas.
+QUALIDADE: Fotografia hiper-realista, nitidez extrema nos detalhes faciais, iluminação de estúdio. Aparência de foto real, nunca de render 3D ou IA.`;
 
 const NEGATIVE_PROMPT = `
-RESTRIÇÕES ABSOLUTAS — nunca fazer:
-Não alterar a identidade. Não criar rosto diferente. Não gerar aparência artificial.
-Não gerar desenho, cartoon, anime, 3D, pintura ou ilustração.
-Não modificar idade, gênero ou tom de pele.
-Não adicionar acessórios, chapéu, óculos, barba ou maquiagem.
-Não adicionar fundo. Não cortar cabeça. Não desfocar rosto.
-Não deformar olhos, boca, nariz ou orelhas.
-Não gerar dedos ou corpo inteiro. Não adicionar objetos.
-Não adicionar textos extras, marcas, logotipos ou patrocinadores.
-Sem watermark. Sem assinatura. Sem molduras diferentes das especificadas. Máxima fidelidade facial.`;
+PROIBIÇÕES ABSOLUTAS — NUNCA FAZER:
+— Nunca alterar a identidade, rosto, traços ou expressão facial da pessoa.
+— Nunca criar rosto diferente do original, mesmo que "mais bonito" ou "mais jovem".
+— Nunca mudar a expressão: se sorriu na foto, sorri na figurinha; se estava sério, fica sério.
+— Nunca gerar aparência artificial, plástica, de boneco ou de render 3D.
+— Nunca gerar cartoon, anime, ilustração, pintura, sketch ou caricatura.
+— Nunca modificar idade, gênero ou tom de pele.
+— Nunca adicionar ou remover barba, bigode, óculos ou acessórios não presentes na foto.
+— Nunca cortar a cabeça. Nunca desfocar ou suavizar o rosto artificialmente.
+— Nunca deformar olhos, boca, nariz, orelhas ou sobrancelhas.
+— Nunca adicionar textos extras, marcas, logotipos ou patrocinadores além dos especificados.
+— Sem watermark. Sem assinatura. Rosto 100% fiel ao original.`;
 
 const ESTILOS_FIGURINHA = {
 
   comum: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo CROMO OFICIAL.
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, não render de IA.
 
 LAYOUT (proporção vertical 49×65 mm):
 — Fundo: azul-turquesa vibrante (#4ec9e8 → #1e8fc8), gradiente diagonal suave.
@@ -1212,6 +1221,7 @@ LAYOUT (proporção vertical 49×65 mm):
 QUALIDADE: fotografia hiper-realista, iluminação de estúdio, nitidez extrema. Não cartoon.`,
 
   metalizado: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo METALIZADO (Silver Foil / Holográfico).
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — o efeito metálico/holográfico é APENAS no fundo e moldura, NUNCA no rosto.
 
 LAYOUT (proporção vertical 49×65 mm):
 — Fundo: efeito foil holográfico prateado — gradiente iridescente que muda de tom (prata → lilás → azul-gelo → prata), textura metálica refletiva.
@@ -1226,6 +1236,7 @@ LAYOUT (proporção vertical 49×65 mm):
 QUALIDADE: fotorrealismo total, nitidez extrema. O efeito foil é do FUNDO/MOLDURA, não no rosto.`,
 
   ouro: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LEGEND GOLD (Variante Ouro / Extra Sticker).
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, fotorrealismo total no rosto — o dourado/drama é APENAS no fundo, bordas e iluminação.
 
 LAYOUT (proporção vertical 49×65 mm):
 — Fundo: preto profundo (#0a0500) ou marrom escuro (#1a0d00), quase opaco.
@@ -1255,6 +1266,7 @@ LAYOUT (proporção 49×65 mm):
 QUALIDADE: fotorrealismo total, alta nitidez, iluminação de estúdio.`,
 
   lendas: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LENDAS DA COPA (Legend Premium).
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, fotorrealismo total no rosto — o efeito épico/cinematográfico é APENAS no fundo, bordas e iluminação.
 
 LAYOUT (proporção vertical 49×65 mm):
 — Fundo: roxo-escuro profundo (#0a0020) → preto, gradiente dramático.
