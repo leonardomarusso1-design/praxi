@@ -299,6 +299,60 @@
     .opt-label { font-size: 14px; font-weight: 800; }
     .opt-desc { font-size: 11px; opacity: 0.65; font-weight: 400; }
 
+    /* ── Mini sticker card previews ── */
+    .mini-card {
+      width: 62px; height: 83px; border-radius: 5px;
+      position: relative; overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.25);
+      margin-bottom: 2px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+    }
+    .mc-bg { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .mc-wm { /* watermark "26" */
+      position: absolute; font-family:'Anton',sans-serif; font-size:46px; opacity:0.18;
+      color:#fff; line-height:1; top:2px; right:-4px;
+    }
+    .mc-silhouette {
+      width:30px; height:42px; background:rgba(0,0,0,0.25);
+      border-radius: 50% 50% 8px 8px; position:relative; z-index:1;
+    }
+    .mc-head {
+      width:18px; height:18px; background:rgba(0,0,0,0.25);
+      border-radius:50%; margin:0 auto -2px; position:relative; z-index:2;
+    }
+    .mc-namebar {
+      background: #0a1f6e; color:#fff; font-size:6px; font-weight:900;
+      text-align:center; padding:3px 2px; letter-spacing:.3px;
+      text-transform:uppercase; white-space:nowrap; overflow:hidden;
+    }
+    .mc-badge {
+      position:absolute; top:3px; right:3px;
+      background:#FFD700; color:#000; font-size:5px; font-weight:900;
+      padding:1px 3px; border-radius:2px; letter-spacing:.2px; z-index:3;
+    }
+
+    /* por estilo */
+    .mc-comum .mc-bg { background: linear-gradient(160deg,#4ec9e8 0%,#1e8fc8 100%); }
+    .mc-metalizado .mc-bg {
+      background: linear-gradient(135deg,#9ab 0%,#dde 30%,#8ab 55%,#cdf 80%,#9ab 100%);
+    }
+    .mc-metalizado .mc-silhouette,.mc-metalizado .mc-head { background:rgba(255,255,255,0.2); }
+    .mc-metalizado .mc-namebar { background: #1a1a2e; }
+    .mc-ouro .mc-bg { background: radial-gradient(circle at 60% 40%, #5a3800 0%, #1a0d00 100%); }
+    .mc-ouro { border-color: #FFD700; }
+    .mc-ouro .mc-silhouette,.mc-ouro .mc-head { background:rgba(255,215,0,0.25); }
+    .mc-ouro .mc-namebar { background:#111; color:#FFD700; }
+    .mc-ouro .mc-wm { color:#FFD700; opacity:0.22; }
+    .mc-lendas .mc-bg { background: radial-gradient(circle at 50% 50%, #2a0050 0%, #080015 100%); }
+    .mc-lendas { border-color: #c0a020; }
+    .mc-lendas .mc-silhouette,.mc-lendas .mc-head { background:rgba(200,160,0,0.3); }
+    .mc-lendas .mc-namebar { background:#c0a020; color:#000; }
+    .mc-lendas .mc-wm { color:#c0a020; font-size:38px; }
+    .mc-flag-circle {
+      position:absolute; width:36px; height:36px; border-radius:50%;
+      border:2px solid rgba(255,215,0,0.5); opacity:0.4; bottom:-8px; right:-4px;
+    }
+
     .txt-input {
       width: 100%; background: rgba(255,255,255,0.09);
       border: 2px solid rgba(255,255,255,0.18); border-radius: 13px;
@@ -663,27 +717,54 @@
 
     <div class="qstep" id="q5">
       <h2>ESCOLHA O ESTILO<br>DA FIGURINHA</h2>
-      <p class="q-hint">Igual às figurinhas OFICIAIS do álbum Panini Copa 2026 — qual vai ser a do craque?</p>
+      <p class="q-hint">Cada estilo gera uma figurinha diferente — clique para ver e escolher!</p>
       <div class="opt-grid">
         <button class="opt-btn" onclick="selOpt('estilo','comum',this)">
-          <span class="opt-emoji">⚽</span>
+          <div class="mini-card mc-comum">
+            <div class="mc-bg">
+              <span class="mc-wm">26</span>
+              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
+            </div>
+            <div class="mc-namebar">CROMO OFICIAL</div>
+          </div>
           <span class="opt-label">Cromo Oficial</span>
-          <span class="opt-desc">Padrão Panini 2026</span>
+          <span class="opt-desc">Padrão álbum Copa 2026</span>
         </button>
         <button class="opt-btn" onclick="selOpt('estilo','metalizado',this)">
-          <span class="opt-emoji">✨</span>
+          <div class="mini-card mc-metalizado">
+            <div class="mc-bg">
+              <span class="mc-wm">26</span>
+              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
+            </div>
+            <div class="mc-namebar">METALIZADO</div>
+          </div>
           <span class="opt-label">Metalizado</span>
-          <span class="opt-desc">Edição especial brilhante</span>
+          <span class="opt-desc">Foil prata holográfico</span>
         </button>
         <button class="opt-btn" onclick="selOpt('estilo','ouro',this)">
-          <span class="opt-emoji">🥇</span>
+          <div class="mini-card mc-ouro">
+            <div class="mc-bg">
+              <span class="mc-wm">★</span>
+              <div class="mc-flag-circle"></div>
+              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
+            </div>
+            <div class="mc-badge">LEGEND</div>
+            <div class="mc-namebar">VARIANTE OURO</div>
+          </div>
           <span class="opt-label">Variante Ouro</span>
-          <span class="opt-desc">Raridade máxima</span>
+          <span class="opt-desc">Gold foil · Raridade máxima</span>
         </button>
         <button class="opt-btn" onclick="selOpt('estilo','lendas',this)">
-          <span class="opt-emoji">👑</span>
+          <div class="mini-card mc-lendas">
+            <div class="mc-bg">
+              <span class="mc-wm">★</span>
+              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
+            </div>
+            <div class="mc-badge" style="background:#c0a020">LENDA</div>
+            <div class="mc-namebar">LENDAS DA COPA</div>
+          </div>
           <span class="opt-label">Lendas da Copa</span>
-          <span class="opt-desc">Como Vini Jr. e Neymar</span>
+          <span class="opt-desc">Edição épica premium</span>
         </button>
       </div>
     </div>
@@ -1115,42 +1196,77 @@ Não adicionar textos extras, marcas, logotipos ou patrocinadores.
 Sem watermark. Sem assinatura. Sem molduras diferentes das especificadas. Máxima fidelidade facial.`;
 
 const ESTILOS_FIGURINHA = {
-	  comum: (s) => `Criar uma figurinha colecionável de Copa do Mundo.
-    Visual clássico Panini. Fundo branco limpo. Borda branca.
-    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
-    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
 
-	  metalizado: (s) => `Criar uma figurinha METALIZADA (Silver Foil) de Copa do Mundo.
-    Efeito holográfico prateado e brilhante.
-    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
-    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
+  comum: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo CROMO OFICIAL.
 
-  ouro: (s) => `Criar uma figurinha colecionável EXTRA RARA Edição Ouro (Gold Edition), idêntica às figurinhas lendárias da Panini.
-    Layout oficial de figurinha de Copa.
-    Fundo: Padrão radial de raios solares dourados e brilhantes saindo de trás do jogador. Textura metálica de ouro polido.
-    Moldura: Borda dupla dourada com efeito de relevo.
-    Na parte superior, centralizado em um banner azul: nome "${s.nome}".
-    No canto superior esquerdo: idade "${s.idade}".
-    No canto superior direito: posição "${s.posicao}".
-    Na parte inferior: apelido "${s.apelido}".
-    No rodapé: número da camisa "${s.numero}".
-    Estilo visual: Fotografia de estúdio de altíssima qualidade, cores vibrantes, contraste profissional.
-    Efeito de brilho: Adicionar faixas de luz e reflexos dourados que atravessam a figurinha, dando aspecto de material holográfico premium.`,
+LAYOUT (proporção vertical 49×65 mm):
+— Fundo: azul-turquesa vibrante (#4ec9e8 → #1e8fc8), gradiente diagonal suave.
+— Marca d'água central: número "26" gigante semitransparente em cinza claro (opacidade ~15%), fonte condensada bold, ocupando quase todo o fundo.
+— Borda: fina borda branca externa (2–3 px) e fina borda interna azul-marinho, dando aspecto de cartinha impressa.
+— Canto superior esquerdo: ícone pequeno de troféu/Copa do Mundo.
+— Canto superior direito: número "${s.numero}" em fonte bold branca, pequeno.
+— Foto do jogador: da cabeça até a cintura, centralizada, ocupando ~70% da altura. Camisa de futebol da Seleção Brasileira (amarela). Fundo original completamente removido.
+— Barra inferior (30% da altura): retângulo azul-marinho (#0a1f6e). Dentro: nome "${s.nome}" em caixa-alta, fonte Anton/condensada, branca, centralizado. Abaixo do nome: posição "${s.posicao}" em fonte menor, cor amarela/dourada.
+— Borda inferior: faixa verde pequena (#009c3b) no rodapé absoluto.
 
-  familia: (s) => `Criar uma figurinha colecionável familiar inspirada nas clássicas figurinhas de Copa do Mundo.
-Utilizar exatamente as pessoas presentes na foto. Preservar totalmente a identidade de cada pessoa.
-Não criar pessoas novas. Não remover pessoas. Remover totalmente o fundo original.
-Adicionar camisas de futebol iguais para todos, sem patrocinadores, sem logotipos reais.
-Organizar em composição harmônica: adultos atrás, crianças na frente, todos olhando para a câmera, expressão natural.
-No topo, centralizado: "Família ${s.apelido}".
-Na parte inferior: apelido "${s.apelido}".
-Visual inspirado em figurinhas clássicas de Copa. Aspect ratio 49 x 65 mm. 300 DPI. Preparada para impressão.
-Sem logotipos. Sem patrocinadores. Sem marcas. Fotografia extremamente realista. Alta nitidez. Qualidade de estúdio.`,
+QUALIDADE: fotografia hiper-realista, iluminação de estúdio, nitidez extrema. Não cartoon.`,
 
-	  lendas: (s) => `Criar uma figurinha LENDAS DA COPA (Legend Edition).
-    Fundo épico com estádio desfocado e luzes de vitória.
-    TEXTOS GRÁFICOS (Essencial): Escreva na imagem: Nome "${s.nome}" no topo, Idade "${s.idade}" no canto, Posição "${s.posicao}" e Número "${s.numero}".
-    A pessoa deve estar com camisa do Brasil. Remova o fundo original.`,
+  metalizado: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo METALIZADO (Silver Foil / Holográfico).
+
+LAYOUT (proporção vertical 49×65 mm):
+— Fundo: efeito foil holográfico prateado — gradiente iridescente que muda de tom (prata → lilás → azul-gelo → prata), textura metálica refletiva.
+— Marca d'água "26" semitransparente em prata, tamanho gigante, no fundo.
+— Sobre o foil: reflexos de luz em diagonal (faixas brancas brilhantes, opacidade ~30%), simulando a luz batendo no holograma.
+— Borda dupla: externa branca fina + interna prata/cromo.
+— Canto superior esquerdo: ícone Copa do Mundo cromado.
+— Canto superior direito: número "${s.numero}" em prata metálico.
+— Foto do jogador: cabeça até a cintura, centralizada, sem fundo. Camisa da Seleção Brasileira amarela. Pele e rosto com reflexo de luz prata suave.
+— Barra inferior: retângulo azul-marinho escuro com reflexo metálico. Nome "${s.nome}" em branco brilhante, caixa-alta, fonte condensada. Posição "${s.posicao}" abaixo em dourado claro.
+
+QUALIDADE: fotorrealismo total, nitidez extrema. O efeito foil é do FUNDO/MOLDURA, não no rosto.`,
+
+  ouro: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LEGEND GOLD (Variante Ouro / Extra Sticker).
+
+LAYOUT (proporção vertical 49×65 mm):
+— Fundo: preto profundo (#0a0500) ou marrom escuro (#1a0d00), quase opaco.
+— Elemento central de fundo: grande círculo (80% da largura) com as cores da bandeira do Brasil (verde, amarelo, azul) desfocado e com efeito de luz dourada irradiando do centro.
+— Textura de foil dourado sobre tudo: faixas diagonais de luz áurea (opacidade ~25%), efeito de ouro polido.
+— Borda: dupla borda dourada metálica (#FFD700 → #b8960c), com leve efeito de relevo/emboss.
+— Badge de raridade: no canto superior direito, retângulo dourado pequeno com texto "LEGEND" em preto, fonte bold maiúscula.
+— Foto do jogador: da cabeça até os joelhos (mais corpo que o cromo comum), centralizada, sem fundo. Camisa da Seleção Brasileira amarela. Iluminação dramática com contorno de luz dourada no jogador (rim light dourado).
+— Barra inferior: retângulo preto (#111). Nome "${s.nome}" em caixa-alta, fonte Anton, cor DOURADA (#FFD700), centralizado e grande. Abaixo: posição "${s.posicao}" em branco menor.
+— Rodapé: faixa de ouro sólido, número "${s.numero}" em preto no canto.
+
+QUALIDADE: fotorrealismo extremo, contraste dramático, iluminação de alta qualidade de estúdio.`,
+
+  familia: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo FAMÍLIA.
+
+Usar exatamente as pessoas presentes na foto. Preservar totalmente a identidade de cada uma.
+Não criar pessoas novas. Não remover nenhuma pessoa. Remover totalmente o fundo original.
+Adicionar camisas de futebol iguais para todos (Seleção Brasileira, amarela), sem patrocinadores.
+Composição: adultos atrás, crianças na frente, todos olhando para a câmera, expressão natural e sorridente.
+
+LAYOUT (proporção 49×65 mm):
+— Fundo: azul-turquesa (#4ec9e8) com marca d'água "26".
+— Borda branca fina.
+— No topo: nome "FAMÍLIA ${s.apelido}" em fonte Anton, branco, centralizado.
+— Barra inferior azul-marinho com texto "${s.apelido}" em branco.
+
+QUALIDADE: fotorrealismo total, alta nitidez, iluminação de estúdio.`,
+
+  lendas: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LENDAS DA COPA (Legend Premium).
+
+LAYOUT (proporção vertical 49×65 mm):
+— Fundo: roxo-escuro profundo (#0a0020) → preto, gradiente dramático.
+— Elemento épico de fundo: estádio lotado desfocado ao fundo, com luzes de holofotes e confetes, atmosfera de final de Copa.
+— Sobre o fundo: brilhos e faíscas douradas e brancas (efeito "bokeh" de luzes), textura de ouro envelhecido.
+— Borda: dupla borda dourada-escura (#c0a020), com detalhe de arabescos/filigrana nos cantos (estilo medieval/troféu).
+— Badge topo direito: retângulo dourado com "LENDA" em preto, fonte bold.
+— Foto do jogador: da cabeça até os joelhos, pose heroica (ligeiramente angular/dinâmica), camisa da Seleção Brasileira amarela, sem fundo. Efeito de luz épica vindo de baixo (contra-luz dourado).
+— Barra inferior: fundo dourado escuro (#c0a020). Nome "${s.nome}" em caixa-alta, fonte condensada preta, grande. Posição "${s.posicao}" em preto menor.
+— Rodapé: número "${s.numero}" em dourado dentro de escudo pequeno.
+
+QUALIDADE: fotorrealismo extremo, iluminação cinematográfica épica, máxima nitidez facial.`,
 };
 
 async function processPhotoGemini(dataUrl) {
