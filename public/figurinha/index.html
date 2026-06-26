@@ -1580,12 +1580,6 @@ function rrect(ctx,x,y,w,h,r){
 // ─── PAYMENT ────────────────────────────────────────────────
 function goPayment() {
   saveSessionState();
-  
-  // PARA TESTAR GERAÇÕES (comente as 2 linhas abaixo para ativar o checkout real)
-  // window.location.href = window.location.pathname + '?liberado=1'; 
-  // return;
-
-  // CHECKOUT REAL (Kiwify/Cakto)
   window.location.href = CAKTO_CHECKOUT;
 }
 
@@ -1623,38 +1617,56 @@ function restoreSessionState(cb) {
   return false;
 }
 
-// Detecta retorno do Cakto com ?liberado=1
+// Detecta retorno do Kiwify com ?order_id=XXX e verifica no servidor
 function checkPaidReturn() {
   const params = new URLSearchParams(window.location.search);
-  // O parâmetro 'liberado=1' deve ser configurado como URL de retorno no Kiwify
-  if (params.get('liberado') === '1') {
-    // Salva no localStorage que o usuário pagou para persistir se ele atualizar a página
-    localStorage.setItem('fc_paid', 'true');
+  const orderId = params.get('order_id');
+
+  // Se tem order_id na URL → verifca no servidor (não aceita ?liberado=1 mais)
+  if (orderId) {
     window.history.replaceState({}, '', window.location.pathname);
+    fetch('/api/verify-order?order_id=' + encodeURIComponent(orderId))
+      .then(r => r.json())
+      .then(data => {
+        if (data.paid) {
+          sessionStorage.setItem('fc_verified_order', orderId);
+          unlockPaid();
+        } else {
+          // Ordem não encontrada ainda (webhook pode demorar alguns segundos) — tenta de novo em 3s
+          setTimeout(() => {
+            fetch('/api/verify-order?order_id=' + encodeURIComponent(orderId))
+              .then(r => r.json())
+              .then(d => { if (d.paid) { sessionStorage.setItem('fc_verified_order', orderId); unlockPaid(); } });
+          }, 3000);
+        }
+      })
+      .catch(() => {}); // silencioso em caso de erro de rede
+    return;
   }
 
-  // Se estiver pago (via URL ou via localStorage), mostra a tela de sucesso
-  if (localStorage.getItem('fc_paid') === 'true') {
-    const afterRestore = () => {
-      const gc = document.getElementById('gen-canvas');
-      const tc = document.getElementById('wpp-thumb-canvas');
-      if (tc && gc.width > 0) tc.getContext('2d').drawImage(gc, 0, 0, tc.width, tc.height);
-      const rc = document.getElementById('result-canvas');
-      if (rc && gc.width > 0) rc.getContext('2d').drawImage(gc, 0, 0, rc.width, rc.height);
-      const wn = document.getElementById('wpp-nome'); if (wn) wn.textContent = state.nome;
-      
-      const saved = sessionStorage.getItem('fc_sorteio');
-      if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
-      const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
-      show('s-wpp');
-    };
-    
-    const hasCanvas = restoreSessionState(afterRestore);
-    // Se não tem a figurinha no estado mas está pago, volta pro início (segurança)
-    if (!hasCanvas) {
-       localStorage.removeItem('fc_paid');
-       show('s-landing');
-    }
+  // Se voltou sem order_id mas tem sessao verificada (refresh da pagina)
+  if (sessionStorage.getItem('fc_verified_order')) {
+    unlockPaid();
+  }
+}
+
+function unlockPaid() {
+  const afterRestore = () => {
+    const gc = document.getElementById('gen-canvas');
+    const tc = document.getElementById('wpp-thumb-canvas');
+    if (tc && gc.width > 0) tc.getContext('2d').drawImage(gc, 0, 0, tc.width, tc.height);
+    const rc = document.getElementById('result-canvas');
+    if (rc && gc.width > 0) rc.getContext('2d').drawImage(gc, 0, 0, rc.width, rc.height);
+    const wn = document.getElementById('wpp-nome'); if (wn) wn.textContent = state.nome;
+    const saved = sessionStorage.getItem('fc_sorteio');
+    if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
+    const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
+    show('s-wpp');
+  };
+  const hasCanvas = restoreSessionState(afterRestore);
+  if (!hasCanvas) {
+    sessionStorage.removeItem('fc_verified_order');
+    show('s-landing');
   }
 }
 
@@ -1801,8 +1813,8 @@ function copyPix() {
 }
 
 function confirmPay() {
-  // Usuário diz que pagou via Pix manual — mostra tela de aguardo
-  window.location.href = window.location.pathname + '?liberado=1';
+  // Aguarda webhook da Kiwify confirmar o pagamento
+  alert('Aguarde alguns instantes e reabra o link que a Kiwify vai te enviar por email com sua figurinha liberada!');
 }
 
 // ─── INIT ───────────────────────────────────────────────────
