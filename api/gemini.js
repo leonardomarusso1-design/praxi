@@ -42,12 +42,7 @@ export default async function handler(req, res) {
     const data = await upstream.json();
 
     // Loga a resposta completa no Vercel para debug
-    console.log('Gemini response keys:', Object.keys(data));
-    if (data.steps) {
-      console.log('Gemini steps:', JSON.stringify(data.steps, null, 2));
-    } else {
-      console.log('Gemini full response:', JSON.stringify(data).slice(0, 5000));
-    }
+    console.log('Gemini full response (first 8000 chars):', JSON.stringify(data).slice(0, 8000));
 
     if (!upstream.ok) {
       console.error('Gemini error:', JSON.stringify(data));
