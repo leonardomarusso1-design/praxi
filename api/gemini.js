@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       model: MODEL,
       input: {
         type: 'text',
-        content: []
+        parts: []
       },
       response_modalities: ['text', 'image']
     };
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Payload inválido: envie contents[0].parts ou input.parts' });
     }
 
-    payload.input.content = rawParts.map(p => {
+    payload.input.parts = rawParts.map(p => {
       if (p.text) return { type: 'text', text: p.text };
       if (p.inline_data || p.inlineData) {
         const d = p.inline_data || p.inlineData;
