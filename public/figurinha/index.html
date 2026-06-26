@@ -354,6 +354,42 @@
       border:2px solid rgba(255,215,0,0.5); opacity:0.4; bottom:-8px; right:-4px;
     }
 
+    /* ── Style picker com imagens reais ── */
+    .style-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;
+    }
+    .style-card {
+      background: rgba(255,255,255,0.05);
+      border: 3px solid rgba(255,255,255,0.12);
+      border-radius: 12px; overflow: hidden; cursor: pointer;
+      padding: 0; position: relative; transition: all 0.15s;
+      display: flex; flex-direction: column;
+    }
+    .style-card:hover, .style-card.sel {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(255,215,0,0.35);
+    }
+    .style-card.sel::after {
+      content: '✓'; position: absolute; top: 6px; right: 8px;
+      background: var(--gold); color: #000; font-size: 13px; font-weight: 900;
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 24px; text-align: center;
+    }
+    .style-card img {
+      width: 100%; display: block; aspect-ratio: 49/65; object-fit: cover;
+    }
+    .style-name {
+      background: rgba(0,0,0,0.75); color: #fff;
+      font-size: 11px; font-weight: 900; text-align: center;
+      padding: 7px 4px; text-transform: uppercase; letter-spacing: .4px;
+    }
+    .style-card.sel .style-name { color: var(--gold); }
+    /* 5th card — span full width */
+    .style-card.full { grid-column: 1 / -1; flex-direction: row; }
+    .style-card.full img { width: 90px; aspect-ratio: 49/65; object-fit: cover; flex-shrink: 0; }
+    .style-card.full .style-name { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
     .txt-input {
       width: 100%; background: rgba(255,255,255,0.09);
       border: 2px solid rgba(255,255,255,0.18); border-radius: 13px;
@@ -707,54 +743,27 @@
 
     <div class="qstep" id="q5">
       <h2>ESCOLHA O ESTILO<br>DA FIGURINHA</h2>
-      <p class="q-hint">Cada estilo gera uma figurinha diferente — clique para ver e escolher!</p>
-      <div class="opt-grid">
-        <button class="opt-btn" onclick="selOpt('estilo','comum',this)">
-          <div class="mini-card mc-comum">
-            <div class="mc-bg">
-              <span class="mc-wm">26</span>
-              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
-            </div>
-            <div class="mc-namebar">COPA BRASIL</div>
-          </div>
-          <span class="opt-label">Copa Brasil</span>
-          <span class="opt-desc">Verde/Amarelo — igual à capa</span>
+      <p class="q-hint">Toque para escolher — a figurinha será gerada nesse estilo!</p>
+      <div class="style-grid">
+        <button class="style-card" onclick="selEstilo('comum',this)">
+          <img src="/figurinha/refs/base-referencia.png" alt="Copa Brasil" loading="lazy">
+          <span class="style-name">⚽ Copa Brasil</span>
         </button>
-        <button class="opt-btn" onclick="selOpt('estilo','metalizado',this)">
-          <div class="mini-card mc-metalizado">
-            <div class="mc-bg">
-              <span class="mc-wm">26</span>
-              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
-            </div>
-            <div class="mc-namebar">METALIZADO</div>
-          </div>
-          <span class="opt-label">Metalizado</span>
-          <span class="opt-desc">Foil prata holográfico</span>
+        <button class="style-card" onclick="selEstilo('cromo',this)">
+          <img src="/figurinha/refs/cromo-referencia.png" alt="Cromo Oficial" loading="lazy">
+          <span class="style-name">🃏 Cromo Oficial</span>
         </button>
-        <button class="opt-btn" onclick="selOpt('estilo','ouro',this)">
-          <div class="mini-card mc-ouro">
-            <div class="mc-bg">
-              <span class="mc-wm">★</span>
-              <div class="mc-flag-circle"></div>
-              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
-            </div>
-            <div class="mc-badge">LEGEND</div>
-            <div class="mc-namebar">VARIANTE OURO</div>
-          </div>
-          <span class="opt-label">Variante Ouro</span>
-          <span class="opt-desc">Gold foil · Raridade máxima</span>
+        <button class="style-card" onclick="selEstilo('metalizado',this)">
+          <img src="/figurinha/refs/metalizada-referencia.png" alt="Metalizada" loading="lazy">
+          <span class="style-name">✨ Metalizada</span>
         </button>
-        <button class="opt-btn" onclick="selOpt('estilo','lendas',this)">
-          <div class="mini-card mc-lendas">
-            <div class="mc-bg">
-              <span class="mc-wm">★</span>
-              <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
-            </div>
-            <div class="mc-badge" style="background:#c0a020">LENDA</div>
-            <div class="mc-namebar">LENDAS DA COPA</div>
-          </div>
-          <span class="opt-label">Lendas da Copa</span>
-          <span class="opt-desc">Edição épica premium</span>
+        <button class="style-card" onclick="selEstilo('ouro',this)">
+          <img src="/figurinha/refs/ouro-referencia.png" alt="Ouro Legend" loading="lazy">
+          <span class="style-name">🥇 Ouro Legend</span>
+        </button>
+        <button class="style-card full" onclick="selEstilo('lendas',this)">
+          <img src="/figurinha/refs/lenda-referencia.png" alt="Lenda Extra" loading="lazy">
+          <span class="style-name">👑 Lenda Extra — Edição Especial</span>
         </button>
       </div>
     </div>
@@ -1213,6 +1222,19 @@ LAYOUT EXATO (proporção 49×65 mm, vertical):
 
 QUALIDADE: fotografia hiper-realista, cores vibrantes saturadas, nitidez extrema. Design esportivo moderno e colorido.`,
 
+  cromo: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo CROMO OFICIAL PANINI.
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, ${s.idade} de idade.
+
+LAYOUT EXATO (proporção 49×65 mm, vertical — igual à figurinha oficial do álbum):
+— Fundo: azul-turquesa vibrante (#4ec9e8 → #2796cc) cobrindo toda a carta. Textura sutil de hexágonos ou padrão geométrico suave no fundo.
+— Borda: fina borda branca externa (3px) com canto levemente arredondado. Borda interna tênue.
+— TOPO: ícone FIFA pequeno no canto superior esquerdo. Bandeira do Brasil pequena no canto superior direito.
+— FOTO: pessoa da cabeça até os ombros/peito, centralizada, sem fundo, ocupando ~60% da altura. Camisa da Seleção Brasileira amarela. Iluminação de estúdio natural.
+— BARRA INFERIOR: fundo azul-marinho escuro (#0a1a6e) ocupando ~30% da altura. Nome "${s.nome}" em caixa-alta, fonte condensada bold, branca, centralizada e grande. Abaixo do nome: "★ ${s.posicao} ★" em branco menor. Linha divisória tênue.
+— RODAPÉ: faixa estreita verde (#009c3b). Número "${s.numero}" em branco à esquerda. Idade "${s.idade}" à direita em branco pequeno.
+
+QUALIDADE: fotorrealismo extremo, iluminação de estúdio, nitidez facial máxima.`,
+
   metalizado: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo METALIZADO (Silver Foil / Holográfico).
 IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — o efeito metálico/holográfico é APENAS no fundo e moldura, NUNCA no rosto.
 
@@ -1275,14 +1297,20 @@ QUALIDADE: fotorrealismo extremo, iluminação cinematográfica épica, máxima 
 };
 
 // ─── IMAGEM DE REFERÊNCIA POR ESTILO ────────────────────────
-// Coloque imagens JPG em /public/figurinha/refs/ com o nome do estilo
-// Ex: refs/comum.jpg, refs/ouro.jpg, refs/metalizado.jpg, refs/lendas.jpg
 const STYLE_REF_URLS = {
-  comum:      '/figurinha/refs/comum.jpg',
-  metalizado: '/figurinha/refs/metalizado.jpg',
-  ouro:       '/figurinha/refs/ouro.jpg',
-  lendas:     '/figurinha/refs/lendas.jpg',
+  comum:      '/figurinha/refs/base-referencia.png',
+  cromo:      '/figurinha/refs/cromo-referencia.png',
+  metalizado: '/figurinha/refs/metalizada-referencia.png',
+  ouro:       '/figurinha/refs/ouro-referencia.png',
+  lendas:     '/figurinha/refs/lenda-referencia.png',
 };
+
+function selEstilo(val, btn) {
+  state.estilo = val;
+  document.querySelectorAll('.style-card').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  setTimeout(() => nextQ(step + 1), 300);
+}
 
 async function loadRefImage(style) {
   const url = STYLE_REF_URLS[style];
