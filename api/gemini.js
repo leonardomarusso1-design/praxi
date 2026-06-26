@@ -17,9 +17,6 @@ export default async function handler(req, res) {
       model: MODEL,
       input: {
         parts: []
-      },
-      generation_config: {
-        response_modalities: ['IMAGE', 'TEXT']
       }
     };
 
