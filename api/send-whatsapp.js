@@ -1,7 +1,5 @@
-// Aumenta limite do body para 10MB (imagens em base64 são grandes)
 export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
 
-// Vercel Serverless Function — proxy para Z-API send-image
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -13,16 +11,28 @@ export default async function handler(req, res) {
 
   const { phone, image, caption } = req.body;
 
-  // Z-API aceita base64 puro (sem o prefixo "data:image/...;base64,")
-  const base64clean = image
-    ? image.replace(/^data:image\/\w+;base64,/, '')
-    : null;
+  // Z-API /send-image aceita base64 COM o prefixo data URI completo
+  // Garante que tem o prefixo correto
+  let imageForZapi = null;
+  if (image) {
+    if (image.startsWith('data:')) {
+      // Já tem prefixo — usa direto
+      imageForZapi = image;
+    } else {
+      // Base64 puro — adiciona prefixo
+      imageForZapi = 'data:image/jpeg;base64,' + image;
+    }
+  }
 
   const zapiBody = {
     phone,
-    image: base64clean,
+    image: imageForZapi,
     caption: caption || '',
   };
+
+  console.log('Z-API payload size:', JSON.stringify(zapiBody).length, 'bytes');
+  console.log('Z-API phone:', phone);
+  console.log('Z-API image prefix:', imageForZapi ? imageForZapi.slice(0, 40) : 'null');
 
   try {
     const upstream = await fetch(
@@ -40,7 +50,9 @@ export default async function handler(req, res) {
     const data = await upstream.json();
 
     if (!upstream.ok) {
-      console.error('Z-API error:', JSON.stringify(data));
+      console.error('Z-API error:', upstream.status, JSON.stringify(data));
+    } else {
+      console.log('Z-API success:', JSON.stringify(data));
     }
 
     res.status(upstream.status).json(data);

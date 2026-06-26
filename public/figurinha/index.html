@@ -1213,113 +1213,83 @@ PROIBIÇÕES ABSOLUTAS — NUNCA FAZER:
 
 const ESTILOS_FIGURINHA = {
 
-  comum: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+  comum: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card de referência) pelo rosto e corpo da pessoa na IMAGEM 2. Mantenha TUDO mais idêntico possível ao card original — cores, layout, textos, fundos — apenas troque o jogador.
 
-ESTILO: Copa Brasil 2026 — figurinha colecionável oficial.
-IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
+IDENTIDADE OBRIGATÓRIA: use 100% o rosto, expressão e traços da IMAGEM 2. Não altere nada da aparência.
 
-LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
-— PROPORÇÃO: vertical 49×65 mm (carta de colecionável).
-— FUNDO: verde vibrante com elementos diagonais amarelo e azul, swooshes dinâmicos Copa 2026. EXATAMENTE como na IMAGEM 1.
-— BORDA: branca arredondada externa.
-— TOPO ESQUERDO: logo/escudo Copa 2026 com bola de futebol. TOPO DIREITO: badge "26 / COPA 2026".
-— FOTO: pessoa da IMAGEM 2 da cabeça até o peito, centralizada (~65% da altura). Camisa da Seleção Brasileira amarela com escudo CBF. Fundo removido, integrado ao card.
-— BARRA NOME (inferior): fundo azul-marinho (#001a6e) com estrelas douradas. Nome "${s.nome}" em branco, caixa-alta, fonte bold grande, centralizado. Abaixo: "${s.posicao}" em branco menor.
-— STATS ROW (abaixo da barra nome, fundo claro): 3 colunas com ícones exatamente como na IMAGEM 1:
-  • Coluna 1: ícone calendário + "${s.nascimento}" + "NASCIMENTO" abaixo
-  • Coluna 2: ícone régua + "${s.altura}" + "ALTURA" abaixo
-  • Coluna 3: ícone balança + "${s.peso}" + "PESO" abaixo
-— RODAPÉ: "${s.clube}" centralizado, fonte pequena.
-— Número "${s.numero}" visível no canto superior ou na camisa.
+TEXTOS A INSERIR no card (substituindo os textos originais):
+— Nome: ${s.nome}
+— Posição: ${s.posicao}
+— Número: ${s.numero}
+— Stats: ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube: ${s.clube}
 
-QUALIDADE: fotorrealismo extremo, cores vibrantes, nitidez máxima no rosto.`,
+O resultado deve ser fotorrealista. Camisa da Seleção Brasileira amarela. Fundo e layout idênticos à IMAGEM 1.`,
 
-  cromo: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+  cromo: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card cromo Panini de referência) pelo rosto e corpo da pessoa na IMAGEM 2. Mantenha TUDO idêntico ao card original — cores, layout, fundo azul-turquesa liso, textos — apenas troque o jogador.
 
-ESTILO: Cromo Oficial Panini — figurinha padrão do álbum Copa do Mundo.
-IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
+IDENTIDADE OBRIGATÓRIA: use 100% o rosto, expressão e traços da IMAGEM 2. Não altere nada da aparência.
 
-PROIBIDO: NÃO use efeito metálico. NÃO use holográfico. NÃO use prata ou iridescente. O fundo é AZUL-TURQUESA LISO E LIMPO.
+ATENÇÃO CORES: o fundo é AZUL-TURQUESA LISO rgb(78,202,204) — SEM efeito metálico, SEM holográfico, SEM prata, SEM iridescente, SEM gradiente de cor. Exatamente como na IMAGEM 1.
 
-LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
-— PROPORÇÃO: vertical 49×65 mm.
-— FUNDO: azul-turquesa sólido e liso (#4ECACC) cobrindo TODA a carta. Número "26" grande em verde mais escuro no fundo, semitransparente. SEM gradiente, SEM reflexo, SEM efeito metálico.
-— BORDA: fina borda branca (2-3px), cantos levemente arredondados.
-— TOPO ESQUERDO: logo FIFA branco pequeno. TOPO DIREITO: bandeira do Brasil circular pequena + número "${s.numero}" em branco.
-— FOTO: pessoa da IMAGEM 2 da cabeça até os ombros, rosto grande centralizando o card (~60% da altura). Camisa da Seleção Brasileira amarela com escudo CBF e BRASIL. Fundo completamente removido.
-— BARRA INFERIOR BRANCA (últimos ~30% do card): fundo branco ou quase branco.
-  • Linha 1: "${s.nome}" em preto, fonte bold grande, caixa-alta.
-  • Linha 2: "${s.nascimento} | ${s.altura} | ${s.peso}" em cinza escuro, fonte menor.
-  • Linha 3: "${s.clube}" em cinza, fonte pequena, abaixo.
-— RODAPÉ: logo Panini pequeno no canto inferior direito.
+TEXTOS A INSERIR no card (substituindo os textos originais):
+— Nome (barra branca inferior): ${s.nome}
+— Stats (linha 2): ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube (linha 3): ${s.clube}
+— Número (canto superior): ${s.numero}
 
-QUALIDADE: fotorrealismo extremo, iluminação de estúdio limpa, nitidez máxima facial.`,
+O resultado deve ser fotorrealista. Camisa da Seleção Brasileira amarela com escudo CBF. Fundo e layout idênticos à IMAGEM 1.`,
 
-  metalizado: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+  metalizado: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card metalizado/foil de referência) pelo rosto e corpo da pessoa na IMAGEM 2. Mantenha TUDO idêntico ao card original — efeito foil, cores, layout — apenas troque o jogador.
 
-ESTILO: Metalizado Panini — figurinha com efeito foil dourado/prateado holográfico.
-IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. O efeito metálico é APENAS no fundo e bordas — NUNCA no rosto.
+IDENTIDADE OBRIGATÓRIA: use 100% o rosto, expressão e traços da IMAGEM 2. O efeito foil/metálico é APENAS no fundo — o rosto é humano real, sem efeito metálico.
 
-LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
-— PROPORÇÃO: vertical 49×65 mm.
-— FUNDO: efeito foil holográfico dourado/prateado iridescente, gradiente que muda de dourado para prata. "26" gigante em foil dourado no fundo.
-— BORDA: dupla borda dourada metálica externa.
-— TOPO: logo Copa do Mundo dourado. Número "${s.numero}" em dourado metálico no canto.
-— FOTO: pessoa da IMAGEM 2, cabeça até a cintura, centralizada. Camisa da Seleção Brasileira amarela. Iluminação com rim light dourado realçando o contorno.
-— BARRA INFERIOR: fundo escuro com reflexo metálico dourado. Nome "${s.nome}" em dourado brilhante, caixa-alta. Posição "${s.posicao}" em branco.
-— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em dourado claro, fonte pequena.
-— RODAPÉ: "${s.clube}" em dourado.
+TEXTOS A INSERIR:
+— Nome: ${s.nome}
+— Posição: ${s.posicao}
+— Stats: ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube: ${s.clube}
+— Número: ${s.numero}
 
-QUALIDADE: fotorrealismo total, efeito foil no fundo/moldura, rosto humano real sem efeito metálico.`,
+O resultado deve ser fotorrealista. Camisa da Seleção Brasileira amarela. Layout idêntico à IMAGEM 1.`,
 
-  ouro: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+  ouro: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card gold legend de referência) pelo rosto e corpo da pessoa na IMAGEM 2. Mantenha TUDO idêntico ao card original — fundo escuro, bordas douradas, layout — apenas troque o jogador.
 
-ESTILO: Legend Gold — figurinha extra rara, edição dourada premium.
-IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
+IDENTIDADE OBRIGATÓRIA: use 100% o rosto, expressão e traços da IMAGEM 2. Aparência humana real.
 
-LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
-— PROPORÇÃO: vertical 49×65 mm.
-— FUNDO: preto profundo com círculo central das cores do Brasil (verde/amarelo) irradiando luz dourada. Faixas de foil dourado diagonal sutis.
-— BORDA: dupla borda dourada metálica (#FFD700), com relevo.
-— BADGE TOPO DIREITO: retângulo dourado com "LEGEND" em preto bold.
-— FOTO: pessoa da IMAGEM 2, da cabeça até os joelhos, pose heroica. Camisa da Seleção Brasileira amarela. Rim light dourado intenso no contorno.
-— BARRA INFERIOR: fundo preto. Nome "${s.nome}" em dourado (#FFD700), caixa-alta, fonte grande. Posição "${s.posicao}" em branco menor.
-— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em dourado claro.
-— RODAPÉ DOURADO: faixa dourada sólida. "${s.clube}" em preto. Número "${s.numero}" em preto.
+TEXTOS A INSERIR:
+— Nome (em dourado): ${s.nome}
+— Posição: ${s.posicao}
+— Stats: ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube: ${s.clube}
+— Número: ${s.numero}
 
-QUALIDADE: fotorrealismo extremo, contraste dramático, iluminação cinematográfica.`,
+O resultado deve ser fotorrealista. Camisa da Seleção Brasileira amarela. Iluminação dramática com rim light dourado. Layout idêntico à IMAGEM 1.`,
 
-  familia: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para as pessoas da IMAGEM 2.
+  familia: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card cromo de referência) pelas TODAS as pessoas da IMAGEM 2. Mantenha o layout, cores e estrutura do card. Use todos da foto — adultos atrás, crianças na frente.
 
-ESTILO: Cromo Família — figurinha especial com todos da foto.
-IDENTIDADE: Use TODAS as pessoas presentes na IMAGEM 2. Preserve 100% a identidade de cada uma. NÃO crie novas pessoas. NÃO remova ninguém.
+IDENTIDADE OBRIGATÓRIA: preserve 100% o rosto e expressão de cada pessoa da IMAGEM 2.
 
-LAYOUT:
-— PROPORÇÃO: vertical 49×65 mm.
-— FUNDO: azul-turquesa sólido (#4ECACC) com "26" semitransparente no fundo.
-— BORDA: branca fina.
-— TOPO: "FAMÍLIA ${s.nome}" em fonte bold branca, centralizado.
-— FOTO: TODAS as pessoas da IMAGEM 2 com camisa da Seleção Brasileira amarela. Adultos atrás, crianças na frente. Fundo removido, integrado ao card.
-— BARRA INFERIOR BRANCA: "${s.nome}" em preto bold. Abaixo: "${s.nascimento} | ${s.altura} | ${s.peso}". Abaixo: "${s.clube}".
+TEXTOS A INSERIR:
+— Topo: FAMÍLIA ${s.nome}
+— Barra inferior: ${s.nome}
+— Stats: ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube: ${s.clube}
 
-QUALIDADE: fotorrealismo total, alta nitidez, todos reconhecíveis.`,
+Camisa da Seleção Brasileira amarela para todos. Layout idêntico à IMAGEM 1.`,
 
-  lendas: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+  lendas: (s) => `TAREFA: Substitua o jogador na IMAGEM 1 (card lendas premium de referência) pelo rosto e corpo da pessoa na IMAGEM 2. Mantenha TUDO idêntico ao card original — fundo escuro/roxo, bordas douradas, layout épico — apenas troque o jogador.
 
-ESTILO: Lendas da Copa — figurinha épica premium, edição especial.
-IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
+IDENTIDADE OBRIGATÓRIA: use 100% o rosto, expressão e traços da IMAGEM 2. Aparência humana real.
 
-LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
-— PROPORÇÃO: vertical 49×65 mm.
-— FUNDO: roxo-escuro profundo (#0a0020) → preto. Estádio lotado desfocado. Faíscas douradas e brancas bokeh. Textura de ouro envelhecido.
-— BORDA: dupla borda dourada (#c0a020), filigrana nos cantos.
-— BADGE TOPO DIREITO: retângulo dourado com "LENDA" em preto bold.
-— FOTO: pessoa da IMAGEM 2, da cabeça aos joelhos, pose heroica dinâmica. Camisa da Seleção Brasileira amarela. Contra-luz dourado épico vindo de baixo.
-— BARRA INFERIOR: fundo dourado escuro (#c0a020). Nome "${s.nome}" em preto, caixa-alta, fonte grande. Posição "${s.posicao}" em preto menor.
-— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em preto pequeno.
-— RODAPÉ: "${s.clube}" em preto. Número "${s.numero}" em escudo dourado.
+TEXTOS A INSERIR:
+— Nome (em dourado/preto): ${s.nome}
+— Posição: ${s.posicao}
+— Stats: ${s.nascimento} | ${s.altura} | ${s.peso}
+— Clube: ${s.clube}
+— Número: ${s.numero}
 
-QUALIDADE: fotorrealismo extremo, iluminação épica cinematográfica, nitidez máxima no rosto.`,
+Camisa da Seleção Brasileira amarela. Iluminação épica com contra-luz dourado. Layout idêntico à IMAGEM 1.`,
 };
 
 // ─── IMAGEM DE REFERÊNCIA POR ESTILO ────────────────────────
