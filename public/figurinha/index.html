@@ -1618,10 +1618,14 @@ async function enviarWPP() {
   sessionStorage.setItem('fc_sorteio', sorteio);
   sessionStorage.setItem('fc_phone', phone);
 
-  // Gera imagem da figurinha como base64
+  // Gera imagem da figurinha como base64 (reduz pra 600px pra não estourar Z-API)
   const gc = document.getElementById('gen-canvas');
-  const imgData = gc.toDataURL('image/jpeg', 0.75); // 0.75 = ~500KB, suficiente para WPP
+  const wppC = document.createElement('canvas');
+  wppC.width = 600; wppC.height = 840;
+  wppC.getContext('2d').drawImage(gc, 0, 0, 600, 840);
+  const imgData = wppC.toDataURL('image/jpeg', 0.85);
   const b64 = imgData.split(',')[1];
+  console.log('📤 Z-API send: base64 size =', b64.length, 'chars (~', Math.round(b64.length*0.75/1024), 'KB)');
 
   const msg = `⚽🇧🇷 Aqui está a figurinha da Copa 2026 do(a) *${state.nome || 'craque'}*!\n\n` +
     `🎟️ Seu número do sorteio é: *${sorteio}*\n\n` +
@@ -1637,14 +1641,15 @@ async function enviarWPP() {
     });
     const resData = await resWpp.json();
     if (!resWpp.ok) {
-      console.error('❌ Z-API erro no envio:', resData);
-      alert('Houve um problema ao enviar pelo WhatsApp. Mas não se preocupe, sua figurinha está salva abaixo!');
+      const errMsg = resData?.message || resData?.error || JSON.stringify(resData).slice(0,200);
+      console.error('❌ Z-API erro', resWpp.status, errMsg, resData);
+      alert('Erro ao enviar WhatsApp (' + resWpp.status + '): ' + errMsg + '\n\nSua figurinha está salva abaixo!');
     } else {
       console.log('✅ Z-API sucesso:', resData);
     }
-  } catch(e) { 
-    console.error('Z-API error:', e);
-    alert('Erro de conexão ao enviar WhatsApp.');
+  } catch(e) {
+    console.error('Z-API catch error:', e);
+    alert('Erro de conexão: ' + e.message);
   }
 
   // Atualiza e mostra tela de sucesso
@@ -1695,11 +1700,11 @@ function downloadPDF() {
   doc.setFontSize(7); doc.setTextColor(160,160,160);
   doc.text('Tamanho sticker (×8)', 105, sy+stk.h+4, {align:'center'});
 
-  // Sorteio no rodapé
+  // Sorteio no rodapé (sem emoji — jsPDF não suporta)
   const sorteio = state.sorteio || sessionStorage.getItem('fc_sorteio') || '';
   if (sorteio) {
     doc.setFontSize(9); doc.setTextColor(0,180,80);
-    doc.text('🎟️ Nº do sorteio: '+sorteio+' · Final da Copa · '+SORTEIO_DATA, 105, 285, {align:'center'});
+    doc.text('No do sorteio: '+sorteio+' · Final da Copa · '+SORTEIO_DATA, 105, 285, {align:'center'});
   }
 
   doc.save('figurinha-copa-2026-'+(state.nome||'craque').toLowerCase().replace(/\s/g,'-')+'.pdf');
