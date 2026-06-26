@@ -332,7 +332,8 @@
     }
 
     /* por estilo */
-    .mc-comum .mc-bg { background: linear-gradient(160deg,#4ec9e8 0%,#1e8fc8 100%); }
+    .mc-comum .mc-bg { background: linear-gradient(135deg,#006600 0%,#009c3b 40%,#FFD700 70%,#003399 100%); }
+    .mc-comum .mc-namebar { background: #001a6e; }
     .mc-metalizado .mc-bg {
       background: linear-gradient(135deg,#9ab 0%,#dde 30%,#8ab 55%,#cdf 80%,#9ab 100%);
     }
@@ -664,21 +665,10 @@
 
     <div class="qstep" id="q2">
       <h2 id="q2-title">QUANTOS ANOS TEM?</h2>
-      <p class="q-hint">Pra adaptar o visual da figurinha.</p>
-      <div class="opt-grid">
-        <button class="opt-btn" onclick="selOpt('idade','1-3',this)">
-          <span class="opt-emoji">👶</span><span class="opt-label">1-3 anos</span>
-        </button>
-        <button class="opt-btn" onclick="selOpt('idade','4-6',this)">
-          <span class="opt-emoji">🧒</span><span class="opt-label">4-6 anos</span>
-        </button>
-        <button class="opt-btn" onclick="selOpt('idade','7-9',this)">
-          <span class="opt-emoji">👦</span><span class="opt-label">7-9 anos</span>
-        </button>
-        <button class="opt-btn" onclick="selOpt('idade','10+',this)">
-          <span class="opt-emoji">🧑</span><span class="opt-label">10+ anos</span>
-        </button>
-      </div>
+      <p class="q-hint">Digite a idade exata — vai aparecer na figurinha!</p>
+      <input class="txt-input" id="inp-idade" type="text" placeholder="Ex: 5 anos, 8 anos, 30 anos"
+        maxlength="12" oninput="state.idade=this.value.trim()" autocomplete="off">
+      <button class="btn-next" onclick="nextQ(3)">CONTINUAR →</button>
     </div>
 
     <div class="qstep" id="q3">
@@ -725,10 +715,10 @@
               <span class="mc-wm">26</span>
               <div><div class="mc-head"></div><div class="mc-silhouette"></div></div>
             </div>
-            <div class="mc-namebar">CROMO OFICIAL</div>
+            <div class="mc-namebar">COPA BRASIL</div>
           </div>
-          <span class="opt-label">Cromo Oficial</span>
-          <span class="opt-desc">Padrão álbum Copa 2026</span>
+          <span class="opt-label">Copa Brasil</span>
+          <span class="opt-desc">Verde/Amarelo — igual à capa</span>
         </button>
         <button class="opt-btn" onclick="selOpt('estilo','metalizado',this)">
           <div class="mini-card mc-metalizado">
@@ -999,7 +989,7 @@ function updateQuiz() {
   document.getElementById('prog-fill').style.width = ((step-1)/6*100) + '%';
   document.getElementById('step-ct').textContent = step + ' de 6';
   document.getElementById('btn-back').style.visibility = step > 1 ? 'visible' : 'hidden';
-  if (step===2 && state.nome) document.getElementById('q2-title').textContent = 'QUANTOS ANOS O '+state.nome+' TEM?';
+  if (step===2 && state.nome) { document.getElementById('q2-title').textContent = 'QUANTOS ANOS O '+state.nome+' TEM?'; }
   if (step===3 && state.nome) document.getElementById('q3-title').textContent = 'QUAL A POSIÇÃO DO '+state.nome+'?';
 }
 
@@ -1011,6 +1001,10 @@ function nextQ(to) {
   if (step===1) {
     state.nome = (document.getElementById('inp-nome').value||'').trim().toUpperCase();
     if (!state.nome) { document.getElementById('inp-nome').style.borderColor='#ff4444'; document.getElementById('inp-nome').focus(); return; }
+  }
+  if (step===2) {
+    state.idade = (document.getElementById('inp-idade').value||'').trim();
+    if (!state.idade) { document.getElementById('inp-idade').style.borderColor='#ff4444'; document.getElementById('inp-idade').focus(); return; }
   }
   if (step===4) {
     const v = document.getElementById('inp-num').value;
@@ -1205,20 +1199,19 @@ PROIBIÇÕES ABSOLUTAS — NUNCA FAZER:
 
 const ESTILOS_FIGURINHA = {
 
-  comum: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo CROMO OFICIAL.
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, não render de IA.
+  comum: (s) => `Crie uma figurinha colecionável de Copa do Mundo 2026 — estilo COPA BRASIL (igual ao design oficial de marketing da Copa 2026).
+IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — ${s.idade} de idade.
 
-LAYOUT (proporção vertical 49×65 mm):
-— Fundo: azul-turquesa vibrante (#4ec9e8 → #1e8fc8), gradiente diagonal suave.
-— Marca d'água central: número "26" gigante semitransparente em cinza claro (opacidade ~15%), fonte condensada bold, ocupando quase todo o fundo.
-— Borda: fina borda branca externa (2–3 px) e fina borda interna azul-marinho, dando aspecto de cartinha impressa.
-— Canto superior esquerdo: ícone pequeno de troféu/Copa do Mundo.
-— Canto superior direito: número "${s.numero}" em fonte bold branca, pequeno.
-— Foto do jogador: da cabeça até a cintura, centralizada, ocupando ~70% da altura. Camisa de futebol da Seleção Brasileira (amarela). Fundo original completamente removido.
-— Barra inferior (30% da altura): retângulo azul-marinho (#0a1f6e). Dentro: nome "${s.nome}" em caixa-alta, fonte Anton/condensada, branca, centralizado. Abaixo do nome: posição "${s.posicao}" em fonte menor, cor amarela/dourada.
-— Borda inferior: faixa verde pequena (#009c3b) no rodapé absoluto.
+LAYOUT EXATO (proporção 49×65 mm, vertical):
+— Fundo: verde vibrante (#006600) com elementos diagonais em amarelo (#FFD700) e azul (#003399) cruzando em swooshes/faixas dinâmicas, estilo design esportivo Copa 2026.
+— Borda: branca arredondada externa + borda interna verde, dando aparência de carta colecionável premium.
+— TOPO ESQUERDO: escudo CBF-estilo (círculo azul com bola de futebol e estrelas douradas). Abaixo do escudo: 3 estrelas douradas pequenas.
+— TOPO DIREITO: caixa verde-escura com texto "26" em branco grande (bold) e "COPA 2026" em verde claro abaixo, tudo dentro de um retângulo com bordas.
+— FOTO: pessoa da cabeça até o peito/cintura, centralizada, ocupando ~65% da altura total. Camisa da Seleção Brasileira amarela com gola verde. Fundo completamente removido, integrado ao design da carta.
+— BARRA INFERIOR: retângulo azul-marinho (#001a6e) com 2 estrelas douradas pequenas nos lados. Nome "${s.nome}" em caixa-alta, fonte condensada bold, branco, centralizado e grande. Abaixo: "★ ${s.posicao} ★" em branco menor, centralizado.
+— RODAPÉ: faixa verde fina. Número "${s.numero}" em branco dentro de escudo pequeno à esquerda. Idade "${s.idade}" à direita em branco pequeno.
 
-QUALIDADE: fotografia hiper-realista, iluminação de estúdio, nitidez extrema. Não cartoon.`,
+QUALIDADE: fotografia hiper-realista, cores vibrantes saturadas, nitidez extrema. Design esportivo moderno e colorido.`,
 
   metalizado: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo METALIZADO (Silver Foil / Holográfico).
 IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — o efeito metálico/holográfico é APENAS no fundo e moldura, NUNCA no rosto.
@@ -1281,6 +1274,38 @@ LAYOUT (proporção vertical 49×65 mm):
 QUALIDADE: fotorrealismo extremo, iluminação cinematográfica épica, máxima nitidez facial.`,
 };
 
+// ─── IMAGEM DE REFERÊNCIA POR ESTILO ────────────────────────
+// Coloque imagens JPG em /public/figurinha/refs/ com o nome do estilo
+// Ex: refs/comum.jpg, refs/ouro.jpg, refs/metalizado.jpg, refs/lendas.jpg
+const STYLE_REF_URLS = {
+  comum:      '/figurinha/refs/comum.jpg',
+  metalizado: '/figurinha/refs/metalizado.jpg',
+  ouro:       '/figurinha/refs/ouro.jpg',
+  lendas:     '/figurinha/refs/lendas.jpg',
+};
+
+async function loadRefImage(style) {
+  const url = STYLE_REF_URLS[style];
+  if (!url) return null;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const b64 = reader.result.split(',')[1];
+        resolve({ inline_data: { mime_type: blob.type || 'image/jpeg', data: b64 } });
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch(e) {
+    console.log('Ref image não encontrada para estilo:', style);
+    return null;
+  }
+}
+
 async function processPhotoGemini(dataUrl) {
   if (!dataUrl) return null;
   const s = {
@@ -1291,19 +1316,35 @@ async function processPhotoGemini(dataUrl) {
     numero:  state.numero || '10',
   };
   const estiloFn = ESTILOS_FIGURINHA[state.estilo] || ESTILOS_FIGURINHA['comum'];
-  const prompt = estiloFn(s) + '\n\n' + REGRAS_GERAIS + '\n\n' + NEGATIVE_PROMPT;
+
+  // Tenta carregar imagem de referência do estilo
+  const refPart = await loadRefImage(state.estilo);
+
+  // Se tem referência, ajusta o prompt para o Gemini usar como guia visual
+  let promptBase = estiloFn(s);
+  if (refPart) {
+    promptBase = `IMAGEM DE REFERÊNCIA DE ESTILO: A IMAGEM 1 é o modelo de design/layout que você deve replicar exatamente — mesmas cores, mesma estrutura, mesma composição. NÃO copie a pessoa da imagem de referência, apenas o estilo visual da carta.
+PESSOA A INSERIR: A IMAGEM 2 é a pessoa real que deve aparecer na figurinha. Preserve 100% da identidade, rosto e expressão desta pessoa.
+
+` + promptBase;
+  }
+
+  const prompt = promptBase + '\n\n' + REGRAS_GERAIS + '\n\n' + NEGATIVE_PROMPT;
 
   try {
     const base64 = dataUrl.split(',')[1];
     const mime   = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+
+    // Monta parts: [texto, ref (se existir), foto do usuário]
+    const parts = [{ text: prompt }];
+    if (refPart) parts.push(refPart);
+    parts.push({ inline_data: { mime_type: mime, data: base64 } });
+
     const res = await fetch('/api/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [
-          { text: prompt },
-          { inline_data: { mime_type: mime, data: base64 } }
-        ]}]
+        contents: [{ role: 'user', parts }]
       })
     });
     const json = await res.json();
