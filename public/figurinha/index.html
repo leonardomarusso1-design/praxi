@@ -700,10 +700,16 @@
     </div>
 
     <div class="qstep" id="q2">
-      <h2 id="q2-title">QUANTOS ANOS TEM?</h2>
-      <p class="q-hint">Digite a idade exata — vai aparecer na figurinha!</p>
-      <input class="txt-input" id="inp-idade" type="text" placeholder="Ex: 5 anos, 8 anos, 30 anos"
-        maxlength="12" oninput="state.idade=this.value.trim()" autocomplete="off">
+      <h2 id="q2-title">DADOS DO CRAQUE</h2>
+      <p class="q-hint">Essas informações aparecem na figurinha!</p>
+      <input class="txt-input" id="inp-nasc" type="text" placeholder="Nascimento (ex: 08.07.2015)"
+        maxlength="15" oninput="state.nascimento=this.value.trim()" autocomplete="off" style="margin-bottom:10px;">
+      <input class="txt-input" id="inp-alt" type="text" placeholder="Altura (ex: 1.26 m)"
+        maxlength="8" oninput="state.altura=this.value.trim()" autocomplete="off" style="margin-bottom:10px;">
+      <input class="txt-input" id="inp-peso" type="text" placeholder="Peso (ex: 26 kg)"
+        maxlength="8" oninput="state.peso=this.value.trim()" autocomplete="off" style="margin-bottom:10px;">
+      <input class="txt-input" id="inp-clube" type="text" placeholder="Time/Clube (ex: Santos FC, Escola Municipal)"
+        maxlength="30" oninput="state.clube=this.value.trim()" autocomplete="off">
       <button class="btn-next" onclick="nextQ(3)">CONTINUAR →</button>
     </div>
 
@@ -781,9 +787,6 @@
       </div>
       <input type="file" id="file-inp" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this)">
 
-      <input class="txt-input" id="inp-apelido" type="text"
-        placeholder="Apelido (opcional, ex: GABRIELZINHO)" maxlength="13"
-        oninput="this.value=this.value.toUpperCase()" style="font-size:15px;margin-top:8px;">
 
       <button class="btn-next" id="btn-gerar" onclick="startGen()" disabled>
         ⚡ GERAR MINHA FIGURINHA
@@ -976,8 +979,8 @@ const SORTEIO_DATA       = '19 de julho de 2026'; // Final da Copa 2026
 // ──────────────────────────────────────────────────────────────
 
 const state = {
-  nome: '', idade: '', posicao: 'ATACANTE',
-  numero: '10', estilo: 'ouro', apelido: '', photo: null
+  nome: '', nascimento: '', altura: '', peso: '', clube: '', posicao: 'ATACANTE',
+  numero: '10', estilo: 'ouro', photo: null
 };
 let step = 1;
 
@@ -998,7 +1001,7 @@ function updateQuiz() {
   document.getElementById('prog-fill').style.width = ((step-1)/6*100) + '%';
   document.getElementById('step-ct').textContent = step + ' de 6';
   document.getElementById('btn-back').style.visibility = step > 1 ? 'visible' : 'hidden';
-  if (step===2 && state.nome) { document.getElementById('q2-title').textContent = 'QUANTOS ANOS O '+state.nome+' TEM?'; }
+  if (step===2 && state.nome) { document.getElementById('q2-title').textContent = 'DADOS DO '+state.nome; }
   if (step===3 && state.nome) document.getElementById('q3-title').textContent = 'QUAL A POSIÇÃO DO '+state.nome+'?';
 }
 
@@ -1012,8 +1015,11 @@ function nextQ(to) {
     if (!state.nome) { document.getElementById('inp-nome').style.borderColor='#ff4444'; document.getElementById('inp-nome').focus(); return; }
   }
   if (step===2) {
-    state.idade = (document.getElementById('inp-idade').value||'').trim();
-    if (!state.idade) { document.getElementById('inp-idade').style.borderColor='#ff4444'; document.getElementById('inp-idade').focus(); return; }
+    state.nascimento = (document.getElementById('inp-nasc').value||'').trim();
+    state.altura     = (document.getElementById('inp-alt').value||'').trim();
+    state.peso       = (document.getElementById('inp-peso').value||'').trim();
+    state.clube      = (document.getElementById('inp-clube').value||'').trim();
+    if (!state.nascimento) { document.getElementById('inp-nasc').style.borderColor='#ff4444'; document.getElementById('inp-nasc').focus(); return; }
   }
   if (step===4) {
     const v = document.getElementById('inp-num').value;
@@ -1059,7 +1065,6 @@ function onPhoto(input) {
 
 // ─── GENERATION ─────────────────────────────────────────────
 function startGen() {
-  state.apelido = (document.getElementById('inp-apelido').value||'').toUpperCase();
   show('s-gen');
 
   let canvasDone = false, vslDone = false;
@@ -1208,92 +1213,113 @@ PROIBIÇÕES ABSOLUTAS — NUNCA FAZER:
 
 const ESTILOS_FIGURINHA = {
 
-  comum: (s) => `Crie uma figurinha colecionável de Copa do Mundo 2026 — estilo COPA BRASIL (igual ao design oficial de marketing da Copa 2026).
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — ${s.idade} de idade.
+  comum: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
 
-LAYOUT EXATO (proporção 49×65 mm, vertical):
-— Fundo: verde vibrante (#006600) com elementos diagonais em amarelo (#FFD700) e azul (#003399) cruzando em swooshes/faixas dinâmicas, estilo design esportivo Copa 2026.
-— Borda: branca arredondada externa + borda interna verde, dando aparência de carta colecionável premium.
-— TOPO ESQUERDO: escudo CBF-estilo (círculo azul com bola de futebol e estrelas douradas). Abaixo do escudo: 3 estrelas douradas pequenas.
-— TOPO DIREITO: caixa verde-escura com texto "26" em branco grande (bold) e "COPA 2026" em verde claro abaixo, tudo dentro de um retângulo com bordas.
-— FOTO: pessoa da cabeça até o peito/cintura, centralizada, ocupando ~65% da altura total. Camisa da Seleção Brasileira amarela com gola verde. Fundo completamente removido, integrado ao design da carta.
-— BARRA INFERIOR: retângulo azul-marinho (#001a6e) com 2 estrelas douradas pequenas nos lados. Nome "${s.nome}" em caixa-alta, fonte condensada bold, branco, centralizado e grande. Abaixo: "★ ${s.posicao} ★" em branco menor, centralizado.
-— RODAPÉ: faixa verde fina. Número "${s.numero}" em branco dentro de escudo pequeno à esquerda. Idade "${s.idade}" à direita em branco pequeno.
+ESTILO: Copa Brasil 2026 — figurinha colecionável oficial.
+IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
 
-QUALIDADE: fotografia hiper-realista, cores vibrantes saturadas, nitidez extrema. Design esportivo moderno e colorido.`,
+LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
+— PROPORÇÃO: vertical 49×65 mm (carta de colecionável).
+— FUNDO: verde vibrante com elementos diagonais amarelo e azul, swooshes dinâmicos Copa 2026. EXATAMENTE como na IMAGEM 1.
+— BORDA: branca arredondada externa.
+— TOPO ESQUERDO: logo/escudo Copa 2026 com bola de futebol. TOPO DIREITO: badge "26 / COPA 2026".
+— FOTO: pessoa da IMAGEM 2 da cabeça até o peito, centralizada (~65% da altura). Camisa da Seleção Brasileira amarela com escudo CBF. Fundo removido, integrado ao card.
+— BARRA NOME (inferior): fundo azul-marinho (#001a6e) com estrelas douradas. Nome "${s.nome}" em branco, caixa-alta, fonte bold grande, centralizado. Abaixo: "${s.posicao}" em branco menor.
+— STATS ROW (abaixo da barra nome, fundo claro): 3 colunas com ícones exatamente como na IMAGEM 1:
+  • Coluna 1: ícone calendário + "${s.nascimento}" + "NASCIMENTO" abaixo
+  • Coluna 2: ícone régua + "${s.altura}" + "ALTURA" abaixo
+  • Coluna 3: ícone balança + "${s.peso}" + "PESO" abaixo
+— RODAPÉ: "${s.clube}" centralizado, fonte pequena.
+— Número "${s.numero}" visível no canto superior ou na camisa.
 
-  cromo: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo CROMO OFICIAL PANINI.
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, ${s.idade} de idade.
+QUALIDADE: fotorrealismo extremo, cores vibrantes, nitidez máxima no rosto.`,
 
-LAYOUT EXATO (proporção 49×65 mm, vertical — igual à figurinha oficial do álbum):
-— Fundo: azul-turquesa vibrante (#4ec9e8 → #2796cc) cobrindo toda a carta. Textura sutil de hexágonos ou padrão geométrico suave no fundo.
-— Borda: fina borda branca externa (3px) com canto levemente arredondado. Borda interna tênue.
-— TOPO: ícone FIFA pequeno no canto superior esquerdo. Bandeira do Brasil pequena no canto superior direito.
-— FOTO: pessoa da cabeça até os ombros/peito, centralizada, sem fundo, ocupando ~60% da altura. Camisa da Seleção Brasileira amarela. Iluminação de estúdio natural.
-— BARRA INFERIOR: fundo azul-marinho escuro (#0a1a6e) ocupando ~30% da altura. Nome "${s.nome}" em caixa-alta, fonte condensada bold, branca, centralizada e grande. Abaixo do nome: "★ ${s.posicao} ★" em branco menor. Linha divisória tênue.
-— RODAPÉ: faixa estreita verde (#009c3b). Número "${s.numero}" em branco à esquerda. Idade "${s.idade}" à direita em branco pequeno.
+  cromo: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
 
-QUALIDADE: fotorrealismo extremo, iluminação de estúdio, nitidez facial máxima.`,
+ESTILO: Cromo Oficial Panini — figurinha padrão do álbum Copa do Mundo.
+IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
 
-  metalizado: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo METALIZADO (Silver Foil / Holográfico).
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real — o efeito metálico/holográfico é APENAS no fundo e moldura, NUNCA no rosto.
+PROIBIDO: NÃO use efeito metálico. NÃO use holográfico. NÃO use prata ou iridescente. O fundo é AZUL-TURQUESA LISO E LIMPO.
 
-LAYOUT (proporção vertical 49×65 mm):
-— Fundo: efeito foil holográfico prateado — gradiente iridescente que muda de tom (prata → lilás → azul-gelo → prata), textura metálica refletiva.
-— Marca d'água "26" semitransparente em prata, tamanho gigante, no fundo.
-— Sobre o foil: reflexos de luz em diagonal (faixas brancas brilhantes, opacidade ~30%), simulando a luz batendo no holograma.
-— Borda dupla: externa branca fina + interna prata/cromo.
-— Canto superior esquerdo: ícone Copa do Mundo cromado.
-— Canto superior direito: número "${s.numero}" em prata metálico.
-— Foto do jogador: cabeça até a cintura, centralizada, sem fundo. Camisa da Seleção Brasileira amarela. Pele e rosto com reflexo de luz prata suave.
-— Barra inferior: retângulo azul-marinho escuro com reflexo metálico. Nome "${s.nome}" em branco brilhante, caixa-alta, fonte condensada. Posição "${s.posicao}" abaixo em dourado claro.
+LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
+— PROPORÇÃO: vertical 49×65 mm.
+— FUNDO: azul-turquesa sólido e liso (#4ECACC) cobrindo TODA a carta. Número "26" grande em verde mais escuro no fundo, semitransparente. SEM gradiente, SEM reflexo, SEM efeito metálico.
+— BORDA: fina borda branca (2-3px), cantos levemente arredondados.
+— TOPO ESQUERDO: logo FIFA branco pequeno. TOPO DIREITO: bandeira do Brasil circular pequena + número "${s.numero}" em branco.
+— FOTO: pessoa da IMAGEM 2 da cabeça até os ombros, rosto grande centralizando o card (~60% da altura). Camisa da Seleção Brasileira amarela com escudo CBF e BRASIL. Fundo completamente removido.
+— BARRA INFERIOR BRANCA (últimos ~30% do card): fundo branco ou quase branco.
+  • Linha 1: "${s.nome}" em preto, fonte bold grande, caixa-alta.
+  • Linha 2: "${s.nascimento} | ${s.altura} | ${s.peso}" em cinza escuro, fonte menor.
+  • Linha 3: "${s.clube}" em cinza, fonte pequena, abaixo.
+— RODAPÉ: logo Panini pequeno no canto inferior direito.
 
-QUALIDADE: fotorrealismo total, nitidez extrema. O efeito foil é do FUNDO/MOLDURA, não no rosto.`,
+QUALIDADE: fotorrealismo extremo, iluminação de estúdio limpa, nitidez máxima facial.`,
 
-  ouro: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LEGEND GOLD (Variante Ouro / Extra Sticker).
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, fotorrealismo total no rosto — o dourado/drama é APENAS no fundo, bordas e iluminação.
+  metalizado: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
 
-LAYOUT (proporção vertical 49×65 mm):
-— Fundo: preto profundo (#0a0500) ou marrom escuro (#1a0d00), quase opaco.
-— Elemento central de fundo: grande círculo (80% da largura) com as cores da bandeira do Brasil (verde, amarelo, azul) desfocado e com efeito de luz dourada irradiando do centro.
-— Textura de foil dourado sobre tudo: faixas diagonais de luz áurea (opacidade ~25%), efeito de ouro polido.
-— Borda: dupla borda dourada metálica (#FFD700 → #b8960c), com leve efeito de relevo/emboss.
-— Badge de raridade: no canto superior direito, retângulo dourado pequeno com texto "LEGEND" em preto, fonte bold maiúscula.
-— Foto do jogador: da cabeça até os joelhos (mais corpo que o cromo comum), centralizada, sem fundo. Camisa da Seleção Brasileira amarela. Iluminação dramática com contorno de luz dourada no jogador (rim light dourado).
-— Barra inferior: retângulo preto (#111). Nome "${s.nome}" em caixa-alta, fonte Anton, cor DOURADA (#FFD700), centralizado e grande. Abaixo: posição "${s.posicao}" em branco menor.
-— Rodapé: faixa de ouro sólido, número "${s.numero}" em preto no canto.
+ESTILO: Metalizado Panini — figurinha com efeito foil dourado/prateado holográfico.
+IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. O efeito metálico é APENAS no fundo e bordas — NUNCA no rosto.
 
-QUALIDADE: fotorrealismo extremo, contraste dramático, iluminação de alta qualidade de estúdio.`,
+LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
+— PROPORÇÃO: vertical 49×65 mm.
+— FUNDO: efeito foil holográfico dourado/prateado iridescente, gradiente que muda de dourado para prata. "26" gigante em foil dourado no fundo.
+— BORDA: dupla borda dourada metálica externa.
+— TOPO: logo Copa do Mundo dourado. Número "${s.numero}" em dourado metálico no canto.
+— FOTO: pessoa da IMAGEM 2, cabeça até a cintura, centralizada. Camisa da Seleção Brasileira amarela. Iluminação com rim light dourado realçando o contorno.
+— BARRA INFERIOR: fundo escuro com reflexo metálico dourado. Nome "${s.nome}" em dourado brilhante, caixa-alta. Posição "${s.posicao}" em branco.
+— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em dourado claro, fonte pequena.
+— RODAPÉ: "${s.clube}" em dourado.
 
-  familia: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo FAMÍLIA.
+QUALIDADE: fotorrealismo total, efeito foil no fundo/moldura, rosto humano real sem efeito metálico.`,
 
-Usar exatamente as pessoas presentes na foto. Preservar totalmente a identidade de cada uma.
-Não criar pessoas novas. Não remover nenhuma pessoa. Remover totalmente o fundo original.
-Adicionar camisas de futebol iguais para todos (Seleção Brasileira, amarela), sem patrocinadores.
-Composição: adultos atrás, crianças na frente, todos olhando para a câmera, expressão natural e sorridente.
+  ouro: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
 
-LAYOUT (proporção 49×65 mm):
-— Fundo: azul-turquesa (#4ec9e8) com marca d'água "26".
-— Borda branca fina.
-— No topo: nome "FAMÍLIA ${s.apelido}" em fonte Anton, branco, centralizado.
-— Barra inferior azul-marinho com texto "${s.apelido}" em branco.
+ESTILO: Legend Gold — figurinha extra rara, edição dourada premium.
+IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
 
-QUALIDADE: fotorrealismo total, alta nitidez, iluminação de estúdio.`,
+LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
+— PROPORÇÃO: vertical 49×65 mm.
+— FUNDO: preto profundo com círculo central das cores do Brasil (verde/amarelo) irradiando luz dourada. Faixas de foil dourado diagonal sutis.
+— BORDA: dupla borda dourada metálica (#FFD700), com relevo.
+— BADGE TOPO DIREITO: retângulo dourado com "LEGEND" em preto bold.
+— FOTO: pessoa da IMAGEM 2, da cabeça até os joelhos, pose heroica. Camisa da Seleção Brasileira amarela. Rim light dourado intenso no contorno.
+— BARRA INFERIOR: fundo preto. Nome "${s.nome}" em dourado (#FFD700), caixa-alta, fonte grande. Posição "${s.posicao}" em branco menor.
+— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em dourado claro.
+— RODAPÉ DOURADO: faixa dourada sólida. "${s.clube}" em preto. Número "${s.numero}" em preto.
 
-  lendas: (s) => `Crie uma figurinha colecionável de Copa do Mundo — estilo LENDAS DA COPA (Legend Premium).
-IDENTIDADE: O rosto, a expressão e os traços da pessoa na foto devem ser preservados com 100% de fidelidade. Se ela está sorrindo, a figurinha sorri igual. Se está séria, fica séria. Aparência humana real, fotorrealismo total no rosto — o efeito épico/cinematográfico é APENAS no fundo, bordas e iluminação.
+QUALIDADE: fotorrealismo extremo, contraste dramático, iluminação cinematográfica.`,
 
-LAYOUT (proporção vertical 49×65 mm):
-— Fundo: roxo-escuro profundo (#0a0020) → preto, gradiente dramático.
-— Elemento épico de fundo: estádio lotado desfocado ao fundo, com luzes de holofotes e confetes, atmosfera de final de Copa.
-— Sobre o fundo: brilhos e faíscas douradas e brancas (efeito "bokeh" de luzes), textura de ouro envelhecido.
-— Borda: dupla borda dourada-escura (#c0a020), com detalhe de arabescos/filigrana nos cantos (estilo medieval/troféu).
-— Badge topo direito: retângulo dourado com "LENDA" em preto, fonte bold.
-— Foto do jogador: da cabeça até os joelhos, pose heroica (ligeiramente angular/dinâmica), camisa da Seleção Brasileira amarela, sem fundo. Efeito de luz épica vindo de baixo (contra-luz dourado).
-— Barra inferior: fundo dourado escuro (#c0a020). Nome "${s.nome}" em caixa-alta, fonte condensada preta, grande. Posição "${s.posicao}" em preto menor.
-— Rodapé: número "${s.numero}" em dourado dentro de escudo pequeno.
+  familia: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para as pessoas da IMAGEM 2.
 
-QUALIDADE: fotorrealismo extremo, iluminação cinematográfica épica, máxima nitidez facial.`,
+ESTILO: Cromo Família — figurinha especial com todos da foto.
+IDENTIDADE: Use TODAS as pessoas presentes na IMAGEM 2. Preserve 100% a identidade de cada uma. NÃO crie novas pessoas. NÃO remova ninguém.
+
+LAYOUT:
+— PROPORÇÃO: vertical 49×65 mm.
+— FUNDO: azul-turquesa sólido (#4ECACC) com "26" semitransparente no fundo.
+— BORDA: branca fina.
+— TOPO: "FAMÍLIA ${s.nome}" em fonte bold branca, centralizado.
+— FOTO: TODAS as pessoas da IMAGEM 2 com camisa da Seleção Brasileira amarela. Adultos atrás, crianças na frente. Fundo removido, integrado ao card.
+— BARRA INFERIOR BRANCA: "${s.nome}" em preto bold. Abaixo: "${s.nascimento} | ${s.altura} | ${s.peso}". Abaixo: "${s.clube}".
+
+QUALIDADE: fotorrealismo total, alta nitidez, todos reconhecíveis.`,
+
+  lendas: (s) => `Você está gerando a IMAGEM 1 como referência de design — replique EXATAMENTE esse layout para a pessoa da IMAGEM 2.
+
+ESTILO: Lendas da Copa — figurinha épica premium, edição especial.
+IDENTIDADE: Use SOMENTE a pessoa da IMAGEM 2. Preserve 100% o rosto, expressão, traços e tom de pele. Aparência humana real, fotorrealista.
+
+LAYOUT EXATO — copie pixel a pixel da IMAGEM 1:
+— PROPORÇÃO: vertical 49×65 mm.
+— FUNDO: roxo-escuro profundo (#0a0020) → preto. Estádio lotado desfocado. Faíscas douradas e brancas bokeh. Textura de ouro envelhecido.
+— BORDA: dupla borda dourada (#c0a020), filigrana nos cantos.
+— BADGE TOPO DIREITO: retângulo dourado com "LENDA" em preto bold.
+— FOTO: pessoa da IMAGEM 2, da cabeça aos joelhos, pose heroica dinâmica. Camisa da Seleção Brasileira amarela. Contra-luz dourado épico vindo de baixo.
+— BARRA INFERIOR: fundo dourado escuro (#c0a020). Nome "${s.nome}" em preto, caixa-alta, fonte grande. Posição "${s.posicao}" em preto menor.
+— STATS ROW: "${s.nascimento} | ${s.altura} | ${s.peso}" em preto pequeno.
+— RODAPÉ: "${s.clube}" em preto. Número "${s.numero}" em escudo dourado.
+
+QUALIDADE: fotorrealismo extremo, iluminação épica cinematográfica, nitidez máxima no rosto.`,
 };
 
 // ─── IMAGEM DE REFERÊNCIA POR ESTILO ────────────────────────
@@ -1337,11 +1363,13 @@ async function loadRefImage(style) {
 async function processPhotoGemini(dataUrl) {
   if (!dataUrl) return null;
   const s = {
-    nome:    (state.nome    || 'CRAQUE').toUpperCase(),
-    apelido: (state.apelido || state.nome || 'CRAQUE').toUpperCase(),
-    idade:   state.idade  || '',
-    posicao: (state.posicao || 'ATACANTE').toUpperCase(),
-    numero:  state.numero || '10',
+    nome:       (state.nome    || 'CRAQUE').toUpperCase(),
+    nascimento: state.nascimento || '',
+    altura:     state.altura  || '',
+    peso:       state.peso    || '',
+    clube:      (state.clube  || 'BRASIL').toUpperCase(),
+    posicao:    (state.posicao || 'ATACANTE').toUpperCase(),
+    numero:     state.numero || '10',
   };
   const estiloFn = ESTILOS_FIGURINHA[state.estilo] || ESTILOS_FIGURINHA['comum'];
 
@@ -1473,9 +1501,9 @@ function renderFigurinha(cb) {
 
       // 6) Stats — 3 colunas na faixa amarela (~y=862)
       const stats = [
-        { v: 'Nº ' + (state.numero || '10'),                 l: 'NÚMERO'  },
-        { v: state.idade ? state.idade + ' anos' : '—',      l: 'IDADE'   },
-        { v: (state.apelido || state.estilo || '—').toUpperCase(), l: 'APELIDO' },
+        { v: state.nascimento || '—', l: 'NASCIMENTO' },
+        { v: state.altura     || '—', l: 'ALTURA'     },
+        { v: state.peso       || '—', l: 'PESO'       },
       ];
       [200, W / 2, 600].forEach((x, i) => {
         ctx.font      = 'bold 22px Inter, Arial, sans-serif';
@@ -1550,7 +1578,7 @@ function renderFigurinhaLegacy(cb) {
     const BY=PY+PH;
     ctx.fillStyle='rgba(0,0,0,0.68)'; ctx.fillRect(34,BY,W-68,H-BY-34);
     ctx.fillStyle='#FFD700'; ctx.font='bold 68px Arial'; ctx.textAlign='center';
-    const dName=state.apelido||state.nome;
+    const dName=state.nome;
     ctx.fillText(dName,W/2,BY+100);
     ctx.fillStyle='rgba(255,255,255,0.72)'; ctx.font='34px Arial';
     ctx.fillText(state.posicao,W/2,BY+148);
@@ -1595,7 +1623,8 @@ function saveSessionState() {
   try {
     sessionStorage.setItem('fc_state', JSON.stringify({
       nome: state.nome, idade: state.idade, posicao: state.posicao,
-      numero: state.numero, estilo: state.estilo, apelido: state.apelido
+      numero: state.numero, estilo: state.estilo,
+      nascimento: state.nascimento, altura: state.altura, peso: state.peso, clube: state.clube
     }));
     const gc = document.getElementById('gen-canvas');
     if (gc.width > 0) sessionStorage.setItem('fc_canvas', gc.toDataURL('image/png'));
