@@ -18,8 +18,8 @@ export default async function handler(req, res) {
       input: {
         parts: []
       },
-      generationConfig: {
-        responseModalities: ['IMAGE', 'TEXT']
+      generation_config: {
+        response_modalities: ['IMAGE', 'TEXT']
       }
     };
 
