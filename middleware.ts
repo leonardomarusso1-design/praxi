@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const publicPaths = ['/', '/login', '/cadastro', '/figurinha']
-  const isPublic = publicPaths.includes(pathname)
+  const isPublic = publicPaths.includes(pathname) || pathname.startsWith('/api/')
 
   if (!user && !isPublic) {
     return NextResponse.redirect(new URL('/login', request.url))
@@ -35,5 +35,4 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
-}
+  matcher: ['/((?
