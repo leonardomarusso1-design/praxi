@@ -1179,24 +1179,33 @@ async function processPhotoGemini(dataUrl) {
       })
     });
     const json = await res.json();
-    console.log('🎨 Gemini resposta completa:', JSON.stringify(json).slice(0, 2000));
     if (!res.ok) {
-      console.error('❌ Gemini HTTP', res.status, JSON.stringify(json?.error || json));
+      console.error('❌ Gemini HTTP', res.status, json?.error || JSON.stringify(json).slice(0,300));
       return null;
     }
 
-    // Novo formato /interactions: steps[].modelOutput.content[].type === 'image'
+    // Proxy já extrai e retorna { image: "data:..." }
+    if (json.image) {
+      console.log('✅ Imagem recebida do proxy');
+      return json.image;
+    }
+
+    // Fallback: proxy retornou a resposta bruta — tenta extrair aqui
+    // Novo formato /interactions: steps[].content[].data (confirmado via gemini-debug.js)
     const steps = json.steps || [];
+    console.log('Steps encontrados:', steps.length);
     for (const step of steps) {
-      const contents = step?.modelOutput?.content || [];
+      // Tenta step.content (confirmado pelo debug handler) e também step.modelOutput.content
+      const contents = step?.content || step?.modelOutput?.content || [];
+      console.log('Step content items:', contents.length, contents.map(c => c.type || (c.data ? 'data':'?')));
       for (const c of contents) {
-        if ((c.type === 'image' || c.inlineData || c.inline_data) && c.data) {
+        // Imagem: tem c.data com string grande, ou type === 'image'
+        if (c.data && typeof c.data === 'string' && c.data.length > 200) {
           const mime = c.mime_type || c.mimeType || 'image/png';
-          const b64 = c.data;
-          console.log('✅ Gemini gerou imagem:', mime, 'tamanho base64:', b64.length);
-          return `data:${mime};base64,${b64}`;
+          console.log('✅ Gemini gerou imagem em step.content:', mime, 'tamanho:', c.data.length);
+          return `data:${mime};base64,${c.data}`;
         }
-        if (c.type === 'text' && c.text) console.warn('⚠️ Gemini retornou texto:', c.text);
+        if (c.type === 'text' && c.text) console.warn('⚠️ Gemini step texto:', c.text.slice(0,100));
       }
     }
 
