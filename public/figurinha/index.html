@@ -8,6 +8,13 @@
   <meta property="og:title" content="Seu Filho é o Craque da Copa 2026 🇧🇷">
   <meta property="og:description" content="Figurinha personalizada com foto, nome e uniforme da Seleção. Em 2 minutos, pronto pra imprimir!">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "xdpwubey17");
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -856,15 +863,16 @@
   <p class="gen-sub">Não saia da tela! Leva até 30 segundos.</p>
 
   <!-- Vídeo VSL -->
-  <div class="gen-video-wrap" id="gen-video-wrap">
-    <video id="gen-video" playsinline preload="auto" muted poster="/figurinha/cover.png"
-      style="width:240px;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:block;background:#000">
+  <div class="gen-video-wrap" id="gen-video-wrap" style="margin-bottom: 20px;">
+    <video id="gen-video" playsinline preload="auto" poster="/figurinha/cover.png"
+      style="width:100%; max-width:320px; border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,0.6); display:block; background:#000; margin: 0 auto;">
       <source src="/figurinha/vsl.mp4" type="video/mp4">
     </video>
-    <button type="button" class="btn-vsl-play" id="btn-vsl-play" onclick="playGenVideo()">
-      ▶ TOCAR VIDEO
+    <button type="button" class="btn-vsl-play" id="btn-vsl-play" onclick="playGenVideo()" 
+      style="display: block; margin: 10px auto; background: var(--gold); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+      🔊 ATIVAR SOM E ASSISTIR
     </button>
-    <div class="gen-video-hint" id="gen-video-hint">Se o video nao iniciar sozinho, toque para assistir enquanto gera.</div>
+    <div class="gen-video-hint" id="gen-video-hint" style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px;">Assista até o final para liberar sua figurinha.</div>
   </div>
 
   <!-- Animação fallback (some quando o vídeo carrega) -->
@@ -924,7 +932,16 @@
     <button class="btn-cta" onclick="goPayment()" style="background: linear-gradient(135deg, #00d46a, #00a050); color: #fff;">
       🔓 DESBLOQUEAR FIGURINHA AGORA
     </button>
-    <p class="cta-sub">Pagamento 100% seguro · Pix instantâneo</p>
+    <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(0,255,153,0.3); text-align: center;">
+      <p style="font-size: 13px; color: #fff; line-height: 1.4; margin-bottom: 8px;">
+        <strong>Apos o pagamento você vai ser redirecionado para pegar sua figurinha.</strong>
+      </p>
+      <p style="font-size: 12px; color: rgba(255,255,255,0.7);">
+        Caso não consiga, entre em contato comigo no <br>
+        <a href="https://wa.me/5519997051919" target="_blank" style="color: #00ff99; text-decoration: none; font-weight: bold;">WhatsApp: (19) 99705-1919</a>
+      </p>
+    </div>
+    <p class="cta-sub" style="margin-top: 10px;">Pagamento 100% seguro · Pix instantâneo</p>
   </div>
 </div>
 
@@ -1283,6 +1300,17 @@ function startGen() {
     if (vslDone) { doProceed(); return; }
   };
 
+  vid.onended = () => {
+    vslDone = true;
+    tryProceed();
+  };
+
+  window.__playGenVideoHandler = () => {
+    vid.muted = false;
+    vid.play().catch(e => console.error("Erro ao dar play:", e));
+    vidPlayBtn.style.display = 'none';
+  };
+
   // Progresso lento durante a VSL
   const setProgress = (pct) => {
     const f = document.getElementById('gen-fill');
@@ -1319,10 +1347,15 @@ function startGen() {
     setProgress(item.pct);
     setStep(item.gs, item.done);
   }, item.t));
+  // vslDone será marcado pelo evento onended do vídeo
+  // Fallback caso o vídeo falhe em carregar ou trave
   addTimer(() => {
-    vslDone = true;
-    tryProceed();
-  }, 4800);
+    if (!vslDone) {
+      console.warn("VSL timeout fallback");
+      vslDone = true;
+      tryProceed();
+    }
+  }, 45000);
 
   // Gemini gera a figurinha completa — sem fallback de canvas
   withTimeout(
@@ -1972,7 +2005,7 @@ function checkPaidReturn() {
 }
 
 function unlockPaid() {
-  const afterRestore = () => {
+  const afterRestore = async () => {
     const gc = document.getElementById('gen-canvas');
     const tc = document.getElementById('wpp-thumb-canvas');
     if (tc && gc.width > 0) tc.getContext('2d').drawImage(gc, 0, 0, tc.width, tc.height);
@@ -1982,6 +2015,31 @@ function unlockPaid() {
     const saved = persistGet('fc_sorteio');
     if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
     const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
+    
+    // Salva na nuvem (background)
+    const orderId = persistGet('fc_verified_order');
+    if (orderId && gc.width > 0) {
+      try {
+        const png_base64 = gc.toDataURL('image/png');
+        // PDF base64 - precisa gerar
+        const {jsPDF} = window.jspdf;
+        const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+        doc.addImage(png_base64,'PNG',10,10,190,267); // simplificado para o storage
+        const pdf_base64 = doc.output('datauristring');
+        
+        fetch('/api/upload-figurinha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order_id: orderId,
+            png_base64,
+            pdf_base64,
+            figurinha_name: state.nome
+          })
+        }).then(r => r.json()).then(d => console.log('Nuvem:', d));
+      } catch(e) { console.error('Erro upload nuvem:', e); }
+    }
+
     persistRemove('fc_pending_checkout');
     show('s-wpp');
   };

@@ -82,6 +82,10 @@ CREATE TABLE IF NOT EXISTS figurinha_orders (
   order_id TEXT NOT NULL UNIQUE,
   customer_email TEXT DEFAULT '',
   customer_name TEXT DEFAULT '',
+  customer_phone TEXT DEFAULT '',
+  png_url TEXT DEFAULT '',
+  pdf_url TEXT DEFAULT '',
+  figurinha_name TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

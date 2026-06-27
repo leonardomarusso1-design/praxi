@@ -60,6 +60,14 @@ export default async function handler(req, res) {
       body?.customer_name,
       body?.name
     );
+    const phone = firstNonEmpty(
+      body?.data?.customer?.mobile,
+      body?.data?.customer?.phone_number,
+      body?.customer?.mobile,
+      body?.customer?.phone_number,
+      body?.mobile,
+      body?.phone
+    );
 
     const isPaid = ['paid', 'approved', 'active', 'complete', 'purchase_approved']
       .includes(String(status).toLowerCase());
@@ -83,7 +91,12 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
         'Prefer': 'resolution=merge-duplicates,return=representation',
       },
-      body: JSON.stringify([{ order_id: orderId, customer_email: email, customer_name: name }]),
+      body: JSON.stringify([{ 
+        order_id: orderId, 
+        customer_email: email, 
+        customer_name: name,
+        customer_phone: phone
+      }]),
     });
 
     if (!r.ok) {
