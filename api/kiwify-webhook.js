@@ -6,6 +6,13 @@ export const config = { api: { bodyParser: { sizeLimit: '1mb' } } };
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
+function firstNonEmpty(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -17,10 +24,42 @@ export default async function handler(req, res) {
     // Formato 1: { type: 'PURCHASE_APPROVED', data: { id, status, customer } }
     // Formato 2: { order: { id, status }, customer: { name, email } }
     // Formato 3: { order_id, status, customer_email }
-    const orderId = body?.data?.id || body?.order?.id || body?.order_id || body?.id;
-    const status  = body?.data?.status || body?.order?.status || body?.status || body?.type || '';
-    const email   = body?.data?.customer?.email || body?.customer?.email || body?.customer_email || '';
-    const name    = body?.data?.customer?.name  || body?.customer?.name  || body?.customer_name  || '';
+    const orderId = firstNonEmpty(
+      body?.data?.id,
+      body?.data?.order_id,
+      body?.order?.id,
+      body?.order_id,
+      body?.sale_id,
+      body?.id
+    );
+    const status = firstNonEmpty(
+      body?.data?.status,
+      body?.order?.status,
+      body?.sale?.status,
+      body?.status,
+      body?.type
+    );
+    const email = firstNonEmpty(
+      body?.data?.customer?.email,
+      body?.data?.Customer?.email,
+      body?.data?.buyer?.email,
+      body?.data?.buyer_email,
+      body?.customer?.email,
+      body?.Customer?.email,
+      body?.buyer?.email,
+      body?.customer_email,
+      body?.email
+    ).toLowerCase();
+    const name = firstNonEmpty(
+      body?.data?.customer?.name,
+      body?.data?.Customer?.name,
+      body?.data?.buyer?.name,
+      body?.customer?.name,
+      body?.Customer?.name,
+      body?.buyer?.name,
+      body?.customer_name,
+      body?.name
+    );
 
     const isPaid = ['paid', 'approved', 'active', 'complete', 'purchase_approved']
       .includes(String(status).toLowerCase());
@@ -36,15 +75,15 @@ export default async function handler(req, res) {
     }
 
     // Grava no Supabase
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/figurinha_orders`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/figurinha_orders?on_conflict=order_id`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_SERVICE_KEY,
         'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Prefer': 'resolution=ignore-duplicates',
+        'Prefer': 'resolution=merge-duplicates,return=representation',
       },
-      body: JSON.stringify({ order_id: orderId, customer_email: email, customer_name: name }),
+      body: JSON.stringify([{ order_id: orderId, customer_email: email, customer_name: name }]),
     });
 
     if (!r.ok) {
@@ -53,8 +92,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'db_error', detail: err });
     }
 
-    console.log(`✅ Ordem gravada: ${orderId} (${email})`);
-    return res.status(200).json({ ok: true, order_id: orderId });
+    const savedRows = await r.json().catch(() => []);
+    const saved = Array.isArray(savedRows) ? savedRows[0] : savedRows;
+
+    console.log(`✅ Ordem gravada: ${orderId} (${email || 'sem-email'})`);
+    return res.status(200).json({ ok: true, order_id: orderId, customer_email: saved?.customer_email || email || '' });
 
   } catch (e) {
     console.error('Webhook error:', e.message);

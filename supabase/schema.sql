@@ -77,11 +77,20 @@ CREATE TABLE IF NOT EXISTS carne_leao (
   UNIQUE(professional_id, mes, ano)
 );
 
+CREATE TABLE IF NOT EXISTS figurinha_orders (
+  id BIGSERIAL PRIMARY KEY,
+  order_id TEXT NOT NULL UNIQUE,
+  customer_email TEXT DEFAULT '',
+  customer_name TEXT DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 ALTER TABLE professionals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE carne_leao ENABLE ROW LEVEL SECURITY;
+ALTER TABLE figurinha_orders ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "own_profile_select" ON professionals FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "own_profile_update" ON professionals FOR UPDATE USING (auth.uid() = id);
@@ -90,6 +99,7 @@ CREATE POLICY "own_patients" ON patients FOR ALL USING (professional_id = auth.u
 CREATE POLICY "own_sessions" ON sessions FOR ALL USING (professional_id = auth.uid());
 CREATE POLICY "own_receipts" ON receipts FOR ALL USING (professional_id = auth.uid());
 CREATE POLICY "own_carne_leao" ON carne_leao FOR ALL USING (professional_id = auth.uid());
+CREATE POLICY "figurinha_orders_service_only" ON figurinha_orders FOR ALL USING (false) WITH CHECK (false);
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

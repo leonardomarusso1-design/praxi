@@ -1839,22 +1839,47 @@ function goPayment() {
   window.location.href = CAKTO_CHECKOUT;
 }
 
+function persistSet(key, value) {
+  [sessionStorage, localStorage].forEach(storage => {
+    try { storage.setItem(key, value); } catch (e) {}
+  });
+}
+
+function persistGet(key) {
+  try {
+    const sessionValue = sessionStorage.getItem(key);
+    if (sessionValue !== null) return sessionValue;
+  } catch (e) {}
+  try {
+    const localValue = localStorage.getItem(key);
+    if (localValue !== null) return localValue;
+  } catch (e) {}
+  return null;
+}
+
+function persistRemove(key) {
+  [sessionStorage, localStorage].forEach(storage => {
+    try { storage.removeItem(key); } catch (e) {}
+  });
+}
+
 function saveSessionState() {
   try {
-    sessionStorage.setItem('fc_state', JSON.stringify({
+    persistSet('fc_state', JSON.stringify({
       nome: state.nome, idade: state.idade, posicao: state.posicao,
       numero: state.numero, estilo: state.estilo,
       nascimento: state.nascimento, altura: state.altura, peso: state.peso, clube: state.clube
     }));
+    persistSet('fc_pending_checkout', String(Date.now()));
     const gc = document.getElementById('gen-canvas');
-    if (gc.width > 0) sessionStorage.setItem('fc_canvas', gc.toDataURL('image/png'));
+    if (gc.width > 0) persistSet('fc_canvas', gc.toDataURL('image/jpeg', 0.92));
   } catch(e) { console.warn('sessionStorage error:', e); }
 }
 
 function restoreSessionState(cb) {
   try {
-    const saved = sessionStorage.getItem('fc_state');
-    const canvasData = sessionStorage.getItem('fc_canvas');
+    const saved = persistGet('fc_state');
+    const canvasData = persistGet('fc_canvas');
     if (saved) Object.assign(state, JSON.parse(saved));
     if (canvasData) {
       const img = new Image();
@@ -1873,10 +1898,45 @@ function restoreSessionState(cb) {
   return false;
 }
 
+function syncRecoveredPreview() {
+  const gc = document.getElementById('gen-canvas');
+  const pc = document.getElementById('pw-canvas');
+  if (pc && gc.width > 0) pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
+  const pn = document.getElementById('pw-nome');
+  if (pn) pn.textContent = state.nome || 'craque';
+}
+
+function recoverPendingCheckout() {
+  const pendingAt = Number(persistGet('fc_pending_checkout') || 0);
+  if (!pendingAt) return false;
+  const tooOld = (Date.now() - pendingAt) > (24 * 60 * 60 * 1000);
+  if (tooOld) {
+    persistRemove('fc_pending_checkout');
+    return false;
+  }
+  const hasCanvas = restoreSessionState(() => {
+    syncRecoveredPreview();
+    show('s-paywall');
+  });
+  return hasCanvas;
+}
+
+function getReturnOrderId(params) {
+  return params.get('order_id')
+    || params.get('orderId')
+    || params.get('payment_id')
+    || params.get('paymentId')
+    || params.get('transaction_id')
+    || params.get('transactionId')
+    || params.get('sale_id')
+    || params.get('saleId')
+    || '';
+}
+
 // Detecta retorno do Kiwify com ?order_id=XXX e verifica no servidor
 function checkPaidReturn() {
   const params = new URLSearchParams(window.location.search);
-  const orderId = params.get('order_id');
+  const orderId = getReturnOrderId(params);
 
   // Se tem order_id na URL → verifca no servidor (não aceita ?liberado=1 mais)
   if (orderId) {
@@ -1885,14 +1945,14 @@ function checkPaidReturn() {
       .then(r => r.json())
       .then(data => {
         if (data.paid) {
-          sessionStorage.setItem('fc_verified_order', orderId);
+          persistSet('fc_verified_order', orderId);
           unlockPaid();
         } else {
           // Ordem não encontrada ainda (webhook pode demorar alguns segundos) — tenta de novo em 3s
           setTimeout(() => {
             fetch('/api/verify-order?order_id=' + encodeURIComponent(orderId))
               .then(r => r.json())
-              .then(d => { if (d.paid) { sessionStorage.setItem('fc_verified_order', orderId); unlockPaid(); } });
+              .then(d => { if (d.paid) { persistSet('fc_verified_order', orderId); unlockPaid(); } });
           }, 3000);
         }
       })
@@ -1901,8 +1961,13 @@ function checkPaidReturn() {
   }
 
   // Se voltou sem order_id mas tem sessao verificada (refresh da pagina)
-  if (sessionStorage.getItem('fc_verified_order')) {
+  if (persistGet('fc_verified_order')) {
     unlockPaid();
+    return;
+  }
+
+  if (recoverPendingCheckout()) {
+    console.warn('Checkout recuperado localmente, aguardando confirmacao do pagamento.');
   }
 }
 
@@ -1914,14 +1979,15 @@ function unlockPaid() {
     const rc = document.getElementById('result-canvas');
     if (rc && gc.width > 0) rc.getContext('2d').drawImage(gc, 0, 0, rc.width, rc.height);
     const wn = document.getElementById('wpp-nome'); if (wn) wn.textContent = state.nome;
-    const saved = sessionStorage.getItem('fc_sorteio');
+    const saved = persistGet('fc_sorteio');
     if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
     const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
+    persistRemove('fc_pending_checkout');
     show('s-wpp');
   };
   const hasCanvas = restoreSessionState(afterRestore);
   if (!hasCanvas) {
-    sessionStorage.removeItem('fc_verified_order');
+    persistRemove('fc_verified_order');
     show('s-landing');
   }
 }
@@ -1951,8 +2017,8 @@ async function enviarWPP() {
 
   const sorteio = gerarNumeroSorteio();
   state.sorteio = sorteio;
-  sessionStorage.setItem('fc_sorteio', sorteio);
-  sessionStorage.setItem('fc_phone', phone);
+  persistSet('fc_sorteio', sorteio);
+  persistSet('fc_phone', phone);
 
   // Gera imagem da figurinha como base64 (reduz pra 600px pra não estourar Z-API)
   const gc = document.getElementById('gen-canvas');
@@ -2037,7 +2103,7 @@ function downloadPDF() {
   doc.text('Tamanho sticker (×8)', 105, sy+stk.h+4, {align:'center'});
 
   // Sorteio no rodapé (sem emoji — jsPDF não suporta)
-  const sorteio = state.sorteio || sessionStorage.getItem('fc_sorteio') || '';
+  const sorteio = state.sorteio || persistGet('fc_sorteio') || '';
   if (sorteio) {
     doc.setFontSize(9); doc.setTextColor(0,180,80);
     doc.text('No do sorteio: '+sorteio+' · Final da Copa · '+SORTEIO_DATA, 105, 285, {align:'center'});
@@ -2047,7 +2113,7 @@ function downloadPDF() {
 }
 
 function shareWA() {
-  const sorteio = state.sorteio || sessionStorage.getItem('fc_sorteio') || '';
+  const sorteio = state.sorteio || persistGet('fc_sorteio') || '';
   const txt = encodeURIComponent(
     '⚽🇧🇷 Olha a figurinha da Copa 2026 que eu fiz pro '+state.nome+'! Ficou INCRÍVEL!\n' +
     (sorteio ? '🎟️ Meu número do sorteio é: '+sorteio+'\n' : '') +
