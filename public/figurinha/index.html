@@ -431,6 +431,23 @@
     .uz-icon { font-size: 44px; margin-bottom: 10px; }
     .uz-title { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
     .uz-hint { font-size: 12px; color: rgba(255,255,255,0.45); }
+    .upload-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .btn-upload-alt {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 14px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-upload-alt:hover, .btn-upload-alt:active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(255,215,0,0.08);
+    }
     #photo-preview-img {
       width: 110px; height: 110px; border-radius: 50%;
       object-fit: cover; border: 3px solid var(--gold);
@@ -782,10 +799,19 @@
 
       <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-inp').click()">
         <div class="uz-icon">📸</div>
-        <div class="uz-title">Toque para enviar a foto</div>
-        <div class="uz-hint">JPG, PNG ou HEIC · até 10MB</div>
+        <div class="uz-title">Escolha da galeria ou tire na hora</div>
+        <div class="uz-hint">JPG, PNG ou HEIC do iPhone · ate 10MB</div>
       </div>
-      <input type="file" id="file-inp" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this)">
+      <div class="upload-actions">
+        <button type="button" class="btn-upload-alt" onclick="document.getElementById('file-inp').click()">
+          🖼️ GALERIA
+        </button>
+        <button type="button" class="btn-upload-alt" onclick="document.getElementById('file-inp-camera').click()">
+          📷 CAMERA
+        </button>
+      </div>
+      <input type="file" id="file-inp" accept="image/*" style="display:none" onchange="onPhoto(this)">
+      <input type="file" id="file-inp-camera" accept="image/*" capture="user" style="display:none" onchange="onPhoto(this)">
 
 
       <button class="btn-next" id="btn-gerar" onclick="startGen()" disabled>
@@ -1048,44 +1074,170 @@ function clearNums() {
   document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('sel'));
 }
 
-function onPhoto(input) {
-  const file = input.files[0];
+function setUploadZoneMessage(icon, title, hint) {
+  const zone = document.getElementById('upload-zone');
+  if (!zone) return;
+  zone.innerHTML =
+    '<div class="uz-icon">' + icon + '</div>' +
+    '<div class="uz-title">' + title + '</div>' +
+    '<div class="uz-hint">' + hint + '</div>';
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => reject(new Error('Nao foi possivel ler a imagem.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageElement(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Nao foi possivel abrir a imagem.'));
+    img.src = src;
+  });
+}
+
+async function normalizeUploadedPhoto(file, maxDim = 1536) {
+  const objectUrl = URL.createObjectURL(file);
+  let bitmap = null;
+  try {
+    if ('createImageBitmap' in window) {
+      try { bitmap = await createImageBitmap(file); } catch (_) {}
+    }
+
+    let source = bitmap;
+    let width = bitmap ? bitmap.width : 0;
+    let height = bitmap ? bitmap.height : 0;
+
+    if (!source) {
+      source = await loadImageElement(objectUrl);
+      width = source.naturalWidth || source.width;
+      height = source.naturalHeight || source.height;
+    }
+
+    const scale = Math.min(1, maxDim / Math.max(width, height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(width * scale));
+    canvas.height = Math.max(1, Math.round(height * scale));
+
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+
+    return canvas.toDataURL('image/jpeg', 0.88);
+  } catch (error) {
+    console.warn('Falha ao normalizar a foto, usando arquivo original:', error);
+    return fileToDataUrl(file);
+  } finally {
+    if (bitmap && typeof bitmap.close === 'function') bitmap.close();
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+async function onPhoto(input) {
+  const file = input.files && input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    state.photo = e.target.result;
-    const prev = document.getElementById('photo-preview-img');
-    prev.src = e.target.result; prev.style.display = 'block';
-    document.getElementById('upload-zone').innerHTML =
-      '<div class="uz-icon">✅</div><div class="uz-title">Foto enviada!</div><div class="uz-hint">Toque aqui para trocar</div>';
-    document.getElementById('btn-gerar').disabled = false;
-  };
-  reader.readAsDataURL(file);
+
+  const btnGerar = document.getElementById('btn-gerar');
+  const prev = document.getElementById('photo-preview-img');
+  if (btnGerar) btnGerar.disabled = true;
+  setUploadZoneMessage('⏳', 'Preparando foto...', 'Otimizando para funcionar melhor no celular');
+
+  try {
+    const normalizedPhoto = await normalizeUploadedPhoto(file);
+    state.photo = normalizedPhoto;
+    prev.src = normalizedPhoto;
+    prev.style.display = 'block';
+    setUploadZoneMessage('✅', 'Foto enviada!', 'Toque aqui para trocar');
+    if (btnGerar) btnGerar.disabled = false;
+  } catch (error) {
+    console.error('Erro ao processar foto:', error);
+    state.photo = null;
+    prev.removeAttribute('src');
+    prev.style.display = 'none';
+    input.value = '';
+    setUploadZoneMessage('⚠️', 'Nao foi possivel ler essa foto', 'Tente novamente com outra imagem');
+    alert('Nao foi possivel preparar a foto. Tente outra imagem ou envie uma versao JPG/PNG.');
+  }
 }
 
 // ─── GENERATION ─────────────────────────────────────────────
+function withTimeout(promise, ms, message) {
+  let timer = null;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), ms);
+    })
+  ]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
 function startGen() {
+  if (!state.photo) {
+    show('s-quiz');
+    alert('Envie uma foto antes de gerar a figurinha.');
+    return;
+  }
+
+  const btnGerar = document.getElementById('btn-gerar');
+  if (btnGerar) btnGerar.disabled = true;
   show('s-gen');
 
-  let canvasDone = false, vslDone = false;
+  let canvasDone = false, vslDone = false, proceeded = false;
+  const timers = [];
+  const vid = document.getElementById('gen-video');
+  const fallback = document.getElementById('gen-anim-fallback');
+
+  const addTimer = (fn, ms) => {
+    const timerId = setTimeout(fn, ms);
+    timers.push(timerId);
+    return timerId;
+  };
+
+  const clearTimers = () => {
+    while (timers.length) clearTimeout(timers.pop());
+  };
 
   const doProceed = () => {
+    if (proceeded) return;
+    proceeded = true;
+    clearTimers();
     const gc = document.getElementById('gen-canvas');
     const pc = document.getElementById('pw-canvas');
     if (pc && gc.width > 0) pc.getContext('2d').drawImage(gc, 0, 0, pc.width, pc.height);
     const pn = document.getElementById('pw-nome');
     if (pn) pn.textContent = state.nome;
+    if (btnGerar) btnGerar.disabled = false;
     show('s-paywall');
   };
 
+  const failGeneration = (message) => {
+    if (proceeded) return;
+    clearTimers();
+    try { vid.pause(); } catch(_) {}
+    vid.style.display = 'none';
+    if (fallback) {
+      fallback.style.display = 'block';
+      fallback.innerHTML =
+        '<div style="text-align:center;padding:30px 20px">' +
+        '<p style="color:#f66;font-size:17px;margin-bottom:16px">⚠️ ' + message + '</p>' +
+        '<button class="btn-cta" onclick="show(\'s-quiz\')" style="width:100%">🔄 Tentar novamente</button>' +
+        '</div>';
+    }
+    if (btnGerar) btnGerar.disabled = false;
+  };
+
   // Quando a figurinha está pronta E a VSL terminou → avança
-  // Mas se a VSL demorar mais de 90s após a figurinha pronta, avança mesmo assim
-  let vslTimer = null;
   const tryProceed = () => {
     if (!canvasDone) return; // figurinha ainda não pronta
     if (vslDone) { doProceed(); return; }
-    // Figurinha pronta mas VSL ainda rodando → aguarda até 90s
-    if (!vslTimer) vslTimer = setTimeout(() => { vslDone = true; doProceed(); }, 90000);
   };
 
   // Progresso lento durante a VSL
@@ -1100,8 +1252,38 @@ function startGen() {
     const e = document.getElementById(gs); if(e) e.classList.add('active');
   };
 
+  setProgress(0);
+  ['gs1', 'gs2', 'gs3', 'gs4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('done', 'active');
+    if (index === 0) el.classList.add('active');
+  });
+  if (fallback) fallback.style.display = 'block';
+  vid.style.display = 'none';
+
+  // A VSL nao pode bloquear o fluxo no celular; ela agora eh apenas visual.
+  const progressTimeline = [
+    { pct: 15, gs: 'gs1', done: [], t: 700 },
+    { pct: 45, gs: 'gs2', done: ['gs1'], t: 1800 },
+    { pct: 75, gs: 'gs3', done: ['gs1', 'gs2'], t: 3200 },
+    { pct: 100, gs: 'gs4', done: ['gs1', 'gs2', 'gs3'], t: 4600 },
+  ];
+  progressTimeline.forEach(item => addTimer(() => {
+    setProgress(item.pct);
+    setStep(item.gs, item.done);
+  }, item.t));
+  addTimer(() => {
+    vslDone = true;
+    tryProceed();
+  }, 4800);
+
   // Gemini gera a figurinha completa — sem fallback de canvas
-  resizeForGemini(state.photo).then(small => processPhotoGemini(small)).then(geminiImg => {
+  withTimeout(
+    resizeForGemini(state.photo).then(small => processPhotoGemini(small)),
+    45000,
+    'A geracao demorou demais no celular. Tente outra foto ou tente novamente.'
+  ).then(geminiImg => {
     if (geminiImg) {
       // ✅ Gemini gerou — desenha no canvas (apenas para exportar para Z-API)
       const gc = document.getElementById('gen-canvas');
@@ -1111,52 +1293,31 @@ function startGen() {
         gc.getContext('2d').drawImage(img, 0, 0, 800, 1061);
         canvasDone = true; tryProceed();
       };
+      img.onerror = () => failGeneration('A figurinha foi gerada, mas o celular nao conseguiu abrir a imagem final.');
       img.src = geminiImg;
     } else {
-      // ❌ Gemini falhou — para o vídeo e mostra erro visível
-      try { vid.pause(); vid.currentTime = 0; } catch(e) {}
-      vid.style.display = 'none';
-      const fb = document.getElementById('gen-anim-fallback');
-      if (fb) {
-        fb.style.display = 'block';
-        fb.innerHTML = '<div style="text-align:center;padding:30px 20px"><p style="color:#f66;font-size:17px;margin-bottom:16px">⚠️ Não foi possível gerar a figurinha.<br>Tente com uma foto diferente ou tente novamente.</p><button class="btn-cta" onclick="show(\'s-quiz\')" style="width:100%">🔄 Tentar novamente</button></div>';
-      }
+      failGeneration('Nao foi possivel gerar a figurinha. Tente com uma foto diferente ou tente novamente.');
     }
+  }).catch((error) => {
+    console.error('Erro na geracao da figurinha:', error);
+    failGeneration(error.message || 'A geracao falhou. Tente novamente.');
   });
 
   // VSL video
-  const vid = document.getElementById('gen-video');
-  vid.loop = false; vid.muted = false;
+  vid.loop = false;
+  vid.muted = true;
+  vid.playsInline = true;
+  vid.setAttribute('muted', '');
+  vid.setAttribute('playsinline', '');
+  vid.setAttribute('webkit-playsinline', 'true');
   vid.load();
-
-  vid.onended = () => {
-    setProgress(100); setStep('gs4', ['gs1','gs2','gs3']);
-    vslDone = true;
-    setTimeout(tryProceed, 800);
-  };
 
   vid.play().then(() => {
     vid.style.display = 'block';
-    document.getElementById('gen-anim-fallback').style.display = 'none';
-    // Progresso se sincroniza com a duração do vídeo
-    const scale = (t) => {
-      const dur = vid.duration || 90; // fallback 90s
-      return (t / 100) * dur * 1000;
-    };
-    setTimeout(() => { setProgress(12); setStep('gs1'); },          scale(12));
-    setTimeout(() => { setProgress(35); setStep('gs2', ['gs1']); }, scale(35));
-    setTimeout(() => { setProgress(65); setStep('gs3', ['gs1','gs2']); }, scale(65));
-    setTimeout(() => { setProgress(90); setStep('gs4', ['gs1','gs2','gs3']); }, scale(90));
+    if (fallback) fallback.style.display = 'none';
   }).catch(() => {
-    // Vídeo falhou → fallback de 8s (vsl.mp4 com 0 bytes ou ausente)
+    // Em muitos celulares o autoplay falha; mantemos a animacao fallback e seguimos.
     vid.style.display = 'none';
-    const fb = [{pct:22,gs:'gs1',t:800},{pct:55,gs:'gs2',t:1800},
-                {pct:80,gs:'gs3',t:2800},{pct:100,gs:'gs4',t:3800}];
-    fb.forEach((item,i) => setTimeout(() => {
-      setProgress(item.pct);
-      setStep(item.gs, fb.slice(0,i).map(x=>x.gs));
-      if (i === fb.length-1) { vslDone = true; setTimeout(tryProceed, 600); }
-    }, item.t));
   });
 }
 
