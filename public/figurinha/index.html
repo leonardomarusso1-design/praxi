@@ -463,6 +463,34 @@
     }
     .gen-h { font-family: 'Anton', sans-serif; font-size: 30px; margin-bottom: 6px; }
     .gen-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 32px; }
+    .gen-video-wrap {
+      width: 240px;
+      margin: 0 auto 20px;
+      position: relative;
+      display: none;
+    }
+    .gen-video-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 10px;
+      text-align: center;
+    }
+    .btn-vsl-play {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      border: none;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 10px 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+      display: none;
+    }
 
     .gen-anim {
       width: 180px; height: 252px; margin: 0 auto 32px; position: relative;
@@ -827,11 +855,17 @@
   <h2 class="gen-h">GERANDO SUA FIGURINHA...</h2>
   <p class="gen-sub">Não saia da tela! Leva até 30 segundos.</p>
 
-  <!-- Vídeo VSL com áudio — sem loop, sem mute -->
-  <video id="gen-video" playsinline
-    style="width:240px;border-radius:16px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:none">
-    <source src="/figurinha/vsl.mp4" type="video/mp4">
-  </video>
+  <!-- Vídeo VSL -->
+  <div class="gen-video-wrap" id="gen-video-wrap">
+    <video id="gen-video" playsinline preload="auto" muted poster="/figurinha/cover.png"
+      style="width:240px;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:block;background:#000">
+      <source src="/figurinha/vsl.mp4" type="video/mp4">
+    </video>
+    <button type="button" class="btn-vsl-play" id="btn-vsl-play" onclick="playGenVideo()">
+      ▶ TOCAR VIDEO
+    </button>
+    <div class="gen-video-hint" id="gen-video-hint">Se o video nao iniciar sozinho, toque para assistir enquanto gera.</div>
+  </div>
 
   <!-- Animação fallback (some quando o vídeo carrega) -->
   <div class="gen-anim" id="gen-anim-fallback">
@@ -1179,6 +1213,12 @@ function withTimeout(promise, ms, message) {
   });
 }
 
+function playGenVideo() {
+  if (typeof window.__playGenVideoHandler === 'function') {
+    window.__playGenVideoHandler();
+  }
+}
+
 function startGen() {
   if (!state.photo) {
     show('s-quiz');
@@ -1193,6 +1233,9 @@ function startGen() {
   let canvasDone = false, vslDone = false, proceeded = false;
   const timers = [];
   const vid = document.getElementById('gen-video');
+  const vidWrap = document.getElementById('gen-video-wrap');
+  const vidPlayBtn = document.getElementById('btn-vsl-play');
+  const vidHint = document.getElementById('gen-video-hint');
   const fallback = document.getElementById('gen-anim-fallback');
 
   const addTimer = (fn, ms) => {
@@ -1260,7 +1303,10 @@ function startGen() {
     if (index === 0) el.classList.add('active');
   });
   if (fallback) fallback.style.display = 'block';
-  vid.style.display = 'none';
+  if (vidWrap) vidWrap.style.display = 'block';
+  vid.style.display = 'block';
+  if (vidPlayBtn) vidPlayBtn.style.display = 'none';
+  if (vidHint) vidHint.style.display = 'none';
 
   // A VSL nao pode bloquear o fluxo no celular; ela agora eh apenas visual.
   const progressTimeline = [
@@ -1307,18 +1353,67 @@ function startGen() {
   vid.loop = false;
   vid.muted = true;
   vid.playsInline = true;
+  vid.autoplay = true;
+  vid.controls = false;
+  vid.preload = 'auto';
   vid.setAttribute('muted', '');
+  vid.setAttribute('autoplay', '');
   vid.setAttribute('playsinline', '');
   vid.setAttribute('webkit-playsinline', 'true');
-  vid.load();
+  vid.currentTime = 0;
 
-  vid.play().then(() => {
+  const markVideoVisible = () => {
     vid.style.display = 'block';
+    if (vidWrap) vidWrap.style.display = 'block';
     if (fallback) fallback.style.display = 'none';
-  }).catch(() => {
-    // Em muitos celulares o autoplay falha; mantemos a animacao fallback e seguimos.
-    vid.style.display = 'none';
-  });
+  };
+
+  const enableManualPlay = () => {
+    markVideoVisible();
+    if (vidPlayBtn) vidPlayBtn.style.display = 'inline-block';
+    if (vidHint) vidHint.style.display = 'block';
+  };
+
+  const hideManualPlay = () => {
+    if (vidPlayBtn) vidPlayBtn.style.display = 'none';
+    if (vidHint) vidHint.style.display = 'none';
+  };
+
+  const attemptPlay = () => {
+    markVideoVisible();
+    const playAttempt = vid.play();
+    if (playAttempt && typeof playAttempt.then === 'function') {
+      playAttempt.then(() => {
+        hideManualPlay();
+      }).catch(() => {
+        enableManualPlay();
+      });
+    } else {
+      hideManualPlay();
+    }
+  };
+
+  window.__playGenVideoHandler = attemptPlay;
+
+  vid.onplaying = () => {
+    markVideoVisible();
+    hideManualPlay();
+  };
+  vid.onloadeddata = () => {
+    markVideoVisible();
+  };
+  vid.oncanplay = () => {
+    addTimer(() => {
+      if (vid.paused) attemptPlay();
+    }, 50);
+  };
+  vid.onerror = () => {
+    if (vidWrap) vidWrap.style.display = 'none';
+    if (fallback) fallback.style.display = 'block';
+  };
+
+  vid.load();
+  attemptPlay();
 }
 
 // ─── Redimensiona foto para no máximo 1024px antes de enviar ao Gemini ───
