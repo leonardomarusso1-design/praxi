@@ -1022,7 +1022,12 @@
       <p style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;">Seu número do sorteio</p>
       <div id="sorteio-num" style="font-family:'Anton',sans-serif;font-size:40px;color:var(--gold);letter-spacing:4px;">—</div>
       <p style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;">🏆 Sorteio de R$100 no Pix · Final da Copa · <span id="sorteio-data-txt">19 de julho de 2026</span></p>
-      <p style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;">Guarda essa tela ou salva o print!</p>
+      
+      <div style="margin-top: 15px; padding-top: 15px; border-t: 1px solid rgba(255,255,255,0.1);">
+        <p style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;">ID do Pedido:</p>
+        <p id="display-order-id" style="font-family:monospace;font-size:12px;color:var(--gold);">—</p>
+      </div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px;">Guarda essa tela ou salva o print!</p>
     </div>
 
     <button class="btn-dl" onclick="downloadPDF()">📥 BAIXAR PDF EM ALTA RESOLUÇÃO</button>
@@ -2016,8 +2021,12 @@ function unlockPaid() {
     if (saved) { const el = document.getElementById('sorteio-num'); if(el) el.textContent = saved; }
     const sd = document.getElementById('sorteio-data-txt'); if(sd) sd.textContent = SORTEIO_DATA;
     
-    // Salva na nuvem (background)
+    // Exibe o ID do pedido
     const orderId = persistGet('fc_verified_order');
+    const orderEl = document.getElementById('display-order-id');
+    if (orderEl && orderId) orderEl.textContent = orderId;
+    
+    // Salva na nuvem (background)
     if (orderId && gc.width > 0) {
       try {
         const png_base64 = gc.toDataURL('image/png');
