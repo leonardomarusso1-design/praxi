@@ -865,7 +865,7 @@
   <!-- Vídeo VSL -->
   <div class="gen-video-wrap" id="gen-video-wrap" style="margin-bottom: 20px;">
     <video id="gen-video" playsinline preload="auto" poster="/figurinha/cover.png"
-      style="width:100%; max-width:320px; border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,0.6); display:block; background:#000; margin: 0 auto;">
+      style="width:100%; max-width:320px; border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,0.6); display:none; background:#000; margin: 0 auto;">
       <source src="/figurinha/vsl.mp4" type="video/mp4">
     </video>
     <button type="button" class="btn-vsl-play" id="btn-vsl-play" onclick="playGenVideo()" 
@@ -1389,7 +1389,7 @@ function startGen() {
 
   // VSL video
   vid.loop = false;
-  vid.muted = true;
+  vid.muted = true; // Inicia mutado para permitir autoplay
   vid.playsInline = true;
   vid.autoplay = true;
   vid.controls = false;
@@ -1408,42 +1408,48 @@ function startGen() {
 
   const enableManualPlay = () => {
     markVideoVisible();
-    if (vidPlayBtn) vidPlayBtn.style.display = 'inline-block';
+    if (vidPlayBtn) {
+      vidPlayBtn.style.display = 'block';
+      vidPlayBtn.textContent = '🔊 ATIVAR SOM E ASSISTIR';
+    }
     if (vidHint) vidHint.style.display = 'block';
   };
 
   const hideManualPlay = () => {
-    if (vidPlayBtn) vidPlayBtn.style.display = 'none';
-    if (vidHint) vidHint.style.display = 'none';
-  };
-
-  const attemptPlay = () => {
-    markVideoVisible();
-    const playAttempt = vid.play();
-    if (playAttempt && typeof playAttempt.then === 'function') {
-      playAttempt.then(() => {
-        hideManualPlay();
-      }).catch(() => {
-        enableManualPlay();
-      });
-    } else {
-      hideManualPlay();
+    // Não escondemos o botão se o vídeo estiver mutado, 
+    // pois o usuário precisa dele para ativar o som
+    if (!vid.muted) {
+      if (vidPlayBtn) vidPlayBtn.style.display = 'none';
+      if (vidHint) vidHint.style.display = 'none';
     }
   };
 
-  window.__playGenVideoHandler = attemptPlay;
+  window.__playGenVideoHandler = () => {
+    vid.muted = false;
+    vid.play().then(() => {
+      hideManualPlay();
+    }).catch(e => {
+      console.error("Erro ao dar play com som:", e);
+    });
+  };
 
   vid.onplaying = () => {
     markVideoVisible();
-    hideManualPlay();
+    // Se estiver tocando mutado, garante que o botão de som apareça
+    if (vid.muted) {
+      enableManualPlay();
+    }
   };
   vid.onloadeddata = () => {
     markVideoVisible();
+    vid.play().catch(() => {
+      enableManualPlay();
+    });
   };
   vid.oncanplay = () => {
-    addTimer(() => {
-      if (vid.paused) attemptPlay();
-    }, 50);
+    vid.play().catch(() => {
+      enableManualPlay();
+    });
   };
   vid.onerror = () => {
     if (vidWrap) vidWrap.style.display = 'none';
